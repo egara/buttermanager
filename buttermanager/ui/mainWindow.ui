@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ButterManager (A BTRFS Tool)</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>10</y>
+      <width>781</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>GroupBox</string>
+       </property>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>781</width>
+          <height>531</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Main</string>
+         </attribute>
+         <widget class="QPushButton" name="balanceButton">
+          <property name="geometry">
+           <rect>
+            <x>40</x>
+            <y>110</y>
+            <width>121</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Balance</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="upgradeSystemButton">
+          <property name="geometry">
+           <rect>
+            <x>40</x>
+            <y>60</y>
+            <width>121</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Upgrade System</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Snapshots</string>
+         </attribute>
+         <widget class="QListWidget" name="listWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>701</width>
+            <height>431</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>snapshot1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>snapshot2</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QPushButton" name="snapshotButton">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>440</y>
+            <width>121</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Take snapshot</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="title">
+          <string>Settings</string>
+         </attribute>
+        </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
