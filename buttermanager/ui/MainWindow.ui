@@ -25,11 +25,11 @@
     </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="group_box">
        <property name="title">
-        <string>GroupBox</string>
+        <string/>
        </property>
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="tab_buttermanager">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -39,13 +39,13 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_main">
          <attribute name="title">
           <string>Main</string>
          </attribute>
-         <widget class="QPushButton" name="balanceButton">
+         <widget class="QPushButton" name="button_balance">
           <property name="geometry">
            <rect>
             <x>561</x>
@@ -58,7 +58,7 @@
            <string>Balance</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="upgradeSystemButton">
+         <widget class="QPushButton" name="button_upgrade_system">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -71,7 +71,7 @@
            <string>Upgrade System</string>
           </property>
          </widget>
-         <widget class="QLabel" name="label_subvolume_info">
+         <widget class="QLabel" name="label_filesystem_info">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -81,7 +81,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>Subvolume Information</string>
+           <string>Filesystem Information</string>
           </property>
          </widget>
          <widget class="QProgressBar" name="progressbar_data">
@@ -97,7 +97,7 @@
            <number>85</number>
           </property>
          </widget>
-         <widget class="QLabel" name="label_subvolume_data">
+         <widget class="QLabel" name="label_filesystem_data">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -110,7 +110,7 @@
            <string>Data</string>
           </property>
          </widget>
-         <widget class="QLabel" name="label_subvolume_metadata">
+         <widget class="QLabel" name="label_filesystem_metadata">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -123,7 +123,7 @@
            <string>Metadata</string>
           </property>
          </widget>
-         <widget class="QLabel" name="label_subvolume_system">
+         <widget class="QLabel" name="label_filesystem_system">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -162,7 +162,7 @@
            <number>24</number>
           </property>
          </widget>
-         <widget class="QLabel" name="label_subvolume">
+         <widget class="QLabel" name="label_filesystem">
           <property name="geometry">
            <rect>
             <x>586</x>
@@ -172,10 +172,10 @@
            </rect>
           </property>
           <property name="text">
-           <string>Subvolume</string>
+           <string>Filesystem</string>
           </property>
          </widget>
-         <widget class="QComboBox" name="combobox_subvolume">
+         <widget class="QComboBox" name="combobox_filesystem">
           <property name="geometry">
            <rect>
             <x>510</x>
@@ -216,7 +216,7 @@
          <attribute name="title">
           <string>Snapshots</string>
          </attribute>
-         <widget class="QListWidget" name="listWidget">
+         <widget class="QListWidget" name="list_snapshots">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -236,7 +236,7 @@
            </property>
           </item>
          </widget>
-         <widget class="QPushButton" name="snapshotButton">
+         <widget class="QPushButton" name="button_snapshot">
           <property name="geometry">
            <rect>
             <x>0</x>
