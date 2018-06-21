@@ -33,19 +33,28 @@ class ButtermanagerMainWindow(QMainWindow):
     def initialize(self):
         # Loading User Interface
         uic.loadUi("ui/MainWindow.ui", self)
+
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(550)
         self.setMinimumWidth(800)
         self.setMaximumHeight(550)
         self.setMaximumWidth(800)
+
         # Centering the window
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
 
+        # Button event
+        self.button_balance.clicked.connect(self.balanceFs)
+
         # Showing main window
         self.show()
+
+    def balanceFs(self):
+        list1 = ["One", "Two"]
+        self.combobox_filesystem.addItems(list1)
 
 # Creating application instance
 application = QApplication(sys.argv)
