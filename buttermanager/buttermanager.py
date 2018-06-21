@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
 from PyQt5 import uic
 
 # Class inherited from QMainWindow (Window constructor)
@@ -33,6 +33,18 @@ class ButtermanagerMainWindow(QMainWindow):
     def initialize(self):
         # Loading User Interface
         uic.loadUi("ui/MainWindow.ui", self)
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(550)
+        self.setMinimumWidth(800)
+        self.setMaximumHeight(550)
+        self.setMaximumWidth(800)
+        # Centering the window
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
+        # Showing main window
         self.show()
 
 # Creating application instance
