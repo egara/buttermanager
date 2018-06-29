@@ -19,6 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import filesystem.filesystem
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
 from PyQt5 import uic
 
@@ -45,6 +46,9 @@ class ButtermanagerMainWindow(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
+
+        # Retrieving BTRFS Filesystems
+        self.combobox_filesystem.addItems(filesystem.filesystem.get_btrfs_filesystems(mounted=True))
 
         # Button event
         self.button_balance.clicked.connect(self.balanceFs)

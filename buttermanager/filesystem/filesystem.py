@@ -19,8 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Comment this class
-from typing import List, Any
-
+import subprocess
 
 class Filesystem():
     # Constructor
@@ -37,8 +36,20 @@ class Filesystem():
         self.system_used = system_used
 
 # TODO: Comment this method
-def getBtrfsFilesystems(mounted=True):
-    filesystems = []
-    if mounted:
+def get_btrfs_filesystems(mounted=True):
+    """Retrieves all the BTRFS filesystems.
+
+    Arguments:
+
+    Keyword arguments:
+        mounted (bool): Only mounted filesystems will be retrieved (default True)
+
+    Returns:
+        list (:obj:`list` of :obj:`str`): Paths where those filesystems are.
+    """
+    filesystems = ["/", "/home"]
+    result = subprocess.run(['ls', '-l'], stdout=subprocess.PIPE)
+    result.stdout.decode('utf-8')
+    # if mounted:
 
     return filesystems
