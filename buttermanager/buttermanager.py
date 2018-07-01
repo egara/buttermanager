@@ -23,6 +23,7 @@ import filesystem.filesystem
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
 from PyQt5 import uic
 
+
 # Class inherited from QMainWindow (Window constructor)
 class ButtermanagerMainWindow(QMainWindow):
     # Constructor
@@ -42,10 +43,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.setMaximumWidth(800)
 
         # Centering the window
-        qtRectangle = self.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
 
         # Retrieving BTRFS Filesystems
         self.combobox_filesystem.addItems(filesystem.filesystem.get_btrfs_filesystems(mounted=True))
@@ -59,6 +60,7 @@ class ButtermanagerMainWindow(QMainWindow):
     def balanceFs(self):
         list1 = ["One", "Two"]
         self.combobox_filesystem.addItems(list1)
+
 
 # Creating application instance
 application = QApplication(sys.argv)
