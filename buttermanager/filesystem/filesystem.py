@@ -49,9 +49,10 @@ def get_btrfs_filesystems(mounted=True):
     Returns:
         list (:obj:`list` of :obj:`str`): Paths where those filesystems are.
     """
-    filesystems = ["/", "/home"]
-    result = subprocess.run(['ls', '-l'], stdout=subprocess.PIPE)
+    filesystems = ['/', '/home']
+    result = subprocess.run(['sudo', 'btrfs', 'filesystem',  'show', '--mounted'], stdout=subprocess.PIPE)
     result.stdout.decode('utf-8')
+    print(result.stdout.decode('utf-8'))
     # if mounted:
 
     return filesystems
