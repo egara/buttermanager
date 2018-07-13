@@ -18,14 +18,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Comment this class
+"""This module gathers all the operations related to BTRFS filesystems.
+
+It provides also Filesystem class.
+"""
+
 import subprocess
 
+# Constants
+DEVID = "devid"
+LABEL = "Label"
 
 class Filesystem():
     # Constructor
     def __init__(self, mounted_point="/", total_size=0, total_allocated=0, data_size=0, data_used=0, metadata_size=0,
                  metadata_used=0, system_size=0, system_used=0):
+        """BTRFS Filesystem.
+
+        """
+
         self.mounted_point = mounted_point
         self.total_size = total_size
         self.total_allocated = total_allocated
@@ -49,10 +60,29 @@ def get_btrfs_filesystems(mounted=True):
     Returns:
         list (:obj:`list` of :obj:`str`): Paths where those filesystems are.
     """
-    filesystems = ['/', '/home']
-    result = subprocess.run(['sudo', 'btrfs', 'filesystem',  'show', '--mounted'], stdout=subprocess.PIPE)
-    result.stdout.decode('utf-8')
-    print(result.stdout.decode('utf-8'))
-    # if mounted:
+
+    filesystems = []
+    command = "sudo btrfs filesystem show"
+
+    if mounted:
+        command += " --mounted"
+
+    # run method receives a list, so it is necessary to convert command string into a list using split (by blank space)
+    result = subprocess.run(command.split(), stdout=subprocess.PIPE)
+    # result is Bytes type, so it is needed to decode Unicode string using UTF-8
+    commandline_output = result.stdout.decode('utf-8')
+    filesystem_found = False
+
+    for line in commandline_output.split("\n"):
+        if filesystem_found:
+            # The loop is inside a new BTRFS filesystem
+            # It is necessary to find devid to retrive the filesystem path (only first occurrence)
+            if DEVID in line:
+                path_init = line.find('/')
+                # The path is appended to the list
+                filesystems.append(line[path_init:len(line)])
+                filesystem_found = False
+        if LABEL in line:
+            filesystem_found = True
 
     return filesystems

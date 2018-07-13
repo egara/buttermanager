@@ -49,7 +49,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Retrieving BTRFS Filesystems
-        self.combobox_filesystem.addItems(filesystem.filesystem.get_btrfs_filesystems(mounted=True))
+        self.combobox_filesystem.addItems(filesystem.filesystem.get_btrfs_filesystems())
 
         # Button event
         self.button_balance.clicked.connect(self.balanceFs)
