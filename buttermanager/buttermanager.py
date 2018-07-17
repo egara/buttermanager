@@ -48,8 +48,11 @@ class ButtermanagerMainWindow(QMainWindow):
         qt_rectangle.moveCenter(center_point)
         self.move(qt_rectangle.topLeft())
 
-        # Retrieving BTRFS Filesystems
-        self.combobox_filesystem.addItems(filesystem.filesystem.get_btrfs_filesystems())
+        # Retrieving BTRFS Filesystems uuid
+        uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
+        self.combobox_filesystem.addItems(uuid_filesystems)
+        current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
+        print(str(current_filesystem))
 
         # Button event
         self.button_balance.clicked.connect(self.balanceFs)
