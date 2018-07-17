@@ -184,7 +184,7 @@
          <widget class="QLabel" name="label_filesystem">
           <property name="geometry">
            <rect>
-            <x>586</x>
+            <x>470</x>
             <y>30</y>
             <width>81</width>
             <height>31</height>
@@ -197,9 +197,9 @@
          <widget class="QComboBox" name="combobox_filesystem">
           <property name="geometry">
            <rect>
-            <x>510</x>
+            <x>470</x>
             <y>66</y>
-            <width>221</width>
+            <width>281</width>
             <height>30</height>
            </rect>
           </property>
