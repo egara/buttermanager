@@ -23,7 +23,6 @@
 It provides also Filesystem class.
 """
 
-import subprocess
 import util.buttermanager_utils
 
 # Constants
@@ -176,6 +175,7 @@ class Filesystem():
         return "UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices, self.mounted_points)
 
 
+# Module's methods
 def get_btrfs_filesystems(mounted=True):
     """Retrieves all the BTRFS filesystems.
 

@@ -25,7 +25,7 @@
 import subprocess
 
 
-# Methods
+# Module's methods
 def execute_command(command):
     """Executes a shell command.
 
