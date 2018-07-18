@@ -24,6 +24,7 @@ It provides also Filesystem class.
 """
 
 import subprocess
+import util.buttermanager_utils
 
 # Constants
 DEVID = "devid"
@@ -67,20 +68,11 @@ class Filesystem():
     def __get_devices(self):
         """Retrieves all the devices which the BTRFS filesystem is composed.
 
-        Arguments:
-
-        Keyword arguments:
-
         Returns:
             list (:obj:`list` of :obj:`str`): devices.
         """
         devices = []
-        command = BTRFS_SHOW_COMMAND
-        # run method receives a list, so it is necessary to convert command string into a list using split
-        # (by blank space)
-        result = subprocess.run(command.split(), stdout=subprocess.PIPE)
-        # result is Bytes type, so it is needed to decode Unicode string using UTF-8
-        commandline_output = result.stdout.decode('utf-8')
+        commandline_output = util.buttermanager_utils.execute_command(BTRFS_SHOW_COMMAND)
         filesystem_found = False
 
         for line in commandline_output.split("\n"):
@@ -105,23 +97,20 @@ class Filesystem():
     def __get_mounted_device(self):
         """Retrieves the device tha contains the BTRFS filesystem and it is mounted.
 
-        Arguments:
-
-        Keyword arguments:
-
         Returns:
-            :obj:`str`: device path.
+            string: device path.
         """
-        mounted_device = '/dev/sda1'
+        mounted_device = ''
+        commandline_output = util.buttermanager_utils.execute_command(FINDMT_COMMAND)
+        for device in self.devices:
+            if device in commandline_output:
+                mounted_device = device
+                break
 
         return mounted_device
 
     def __get_mounted_points(self):
         """Retrieves all the mounted points of the BTRFS filesystem.
-
-        Arguments:
-
-        Keyword arguments:
 
         Returns:
             list (:obj:`list` of :obj:`str`): mounted points.
@@ -129,14 +118,9 @@ class Filesystem():
         mounted_points = []
         device = self.__get_mounted_device()
         command = FINDMT_COMMAND + ' ' + device
-        # run method receives a list, so it is necessary to convert command string into a list using split
-        # (by blank space)
-        result = subprocess.run(command.split(), stdout=subprocess.PIPE)
-        # result is Bytes type, so it is needed to decode Unicode string using UTF-8
-        commandline_output = result.stdout.decode('utf-8')
+        commandline_output = util.buttermanager_utils.execute_command(command)
 
         for line in commandline_output.split("\n"):
-            print(line)
             if len(line) > 0:
                 mounted_points.append(line.split(" ")[0].strip())
 
@@ -147,14 +131,11 @@ class Filesystem():
         return "UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices, self.mounted_points)
 
 
-# TODO: Comment this method
 def get_btrfs_filesystems(mounted=True):
     """Retrieves all the BTRFS filesystems.
 
-    Arguments:
-
     Keyword arguments:
-        mounted (bool): Only mounted filesystems will be retrieved (default True)
+        mounted (bool): Only mounted filesystems will be retrieved (default True).
 
     Returns:
         list (:obj:`list` of :obj:`str`): filesystems UUID.
@@ -166,27 +147,11 @@ def get_btrfs_filesystems(mounted=True):
     if mounted:
         command += " --mounted"
 
-    # run method receives a list, so it is necessary to convert command string into a list using split (by blank space)
-    result = subprocess.run(command.split(), stdout=subprocess.PIPE)
-    # result is Bytes type, so it is needed to decode Unicode string using UTF-8
-    commandline_output = result.stdout.decode('utf-8')
-    # filesystem_found = False
+    commandline_output = util.buttermanager_utils.execute_command(command)
 
     for line in commandline_output.split("\n"):
         if UUID in line:
             # The uuid is appended to the list
             filesystems.append(line.split(UUID)[1].strip())
-
-    # for line in commandline_output.split("\n"):
-    #     if filesystem_found:
-    #         # The loop is inside a new BTRFS filesystem
-    #         # It is necessary to find devid to retrive the filesystem path (only first occurrence)
-    #         if DEVID in line:
-    #             path_init = line.find('/')
-    #             # The path is appended to the list
-    #             filesystems.append(line[path_init:len(line)])
-    #             filesystem_found = False
-    #     if LABEL in line:
-    #         filesystem_found = True
 
     return filesystems
