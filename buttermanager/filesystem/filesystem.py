@@ -42,15 +42,15 @@ class Filesystem():
 
         self.__uuid = uuid
         self.__devices = self.__get_devices()
-        self.mounted_points = self.__get_mounted_points()
-        self.total_size = 0
-        self.total_allocated = 0
-        self.data_size = 0
-        self.data_used = 0
-        self.metadata_size = 0
-        self.metadata_used = 0
-        self.system_size = 0
-        self.system_used = 0
+        self.__mounted_points = self.__get_mounted_points()
+        self.__total_size = 0
+        self.__total_allocated = 0
+        self.__data_size = 0
+        self.__data_used = 0
+        self.__metadata_size = 0
+        self.__metadata_used = 0
+        self.__system_size = 0
+        self.__system_used = 0
 
     # Private attributes
     # UUID
@@ -62,6 +62,51 @@ class Filesystem():
     @property
     def devices(self):
         return self.__devices
+
+    # Mounted points
+    @property
+    def mounted_points(self):
+        return self.__mounted_points
+
+    # Total size
+    @property
+    def total_size(self):
+        return self.__total_size
+
+    # Total allocated
+    @property
+    def total_allocated(self):
+        return self.__total_allocated
+
+    # Data size
+    @property
+    def data_size(self):
+        return self.__data_size
+
+    # Data used
+    @property
+    def data_used(self):
+        return self.__data_used
+
+    # Metadata size
+    @property
+    def metadata_size(self):
+        return self.__metadata_size
+
+    # Metadata used
+    @property
+    def metadata_used(self):
+        return self.__metadata_used
+
+    # System size
+    @property
+    def system_size(self):
+        return self.__system_size
+
+    # System used
+    @property
+    def system_used(self):
+        return self.__system_used
 
     # Methods
     # Private methods
