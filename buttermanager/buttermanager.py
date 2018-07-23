@@ -20,6 +20,7 @@
 
 import sys
 import filesystem.filesystem
+import util.buttermanager_utils
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
 from PyQt5 import uic
 
@@ -33,34 +34,45 @@ class ButtermanagerMainWindow(QMainWindow):
         self.initialize()
 
     def initialize(self):
-        # Loading User Interface
-        uic.loadUi("ui/MainWindow.ui", self)
+        try:
+            # Loading User Interface
+            uic.loadUi("ui/MainWindow.ui", self)
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(550)
-        self.setMinimumWidth(800)
-        self.setMaximumHeight(550)
-        self.setMaximumWidth(800)
+            # Setting maximum and minimum  size for the main window
+            self.setMinimumHeight(550)
+            self.setMinimumWidth(800)
+            self.setMaximumHeight(550)
+            self.setMaximumWidth(800)
 
-        # Centering the window
-        qt_rectangle = self.frameGeometry()
-        center_point = QDesktopWidget().availableGeometry().center()
-        qt_rectangle.moveCenter(center_point)
-        self.move(qt_rectangle.topLeft())
+            # Centering the window
+            qt_rectangle = self.frameGeometry()
+            center_point = QDesktopWidget().availableGeometry().center()
+            qt_rectangle.moveCenter(center_point)
+            self.move(qt_rectangle.topLeft())
 
-        # Retrieving BTRFS Filesystems uuid
-        uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
-        self.combobox_filesystem.addItems(uuid_filesystems)
-        current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
-        print(str(current_filesystem))
+            # Retrieving BTRFS Filesystems uuid
+            uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
+            self.combobox_filesystem.addItems(uuid_filesystems)
+            current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
+            # Todo: Logging
+            print("BTRFS filesystems found in the system:")
+            print(str(current_filesystem))
 
-        # Button event
-        self.button_balance.clicked.connect(self.balanceFs)
+            # Button event
+            self.button_balance.clicked.connect(self.balanceFs)
 
-        # Showing main window
-        self.show()
+            # Showing main window
+            self.show()
+
+        except util.buttermanager_utils.NoCommandFound:
+            # Todo: Logging
+            print("The application couldn't start normally. There are some programs needed that are not installed.")
+            print("Please, install these programs and start ButterManager again.")
+            # Exits the application
+            sys.exit()
 
     def balanceFs(self):
+        # Todo: Do it right
         list1 = ["One", "Two"]
         self.combobox_filesystem.addItems(list1)
 

@@ -115,28 +115,32 @@ class Filesystem():
         Returns:
             list (:obj:`list` of :obj:`str`): devices.
         """
-        devices = []
-        commandline_output = util.buttermanager_utils.execute_command(BTRFS_SHOW_COMMAND)
-        filesystem_found = False
+        try:
+            devices = []
+            commandline_output = util.buttermanager_utils.execute_command(BTRFS_SHOW_COMMAND)
+            filesystem_found = False
 
-        for line in commandline_output.split("\n"):
-            if UUID in line:
+            for line in commandline_output.split("\n"):
+                if UUID in line:
+                    if filesystem_found:
+                        break
+                    else:
+                        if self.uuid in line:
+                            filesystem_found = True
+                            continue
+
                 if filesystem_found:
-                    break
-                else:
-                    if self.uuid in line:
-                        filesystem_found = True
-                        continue
+                    # The loop is inside the chosen BTRFS filesystem
+                    # It is necessary to find devid to retrieve all the filesystem paths
+                    if DEVID in line:
+                        path_init = line.find('/')
+                        # The device path is appended to the list
+                        devices.append(line[path_init:len(line)])
 
-            if filesystem_found:
-                # The loop is inside the chosen BTRFS filesystem
-                # It is necessary to find devid to retrieve all the filesystem paths
-                if DEVID in line:
-                    path_init = line.find('/')
-                    # The device path is appended to the list
-                    devices.append(line[path_init:len(line)])
+            return devices
 
-        return devices
+        except util.buttermanager_utils.NoCommandFound as exception:
+            raise exception
 
     def __get_mounted_device(self):
         """Retrieves the device tha contains the BTRFS filesystem and it is mounted.
@@ -144,14 +148,18 @@ class Filesystem():
         Returns:
             string: device path.
         """
-        mounted_device = ''
-        commandline_output = util.buttermanager_utils.execute_command(FINDMT_COMMAND)
-        for device in self.devices:
-            if device in commandline_output:
-                mounted_device = device
-                break
+        try:
+            mounted_device = ''
+            commandline_output = util.buttermanager_utils.execute_command(FINDMT_COMMAND)
+            for device in self.devices:
+                if device in commandline_output:
+                    mounted_device = device
+                    break
 
-        return mounted_device
+            return mounted_device
+
+        except util.buttermanager_utils.NoCommandFound as exception:
+            raise exception
 
     def __get_mounted_points(self):
         """Retrieves all the mounted points of the BTRFS filesystem.
@@ -159,20 +167,29 @@ class Filesystem():
         Returns:
             list (:obj:`list` of :obj:`str`): mounted points.
         """
-        mounted_points = []
-        device = self.__get_mounted_device()
-        command = FINDMT_COMMAND + ' ' + device
-        commandline_output = util.buttermanager_utils.execute_command(command)
+        try:
+            mounted_points = []
+            device = self.__get_mounted_device()
+            command = FINDMT_COMMAND + ' ' + device
+            commandline_output = util.buttermanager_utils.execute_command(command)
 
-        for line in commandline_output.split("\n"):
-            if len(line) > 0:
-                mounted_points.append(line.split(" ")[0].strip())
+            for line in commandline_output.split("\n"):
+                if len(line) > 0:
+                    mounted_points.append(line.split(" ")[0].strip())
 
-        return mounted_points
+            return mounted_points
+
+        except util.buttermanager_utils.NoCommandFound as exception:
+            raise exception
 
     # Public methods
     def __str__(self):
-        return "UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices, self.mounted_points)
+        """Reimplementation of the str method inherited from object class.
+
+        Returns:
+            string: String representation of the Filesystem object.
+        """
+        return "BTRFS Filesystem -> UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices, self.mounted_points)
 
 
 # Module's methods
