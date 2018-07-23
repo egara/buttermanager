@@ -32,12 +32,14 @@ UUID = "uuid:"
 BTRFS_SHOW_COMMAND = "sudo btrfs filesystem show"
 FINDMT_COMMAND = "sudo findmnt -nt btrfs"
 
+
+# Classes
 class Filesystem():
+    """BTRFS Filesystem.
+
+    """
     # Constructor
     def __init__(self, uuid):
-        """BTRFS Filesystem.
-
-        """
 
         self.__uuid = uuid
         self.__devices = self.__get_devices()

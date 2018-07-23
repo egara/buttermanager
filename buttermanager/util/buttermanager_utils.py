@@ -25,13 +25,31 @@ It provides also NoCommandFound exception class.
 
 import subprocess
 import shutil
+import util.settings
 
 
+# Classes
 class NoCommandFound(Exception):
     """Exception raised when a needed program is not installed in the system.
 
     """
     pass
+
+
+class ConfigManager:
+    """Manages buttermanager configuration.
+
+    """
+
+    # Constructor
+    def __init__(self):
+        util.settings.application_name = "buttermanager"
+        util.settings.application_path = ""
+
+    def configure(self):
+        """Configures buttermanager application.
+
+        """
 
 
 # Module's methods

@@ -21,6 +21,7 @@
 import sys
 import filesystem.filesystem
 import util.buttermanager_utils
+import util.settings
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
 from PyQt5 import uic
 
@@ -31,9 +32,20 @@ class ButtermanagerMainWindow(QMainWindow):
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
         self.parent = parent
+        self.configure()
         self.initialize()
 
+    def configure(self):
+        """Configures the application.
+
+        """
+        buttermanager_configurator = util.buttermanager_utils.ConfigManager()
+        buttermanager_configurator.configure()
+
     def initialize(self):
+        """Initializes the Graphic User Interface.
+
+        """
         try:
             # Loading User Interface
             uic.loadUi("ui/MainWindow.ui", self)
