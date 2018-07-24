@@ -22,7 +22,7 @@ import sys
 import filesystem.filesystem
 import util.buttermanager_utils
 import util.settings
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5 import uic
 
 
