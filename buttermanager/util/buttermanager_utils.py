@@ -26,6 +26,9 @@ It provides also NoCommandFound exception class.
 import subprocess
 import shutil
 import util.settings
+import pathlib
+import os
+import logging
 
 
 # Classes
@@ -37,19 +40,49 @@ class NoCommandFound(Exception):
 
 
 class ConfigManager:
-    """Manages buttermanager configuration.
+    """Manages the configuration.
 
     """
+    # Constants
+    APP_NAME = "buttermanager"
 
     # Constructor
     def __init__(self):
-        util.settings.application_name = "buttermanager"
-        util.settings.application_path = ""
+        self.__logger = Logger(self.__class__.__name__).get()
+        util.settings.application_name = self.APP_NAME
+        util.settings.application_path = os.path.join(pathlib.Path.home(), util.settings.application_name)
 
     def configure(self):
-        """Configures buttermanager application.
+        """Configures the application.
 
         """
+        # Creating application's directory if it is needed
+        if not os.path.exists(util.settings.application_path):
+            os.makedirs(util.settings.application_path)
+            # self.__logger.info("The application directory doesn't exist. Creating " + util.settings.application_path)
+            log_filename = os.path.join(util.settings.application_path, "test.log")
+            logging.basicConfig(filename=log_filename,level=logging.DEBUG)
+            logging.debug('This message should go to the log file')
+
+class Logger(object):
+    """Creates the logs of the application.
+
+    """
+    def __init__(self, name):
+        name = name.replace('.log', '')
+        logger = logging.getLogger('log_namespace.%s' % name)  # log_namespace can be replaced with your namespace
+        logger.setLevel(logging.DEBUG)
+        if not logger.handlers:
+            file_name = os.path.join(util.settings.application_path, '%s.log' % name)
+            handler = logging.FileHandler(file_name)
+            formatter = logging.Formatter('%(asctime)s %(levelname)s:%(name)s %(message)s')
+            handler.setFormatter(formatter)
+            handler.setLevel(logging.DEBUG)
+            logger.addHandler(handler)
+        self.__logger = logger
+
+    def get(self):
+        return self.__logger
 
 
 # Module's methods
