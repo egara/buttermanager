@@ -34,7 +34,7 @@ FINDMT_COMMAND = "sudo findmnt -nt btrfs"
 
 
 # Classes
-class Filesystem():
+class Filesystem:
     """BTRFS Filesystem.
 
     """
@@ -191,7 +191,8 @@ class Filesystem():
         Returns:
             string: String representation of the Filesystem object.
         """
-        return "BTRFS Filesystem -> UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices, self.mounted_points)
+        return "BTRFS Filesystem -> UUID: {0}; Devices: {1}; Mounted Points: {2}".format(self.uuid, self.devices,
+                                                                                         self.mounted_points)
 
 
 # Module's methods

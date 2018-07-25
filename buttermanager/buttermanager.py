@@ -80,7 +80,6 @@ class ButtermanagerMainWindow(QMainWindow):
             self.show()
 
         except util.buttermanager_utils.NoCommandFound:
-            # Todo: Logging
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
