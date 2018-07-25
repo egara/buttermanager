@@ -32,7 +32,11 @@ class ButtermanagerMainWindow(QMainWindow):
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
         self.parent = parent
+        # Configuring the application
         self.configure()
+        # Logger
+        self.__logger = util.buttermanager_utils.Logger(self.__class__.__name__).get()
+        # Initializing the application
         self.initialize()
 
     def configure(self):
@@ -66,9 +70,8 @@ class ButtermanagerMainWindow(QMainWindow):
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
             self.combobox_filesystem.addItems(uuid_filesystems)
             current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
-            # Todo: Logging
-            print("BTRFS filesystems found in the system:")
-            print(str(current_filesystem))
+            self.__logger.info("BTRFS filesystems found in the system:")
+            self.__logger.info(str(current_filesystem))
 
             # Button event
             self.button_balance.clicked.connect(self.balanceFs)
@@ -78,8 +81,9 @@ class ButtermanagerMainWindow(QMainWindow):
 
         except util.buttermanager_utils.NoCommandFound:
             # Todo: Logging
-            print("The application couldn't start normally. There are some programs needed that are not installed.")
-            print("Please, install these programs and start ButterManager again.")
+            self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
+                               "installed.")
+            self.__logger.info("Please, install these programs and start ButterManager again.")
             # Exits the application
             sys.exit()
 

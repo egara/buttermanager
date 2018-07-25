@@ -29,6 +29,8 @@ import util.settings
 import pathlib
 import os
 import logging
+import logging.handlers
+import sys
 
 
 # Classes
@@ -48,9 +50,9 @@ class ConfigManager:
 
     # Constructor
     def __init__(self):
-        self.__logger = Logger(self.__class__.__name__).get()
+        # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
-        util.settings.application_path = os.path.join(pathlib.Path.home(), util.settings.application_name)
+        util.settings.application_path = os.path.join(pathlib.Path.home(), "." + util.settings.application_name)
 
     def configure(self):
         """Configures the application.
@@ -59,26 +61,22 @@ class ConfigManager:
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
             os.makedirs(util.settings.application_path)
-            # self.__logger.info("The application directory doesn't exist. Creating " + util.settings.application_path)
-            log_filename = os.path.join(util.settings.application_path, "test.log")
-            logging.basicConfig(filename=log_filename,level=logging.DEBUG)
-            logging.debug('This message should go to the log file')
+
 
 class Logger(object):
     """Creates the logs of the application.
 
     """
-    def __init__(self, name):
-        name = name.replace('.log', '')
-        logger = logging.getLogger('log_namespace.%s' % name)  # log_namespace can be replaced with your namespace
+    def __init__(self, class_name):
+        name = os.path.join(util.settings.application_path, "buttermanager.log")
+        logger = logging.getLogger(class_name)
         logger.setLevel(logging.DEBUG)
-        if not logger.handlers:
-            file_name = os.path.join(util.settings.application_path, '%s.log' % name)
-            handler = logging.FileHandler(file_name)
-            formatter = logging.Formatter('%(asctime)s %(levelname)s:%(name)s %(message)s')
-            handler.setFormatter(formatter)
-            handler.setLevel(logging.DEBUG)
-            logger.addHandler(handler)
+
+        # Add the log message handler to the logger
+        handler = logging.handlers.RotatingFileHandler(name, maxBytes=1048576, backupCount=5)
+        formatter = logging.Formatter('%(asctime)s %(levelname)s:%(name)s. %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
         self.__logger = logger
 
     def get(self):
@@ -110,7 +108,8 @@ def execute_command(command):
 
         return commandline_output
     else:
-        # Todo: Logging
-        print(single_command + " program does not exist in the system")
+        # Logger
+        logger = util.buttermanager_utils.Logger(sys.modules['__main__'].__file__).get()
+        logger.info(single_command + " program does not exist in the system")
         raise NoCommandFound()
 
