@@ -29,8 +29,8 @@ import util.buttermanager_utils
 DEVID = "devid"
 LABEL = "Label"
 UUID = "uuid:"
-BTRFS_SHOW_COMMAND = "sudo btrfs filesystem show"
-FINDMT_COMMAND = "sudo findmnt -nt btrfs"
+BTRFS_SHOW_COMMAND = "sudo -S btrfs filesystem show"
+FINDMT_COMMAND = "sudo -S findmnt -nt btrfs"
 
 
 # Classes
