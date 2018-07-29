@@ -26,8 +26,11 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5 import uic
 
 
-# Class inherited from QMainWindow (Window constructor)
-class ButtermanagerMainWindow(QMainWindow):
+class PasswordWindow(QMainWindow):
+    """Window to let the user type his/her password.
+
+    Class inherited from QMainWindow (Window constructor)
+    """
     # Constructor
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
@@ -45,6 +48,59 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         buttermanager_configurator = util.buttermanager_utils.ConfigManager()
         buttermanager_configurator.configure()
+
+    def initialize(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/PasswordWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Events
+        # OK button event
+        self.button_ok.clicked.connect(self.load_main_window)
+
+        # Cancel button event
+        self.button_cancel.clicked.connect(self.exit)
+
+        # Showing password window
+        self.show()
+
+    def load_main_window(self):
+        # Storing user's password
+        util.settings.user_password = self.input_password.text()
+
+        # Exiting password window
+        self.hide()
+
+        # Showing main window
+        self.butter_manager_window = ButtermanagerMainWindow(self)
+        self.butter_manager_window.show()
+
+    def exit(self):
+        # Exits the application
+        sys.exit()
+
+
+class ButtermanagerMainWindow(QMainWindow):
+    """Main window.
+
+    Class inherited from QMainWindow (Window constructor)
+    """
+    # Constructor
+    def __init__(self, parent):
+        QMainWindow.__init__(self, parent)
+        self.parent = parent
+        # Logger
+        self.__logger = util.buttermanager_utils.Logger(self.__class__.__name__).get()
+        # Initializing the application
+        self.initialize()
 
     def initialize(self):
         """Initializes the Graphic User Interface.
@@ -74,10 +130,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.__logger.info(str(current_filesystem))
 
             # Button event
-            self.button_balance.clicked.connect(self.balanceFs)
-
-            # Showing main window
-            self.show()
+            self.button_balance.clicked.connect(self.balance_filesystem)
 
         except util.buttermanager_utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -86,7 +139,7 @@ class ButtermanagerMainWindow(QMainWindow):
             # Exits the application
             sys.exit()
 
-    def balanceFs(self):
+    def balance_filesystem(self):
         # Todo: Do it right
         list1 = ["One", "Two"]
         self.combobox_filesystem.addItems(list1)
@@ -95,6 +148,6 @@ class ButtermanagerMainWindow(QMainWindow):
 # Creating application instance
 application = QApplication(sys.argv)
 # Creating main window instance
-butter_manager_window = ButtermanagerMainWindow(None)
+password_window = PasswordWindow(None)
 # Launching the application
 application.exec_()

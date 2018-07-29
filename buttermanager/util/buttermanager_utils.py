@@ -102,8 +102,7 @@ def execute_command(command):
         single_command = program[sudo_position + 2]
     path = shutil.which(single_command)
     if path is not None:
-        # Todo: Create a window to retrieve user's password
-        echo = subprocess.Popen(['echo', 'password'], stdout=subprocess.PIPE)
+        echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
         # result is Bytes type, so it is needed to decode Unicode string using UTF-8

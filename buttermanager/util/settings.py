@@ -25,3 +25,4 @@
 # Global module attributes
 application_name = ""
 application_path = ""
+user_password = ""
