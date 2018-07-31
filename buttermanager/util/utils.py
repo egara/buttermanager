@@ -111,6 +111,6 @@ def execute_command(command):
         return commandline_output
     else:
         # Logger
-        logger = util.buttermanager_utils.Logger(sys.modules['__main__'].__file__).get()
+        logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
         logger.info(single_command + " program does not exist in the system")
         raise NoCommandFound()
