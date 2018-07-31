@@ -23,7 +23,7 @@
 It provides also Filesystem class.
 """
 
-import util.buttermanager_utils
+import util.utils
 
 # Constants
 DEVID = "devid"
@@ -119,7 +119,7 @@ class Filesystem:
         """
         try:
             devices = []
-            commandline_output = util.buttermanager_utils.execute_command(BTRFS_SHOW_COMMAND)
+            commandline_output = util.utils.execute_command(BTRFS_SHOW_COMMAND)
             filesystem_found = False
 
             for line in commandline_output.split("\n"):
@@ -141,7 +141,7 @@ class Filesystem:
 
             return devices
 
-        except util.buttermanager_utils.NoCommandFound as exception:
+        except util.utils.NoCommandFound as exception:
             raise exception
 
     def __get_mounted_device(self):
@@ -152,7 +152,7 @@ class Filesystem:
         """
         try:
             mounted_device = ''
-            commandline_output = util.buttermanager_utils.execute_command(FINDMT_COMMAND)
+            commandline_output = util.utils.execute_command(FINDMT_COMMAND)
             for device in self.devices:
                 if device in commandline_output:
                     mounted_device = device
@@ -160,7 +160,7 @@ class Filesystem:
 
             return mounted_device
 
-        except util.buttermanager_utils.NoCommandFound as exception:
+        except util.utils.NoCommandFound as exception:
             raise exception
 
     def __get_mounted_points(self):
@@ -173,7 +173,7 @@ class Filesystem:
             mounted_points = []
             device = self.__get_mounted_device()
             command = FINDMT_COMMAND + ' ' + device
-            commandline_output = util.buttermanager_utils.execute_command(command)
+            commandline_output = util.utils.execute_command(command)
 
             for line in commandline_output.split("\n"):
                 if len(line) > 0:
@@ -181,7 +181,7 @@ class Filesystem:
 
             return mounted_points
 
-        except util.buttermanager_utils.NoCommandFound as exception:
+        except util.utils.NoCommandFound as exception:
             raise exception
 
     # Public methods
@@ -212,7 +212,7 @@ def get_btrfs_filesystems(mounted=True):
     if mounted:
         command += " --mounted"
 
-    commandline_output = util.buttermanager_utils.execute_command(command)
+    commandline_output = util.utils.execute_command(command)
 
     for line in commandline_output.split("\n"):
         if UUID in line:

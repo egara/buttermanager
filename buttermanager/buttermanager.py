@@ -20,7 +20,7 @@
 
 import sys
 import filesystem.filesystem
-import util.buttermanager_utils
+import util.utils
 import util.settings
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5 import uic
@@ -38,7 +38,7 @@ class PasswordWindow(QMainWindow):
         # Configuring the application
         self.configure()
         # Logger
-        self.__logger = util.buttermanager_utils.Logger(self.__class__.__name__).get()
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Initializing the application
         self.initialize()
 
@@ -46,7 +46,7 @@ class PasswordWindow(QMainWindow):
         """Configures the application.
 
         """
-        buttermanager_configurator = util.buttermanager_utils.ConfigManager()
+        buttermanager_configurator = util.utils.ConfigManager()
         buttermanager_configurator.configure()
 
     def initialize(self):
@@ -98,7 +98,7 @@ class ButtermanagerMainWindow(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.parent = parent
         # Logger
-        self.__logger = util.buttermanager_utils.Logger(self.__class__.__name__).get()
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Initializing the application
         self.initialize()
 
@@ -132,7 +132,7 @@ class ButtermanagerMainWindow(QMainWindow):
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
 
-        except util.buttermanager_utils.NoCommandFound:
+        except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
