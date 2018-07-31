@@ -52,7 +52,8 @@ class ConfigManager:
     def __init__(self):
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
-        util.settings.application_path = os.path.join(pathlib.Path.home(), "." + util.settings.application_name)
+        application_directory = ".{name}".format(name=util.settings.application_name)
+        util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
 
     def configure(self):
         """Configures the application.
