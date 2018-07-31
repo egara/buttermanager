@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module gathers all the methods and classes for buttermanager application settings.
+"""This module gathers all the global attributes, methods and classes needed for application settings.
 
 """
 
