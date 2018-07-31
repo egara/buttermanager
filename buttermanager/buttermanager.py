@@ -69,6 +69,9 @@ class PasswordWindow(QMainWindow):
         # Cancel button event
         self.button_cancel.clicked.connect(self.exit)
 
+        # Press enter within QLineEdit
+        self.input_password.returnPressed.connect(self.load_main_window)
+
         # Showing password window
         self.show()
 
