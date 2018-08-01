@@ -32,6 +32,12 @@ import logging
 import logging.handlers
 import sys
 
+# Constants
+GB = "GiB"  # Gigabytes
+MB = "MiB"  # Megabytes
+KB = "KiB"  # Kilobytes
+B = "B"     # Bytes
+BYTE_SIZE = 1024
 
 # Classes
 class NoCommandFound(Exception):
@@ -114,3 +120,71 @@ def execute_command(command):
         logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
         logger.info(single_command + " program does not exist in the system")
         raise NoCommandFound()
+
+
+def get_percentage(total, parcial):
+    """Calculates the percentage between total amount and parcial amount.
+
+    Arguments:
+        total (string): Total amount. It should be specified the unit, f.i.: 30.00GiB
+        parcial (string): Parcial amount. It should be specified the unit, f.i.: 3.00GiB
+    Returns:
+        int: Percentage between total and parcial, f.i.: 10 (3.00GiB is 10% of 30.00GiB).
+
+    >>> get_percentage("30.00GiB", "3.00GiB")
+    10
+    """
+    total_number_unit = get_number_unit(total)
+    parcial_number_unit = get_number_unit(parcial)
+    # All the operations will be done using Bytes unit as reference
+    total_number = convert_to_bytes(total_number_unit)
+    parcial_number = convert_to_bytes(parcial_number_unit)
+    percentage = int((parcial_number * 100) / total_number)
+    return percentage
+
+def get_number_unit(number_unit_string):
+    """Gets the number and the unit present in a specific string.
+
+    Arguments:
+        number_unit_string (string): String consisting of amount and unit, f.i.: 30.00GiB
+
+    Returns:
+        dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
+            - total_size: Device size
+            - total_allocated: Device allocated
+
+    >>> get_number_unit("30.00GiB")
+    ['number': 30.00, 'unit': 'GiB']
+    """
+    number_unit = {'number': 0.0, 'unit': 'GiB'}
+    number_unit_string_list = number_unit_string.split('.')
+    number = float("{integer}.{decimal}".format(integer=number_unit_string_list[0].strip(),
+                                                decimal=number_unit_string_list[1][0:2]))
+    number_unit['number'] = number
+    number_unit['unit'] = number_unit_string_list[1][2:]
+    return number_unit
+
+def convert_to_bytes(number_unit):
+    """Converts a number into a bytes depending on its unit.
+
+    Arguments:
+        number_unit (dictionary): Number and unit to convert
+
+    Returns:
+        float: Number in bytes
+
+    >>> number_unit = {'number': 30.00, 'unit': 'GiB'}
+    >>> convert_to_bytes(number_unit)
+    32212254720
+    """
+    factor = 1
+    if number_unit['unit'] == GB:
+        factor = factor * BYTE_SIZE * BYTE_SIZE * BYTE_SIZE
+    elif number_unit['unit'] == MB:
+        factor = factor * BYTE_SIZE * BYTE_SIZE
+    elif number_unit['unit'] == KB:
+        factor = factor * BYTE_SIZE
+    elif number_unit['unit'] == B:
+        factor = factor
+
+    return number_unit['number'] * factor

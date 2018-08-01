@@ -132,6 +132,9 @@ class ButtermanagerMainWindow(QMainWindow):
             self.__logger.info("BTRFS filesystems found in the system:")
             self.__logger.info(str(current_filesystem))
 
+            # Displaying all the info related to the filesystem selected by default
+            self.fill_filesystem_info(current_filesystem)
+
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
 
@@ -143,9 +146,23 @@ class ButtermanagerMainWindow(QMainWindow):
             sys.exit()
 
     def balance_filesystem(self):
-        # Todo: Do it right
+        """Balances a specific filesystem.
+
+        """
         list1 = ["One", "Two"]
         self.combobox_filesystem.addItems(list1)
+
+    def fill_filesystem_info(self, filesystem):
+        """Fills filesystem information in the GUI.
+
+        Arguments:
+            filesystem (obj: Filesystem): Filesystem.
+        """
+        self.label_filesystem_size_value.setText(filesystem.total_size)
+        self.label_filesystem_allocated_value.setText(filesystem.total_allocated)
+        self.progressbar_data.setValue(filesystem.data_percentage)
+        self.progressbar_metadata.setValue(filesystem.metadata_percentage)
+        self.progressbar_system.setValue(filesystem.system_percentage)
 
 
 # Creating application instance

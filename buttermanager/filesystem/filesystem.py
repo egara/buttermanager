@@ -22,16 +22,22 @@
 
 It provides also Filesystem class.
 """
-
 import util.utils
 
 # Constants
 DEVID = "devid"
 LABEL = "Label"
 UUID = "uuid:"
+DEVICE_SIZE = "Device size:"
+DEVICE_ALLOCATED = "Device allocated:"
+DATA = "Data,single:"
+METADATA = "Metadata,single:"
+SYSTEM = "System,single:"
+SIZE = "Size:"
+USED = "Used:"
 BTRFS_SHOW_COMMAND = "sudo -S btrfs filesystem show"
 FINDMT_COMMAND = "sudo -S findmnt -nt btrfs"
-
+BTRFS_USAGE_COMMAND = "sudo -S btrfs filesystem usage"
 
 # Classes
 class Filesystem:
@@ -44,14 +50,18 @@ class Filesystem:
         self.__uuid = uuid
         self.__devices = self.__get_devices()
         self.__mounted_points = self.__get_mounted_points()
-        self.__total_size = 0
-        self.__total_allocated = 0
-        self.__data_size = 0
-        self.__data_used = 0
-        self.__metadata_size = 0
-        self.__metadata_used = 0
-        self.__system_size = 0
-        self.__system_used = 0
+        filesystem_info = self.__get_filesystem_info(self.mounted_points[0])
+        self.__total_size = filesystem_info['total_size']
+        self.__total_allocated = filesystem_info['total_allocated']
+        self.__data_size = filesystem_info['data_size']
+        self.__data_used = filesystem_info['data_used']
+        self.__data_percentage = filesystem_info['data_percentage']
+        self.__metadata_size = filesystem_info['metadata_size']
+        self.__metadata_used = filesystem_info['metadata_used']
+        self.__metadata_percentage = filesystem_info['metadata_percentage']
+        self.__system_size = filesystem_info['system_size']
+        self.__system_used = filesystem_info['system_used']
+        self.__system_percentage = filesystem_info['system_percentage']
 
     # Private attributes
     # UUID
@@ -89,6 +99,11 @@ class Filesystem:
     def data_used(self):
         return self.__data_used
 
+    # Data percentage
+    @property
+    def data_percentage(self):
+        return self.__data_percentage
+
     # Metadata size
     @property
     def metadata_size(self):
@@ -99,6 +114,11 @@ class Filesystem:
     def metadata_used(self):
         return self.__metadata_used
 
+    # Metadata percentage
+    @property
+    def metadata_percentage(self):
+        return self.__metadata_percentage
+
     # System size
     @property
     def system_size(self):
@@ -108,6 +128,11 @@ class Filesystem:
     @property
     def system_used(self):
         return self.__system_used
+
+    # System percentage
+    @property
+    def system_percentage(self):
+        return self.__system_percentage
 
     # Methods
     # Private methods
@@ -172,7 +197,7 @@ class Filesystem:
         try:
             mounted_points = []
             device = self.__get_mounted_device()
-            command = FINDMT_COMMAND + ' ' + device
+            command = "{command} {device}".format(command=FINDMT_COMMAND, device=device)
             commandline_output = util.utils.execute_command(command)
 
             for line in commandline_output.split("\n"):
@@ -183,6 +208,53 @@ class Filesystem:
 
         except util.utils.NoCommandFound as exception:
             raise exception
+
+    def __get_filesystem_info(self, mounted_point):
+        """Retrieves all the information of the BTRFS filesystem.
+
+        Returns:
+            dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
+                - total_size: Device size
+                - total_allocated: Device allocated
+                - data_size: Data size
+                - data_used: Data used
+                - data_percentage: Percentage of data used
+                - metadata_size: Metadata size
+                - metadata_used: Metadata used
+                - metadata_percentage: Percentage of metadata used
+                - system_size: System size
+                - system_used: System used
+                - system_percentage: Percentage of system used
+        """
+        filesystem_info = {'total_size': '0', 'total_allocated': '0',
+                           'data_size': '0', 'data_used': '0', 'data_percentage': 0,
+                           'metadata_size': '0', 'metadata_used': '0', 'metadata_percentage': 0,
+                           'system_size': '0', 'system_used': '0', 'system_percentage': 0}
+        command = "{command} {point}".format(command=BTRFS_USAGE_COMMAND, point=mounted_point)
+        commandline_output = util.utils.execute_command(command)
+
+        for line in commandline_output.split("\n"):
+            if DEVICE_SIZE in line:
+                filesystem_info['total_size'] = line.split(DEVICE_SIZE)[1].strip()
+            elif DEVICE_ALLOCATED in line:
+                filesystem_info['total_allocated'] = line.split(DEVICE_ALLOCATED)[1].strip()
+            elif DATA in line:
+                data_size = line.split(SIZE)[1].split(',')[0].strip()
+                filesystem_info['data_size'] = data_size
+                filesystem_info['data_used'] = line.split(USED)[1].strip()
+                filesystem_info['data_percentage'] = util.utils.get_percentage(filesystem_info['data_size'], filesystem_info['data_used'])
+            elif METADATA in line:
+                metadata_size = line.split(SIZE)[1].split(',')[0].strip()
+                filesystem_info['metadata_size'] = metadata_size
+                filesystem_info['metadata_used'] = line.split(USED)[1].strip()
+                filesystem_info['metadata_percentage'] = util.utils.get_percentage(filesystem_info['metadata_size'], filesystem_info['metadata_used'])
+            elif SYSTEM in line:
+                system_size = line.split(SIZE)[1].split(',')[0].strip()
+                filesystem_info['system_size'] = system_size
+                filesystem_info['system_used'] = line.split(USED)[1].strip()
+                filesystem_info['system_percentage'] = util.utils.get_percentage(filesystem_info['system_size'], filesystem_info['system_used'])
+
+        return filesystem_info
 
     # Public methods
     def __str__(self):
