@@ -23,6 +23,8 @@ import filesystem.filesystem
 import util.utils
 import util.settings
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from PyQt5.QtGui import QCursor
+from PyQt5.QtCore import Qt
 from PyQt5 import uic
 
 
@@ -158,6 +160,11 @@ class ButtermanagerMainWindow(QMainWindow):
         Arguments:
             filesystem (obj: Filesystem): Filesystem.
         """
+        tooltip = "Devices: {devices} \n " \
+                  "Mounted points: {mounted_points}".format(devices=filesystem.devices,
+                                                            mounted_points=filesystem.mounted_points)
+        self.label_filesystem_info_more.setToolTip(tooltip)
+        self.label_filesystem_info_more.setCursor(QCursor(Qt.WhatsThisCursor))
         self.label_filesystem_size_value.setText(filesystem.total_size)
         self.label_filesystem_allocated_value.setText(filesystem.total_allocated)
         self.progressbar_data.setValue(filesystem.data_percentage)

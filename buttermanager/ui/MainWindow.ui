@@ -302,6 +302,24 @@
            <string>Used space of total allocated</string>
           </property>
          </widget>
+         <widget class="QLabel" name="label_filesystem_info_more">
+          <property name="geometry">
+           <rect>
+            <x>197</x>
+            <y>37</y>
+            <width>21</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_snapshots">
          <attribute name="title">
