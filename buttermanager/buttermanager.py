@@ -85,8 +85,8 @@ class PasswordWindow(QMainWindow):
         self.hide()
 
         # Showing main window
-        self.butter_manager_window = ButtermanagerMainWindow(self)
-        self.butter_manager_window.show()
+        butter_manager_window = ButtermanagerMainWindow(self)
+        butter_manager_window.show()
 
     def exit(self):
         # Exits the application
