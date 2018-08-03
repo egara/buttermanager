@@ -38,18 +38,12 @@ class PasswordWindow(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.parent = parent
         # Configuring the application
-        self.configure()
+        self.__buttermanager_configurator = util.utils.ConfigManager()
+        self.__buttermanager_configurator.configure()
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Initializing the application
         self.initialize()
-
-    def configure(self):
-        """Configures the application.
-
-        """
-        buttermanager_configurator = util.utils.ConfigManager()
-        buttermanager_configurator.configure()
 
     def initialize(self):
         """Initializes the Graphic User Interface.
@@ -161,7 +155,8 @@ class ButtermanagerMainWindow(QMainWindow):
         Arguments:
             filesystem (obj: Filesystem): Filesystem.
         """
-        tooltip = "Devices: {devices} \n " \
+        tooltip = "More info about the filesystem: \n " \
+                  "Devices: {devices} \n " \
                   "Mounted points: {mounted_points}".format(devices=filesystem.devices,
                                                             mounted_points=filesystem.mounted_points)
         self.label_filesystem_info_more.setToolTip(tooltip)
