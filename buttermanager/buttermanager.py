@@ -125,12 +125,12 @@ class ButtermanagerMainWindow(QMainWindow):
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
             self.combobox_filesystem.addItems(uuid_filesystems)
-            current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
+            self.__current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
             self.__logger.info("BTRFS filesystems found in the system:")
-            self.__logger.info(str(current_filesystem))
+            self.__logger.info(str(self.__current_filesystem))
 
             # Displaying all the info related to the filesystem selected by default
-            self.fill_filesystem_info(current_filesystem)
+            self.fill_filesystem_info(self.__current_filesystem)
 
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
