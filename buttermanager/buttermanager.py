@@ -90,6 +90,7 @@ class PasswordWindow(QMainWindow):
 
     def exit(self):
         # Exits the application
+        self.hide()
         sys.exit()
 
 
