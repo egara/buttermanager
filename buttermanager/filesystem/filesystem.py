@@ -23,6 +23,7 @@
 It provides also Filesystem class.
 """
 import util.utils
+import sys
 
 # Constants
 DEVID = "devid"
@@ -38,6 +39,9 @@ USED = "Used:"
 BTRFS_SHOW_COMMAND = "sudo -S btrfs filesystem show"
 FINDMT_COMMAND = "sudo -S findmnt -nt btrfs"
 BTRFS_USAGE_COMMAND = "sudo -S btrfs filesystem usage"
+BTRFS_BALANCE_COMMAND = "sudo -S btrfs balance start"
+BTRFS_BALANCE_DATA_USAGE_FILTER = "dusage"
+BTRFS_BALANCE_METADATA_USAGE_FILTER = "musage"
 
 # Classes
 class Filesystem:
@@ -292,3 +296,28 @@ def get_btrfs_filesystems(mounted=True):
             filesystems.append(line.split(UUID)[1].strip())
 
     return filesystems
+
+
+def balance_filesystem(filter, percentage, mounted_point):
+    """Balances a specific filesystem.
+
+    Arguments:
+        filter (string): filter.
+        percentage (int): usage filter.
+        mounted_point: path to balance.
+    """
+    # Logger
+    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger.info("Balancing {mounted_point} using filter {filter} and "
+                "percentage {percentage}".format(mounted_point=mounted_point,
+                                                 filter=filter,
+                                                 percentage=percentage))
+
+    command = "{command} -{filter}={percentage} {mounted_point}".format(command=BTRFS_BALANCE_COMMAND,
+                                                                       filter=filter,
+                                                                       percentage=percentage,
+                                                                       mounted_point=mounted_point)
+
+    commandline_output = util.utils.execute_command(command)
+    for line in commandline_output.split("\n"):
+        logger.info(line)

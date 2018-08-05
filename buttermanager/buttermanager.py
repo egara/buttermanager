@@ -22,7 +22,7 @@ import sys
 import filesystem.filesystem
 import util.utils
 import util.settings
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QDialog
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
@@ -99,6 +99,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.parent = parent
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        # Current filesystem (it will be initialize in initialize method)
+        self.__current_filesystem = None
+        # Current filesystem uuid (it will be initialize in initialize method)
+        self.__current_filesystem_uuid = None
         # Initializing the application
         self.initialize()
 
@@ -124,8 +128,9 @@ class ButtermanagerMainWindow(QMainWindow):
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
+            self.__current_filesystem_uuid = uuid_filesystems[0]
             self.combobox_filesystem.addItems(uuid_filesystems)
-            self.__current_filesystem = filesystem.filesystem.Filesystem(uuid_filesystems[0])
+            self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
             self.__logger.info("BTRFS filesystems found in the system:")
             self.__logger.info(str(self.__current_filesystem))
 
@@ -143,11 +148,30 @@ class ButtermanagerMainWindow(QMainWindow):
             sys.exit()
 
     def balance_filesystem(self):
-        """Balances a specific filesystem.
+        """Runs the balance method.
 
         """
-        list1 = ["One", "Two"]
-        self.combobox_filesystem.addItems(list1)
+        # Displaying info
+        info_dialog = InfoWindow(self, "In progress: please wait until filesystem is balanced. "
+                                       "It will take a little bit...")
+        info_dialog.show()
+        filesystem.filesystem.balance_filesystem(
+            filesystem.filesystem.BTRFS_BALANCE_DATA_USAGE_FILTER,
+            self.__current_filesystem.data_percentage,
+            self.__current_filesystem.mounted_points[0])
+        filesystem.filesystem.balance_filesystem(
+            filesystem.filesystem.BTRFS_BALANCE_METADATA_USAGE_FILTER,
+            self.__current_filesystem.metadata_percentage,
+            self.__current_filesystem.mounted_points[0])
+
+        # Closing info
+        info_dialog.hide()
+        info_dialog.close()
+
+        # Calculating new values for the filesystem balanced
+        self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
+        # Displaying all the info related to the filesystem recently balanced
+        self.fill_filesystem_info(self.__current_filesystem)
 
     def fill_filesystem_info(self, filesystem):
         """Fills filesystem information in the GUI.
@@ -166,6 +190,34 @@ class ButtermanagerMainWindow(QMainWindow):
         self.progressbar_data.setValue(filesystem.data_percentage)
         self.progressbar_metadata.setValue(filesystem.metadata_percentage)
         self.progressbar_system.setValue(filesystem.system_percentage)
+
+class InfoWindow(QDialog):
+    """Window to display information.
+
+    Class inherited from QDialog (Window constructor)
+    """
+    # Constructor
+    def __init__(self, parent, information):
+        QDialog.__init__(self, parent)
+        self.parent = parent
+        # Initializing the window
+        self.initialize(information)
+
+    def initialize(self, information):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/InfoWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        self.label_info.setText(information)
 
 
 # Creating application instance
