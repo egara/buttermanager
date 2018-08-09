@@ -43,9 +43,9 @@ class PasswordWindow(QMainWindow):
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Initializing the application
-        self.initialize()
+        self.init_ui()
 
-    def initialize(self):
+    def init_ui(self):
         """Initializes the Graphic User Interface.
 
         """
@@ -104,9 +104,9 @@ class ButtermanagerMainWindow(QMainWindow):
         # Current filesystem uuid (it will be initialize in initialize method)
         self.__current_filesystem_uuid = None
         # Initializing the application
-        self.initialize()
+        self.init_ui()
 
-    def initialize(self):
+    def init_ui(self):
         """Initializes the Graphic User Interface.
 
         """
@@ -201,9 +201,9 @@ class InfoWindow(QDialog):
         QDialog.__init__(self, parent)
         self.parent = parent
         # Initializing the window
-        self.initialize(information)
+        self.init_ui(information)
 
-    def initialize(self, information):
+    def init_ui(self, information):
         """Initializes the Graphic User Interface.
 
         """
@@ -220,9 +220,10 @@ class InfoWindow(QDialog):
         self.label_info.setText(information)
 
 
-# Creating application instance
-application = QApplication(sys.argv)
-# Creating main window instance
-password_window = PasswordWindow(None)
-# Launching the application
-application.exec_()
+if __name__ == '__main__':
+    # Creating application instance
+    application = QApplication(sys.argv)
+    # Creating main window instance
+    password_window = PasswordWindow(None)
+    # Launching the application
+    application.exec_()
