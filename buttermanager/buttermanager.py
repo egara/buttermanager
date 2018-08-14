@@ -153,27 +153,6 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the balance method.
 
         """
-        # Displaying info
-        # info_dialog = InfoWindow(self, "In progress: please wait until filesystem is balanced. "
-        #                                "It will take a little bit...")
-        # info_dialog.show()
-        # filesystem.filesystem.balance_filesystem(
-        #     filesystem.filesystem.BTRFS_BALANCE_DATA_USAGE_FILTER,
-        #     self.__current_filesystem.data_percentage,
-        #     self.__current_filesystem.mounted_points[0])
-        # filesystem.filesystem.balance_filesystem(
-        #     filesystem.filesystem.BTRFS_BALANCE_METADATA_USAGE_FILTER,
-        #     self.__current_filesystem.metadata_percentage,
-        #     self.__current_filesystem.mounted_points[0])
-
-        # Closing info
-        # info_dialog.hide()
-        # info_dialog.close()
-
-        # Calculating new values for the filesystem balanced
-        # self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
-        # Displaying all the info related to the filesystem recently balanced
-        # self.fill_filesystem_info(self.__current_filesystem)
         self.__balancer = BalanceThread(self.__current_filesystem.data_percentage,
                                         self.__current_filesystem.mounted_points[0])
         self.__balancer.show_one_window.connect(self.manage_window)
