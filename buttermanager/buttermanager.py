@@ -206,30 +206,22 @@ class BalanceThread(QThread):
     """Indepented thread that will run the filesystem balancing process.
 
     """
-    # Constructor
-    def __init__(self, percentage, mounted_point):
-        QThread.__init__(self)
-        self.__show_one_window = pyqtSignal('bool')
-        self.__refresh_filesystem_statistics = pyqtSignal()
-        self.__percentage = percentage
-        self.__mounted_point = mounted_point
-
-    # Private attributes
-
+    # Attributes
     # pyqtSignal that will be emitted when this class requires to display
     # a single information window on the screen
-    @property
-    def show_one_window(self):
-        return self.__show_one_window
+    show_one_window = pyqtSignal('bool')
 
     # pyqtSignal that will be emitted when this class requires that main
     # window refreshes current filesystem statistics
-    @property
-    def refresh_filesystem_statistics(self):
-        return self.__refresh_filesystem_statistics
+    refresh_filesystem_statistics = pyqtSignal()
+
+    # Constructor
+    def __init__(self, percentage, mounted_point):
+        QThread.__init__(self)
+        self.__percentage = percentage
+        self.__mounted_point = mounted_point
 
     # Methods
-
     def run(self):
         # Main window will be hidden
         self.on_show_one_window(True)
