@@ -22,7 +22,7 @@ import sys
 import filesystem.filesystem
 import util.utils
 import util.settings
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QDialog
 from PyQt5.QtGui import QCursor
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
@@ -206,19 +206,29 @@ class BalanceThread(QThread):
     """Indepented thread that will run the filesystem balancing process.
 
     """
-
-    # Attributes
-    # pyqtSignal that will be emitted when this class requires to display
-    # a single information window on the screen
-    show_one_window = pyqtSignal('bool')
-    # pyqtSignal that will be emitted when this class requires that main
-    # window refreshes current filesystem statistics
-    refresh_filesystem_statistics = pyqtSignal()
-
+    # Constructor
     def __init__(self, percentage, mounted_point):
         QThread.__init__(self)
+        self.__show_one_window = pyqtSignal('bool')
+        self.__refresh_filesystem_statistics = pyqtSignal()
         self.__percentage = percentage
         self.__mounted_point = mounted_point
+
+    # Private attributes
+
+    # pyqtSignal that will be emitted when this class requires to display
+    # a single information window on the screen
+    @property
+    def show_one_window(self):
+        return self.__show_one_window
+
+    # pyqtSignal that will be emitted when this class requires that main
+    # window refreshes current filesystem statistics
+    @property
+    def refresh_filesystem_statistics(self):
+        return self.__refresh_filesystem_statistics
+
+    # Methods
 
     def run(self):
         # Main window will be hidden
@@ -246,15 +256,16 @@ class BalanceThread(QThread):
         """Wraps all the operations to balance the filesystem.
 
         """
+        # Balancing data
         filesystem.filesystem.balance_filesystem(
             filesystem.filesystem.BTRFS_BALANCE_DATA_USAGE_FILTER,
             self.__percentage,
             self.__mounted_point)
+        # Balancing metadata
         filesystem.filesystem.balance_filesystem(
             filesystem.filesystem.BTRFS_BALANCE_METADATA_USAGE_FILTER,
             self.__percentage,
             self.__mounted_point)
-
 
     def on_show_one_window(self, one_window):
         """Emits a QT Signal to hide or show the rest of application windows.
@@ -269,6 +280,7 @@ class BalanceThread(QThread):
 
         """
         self.refresh_filesystem_statistics.emit()
+
 
 class InfoWindow(QDialog):
     """Window to display information.
