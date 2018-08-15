@@ -280,7 +280,15 @@ class InfoWindow(QDialog):
     """
     # Constructor
     def __init__(self, parent, information):
-        QDialog.__init__(self, parent, QtCore.Qt.WindowStaysOnTopHint)
+        QDialog.__init__(self, parent)
+        # Setting window flags, f.i. this window won't have a close button
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowMinimizeButtonHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
         self.parent = parent
         # Initializing the window
         self.init_ui(information)
