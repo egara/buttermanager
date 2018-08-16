@@ -39,6 +39,7 @@ KB = "KiB"  # Kilobytes
 B = "B"     # Bytes
 BYTE_SIZE = 1024
 
+
 # Classes
 class NoCommandFound(Exception):
     """Exception raised when a needed program is not installed in the system.
@@ -142,6 +143,7 @@ def get_percentage(total, parcial):
     percentage = int((parcial_number * 100) / total_number)
     return percentage
 
+
 def get_number_unit(number_unit_string):
     """Gets the number and the unit present in a specific string.
 
@@ -163,6 +165,7 @@ def get_number_unit(number_unit_string):
     number_unit['number'] = number
     number_unit['unit'] = number_unit_string_list[1][2:]
     return number_unit
+
 
 def convert_to_bytes(number_unit):
     """Converts a number into a bytes depending on its unit.

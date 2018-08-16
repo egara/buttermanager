@@ -24,6 +24,8 @@ It provides also Filesystem class.
 """
 import util.utils
 import sys
+import window.windows
+from PyQt5.QtCore import QThread, pyqtSignal
 
 # Constants
 DEVID = "devid"
@@ -42,6 +44,7 @@ BTRFS_USAGE_COMMAND = "sudo -S btrfs filesystem usage"
 BTRFS_BALANCE_COMMAND = "sudo -S btrfs balance start"
 BTRFS_BALANCE_DATA_USAGE_FILTER = "dusage"
 BTRFS_BALANCE_METADATA_USAGE_FILTER = "musage"
+
 
 # Classes
 class Filesystem:
@@ -217,7 +220,8 @@ class Filesystem:
         """Retrieves all the information of the BTRFS filesystem.
 
         Returns:
-            dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
+            dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary
+            will be:
                 - total_size: Device size
                 - total_allocated: Device allocated
                 - data_size: Data size
@@ -246,17 +250,20 @@ class Filesystem:
                 data_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['data_size'] = data_size
                 filesystem_info['data_used'] = line.split(USED)[1].strip()
-                filesystem_info['data_percentage'] = util.utils.get_percentage(filesystem_info['data_size'], filesystem_info['data_used'])
+                filesystem_info['data_percentage'] = util.utils.get_percentage(filesystem_info['data_size'],
+                                                                               filesystem_info['data_used'])
             elif METADATA in line:
                 metadata_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['metadata_size'] = metadata_size
                 filesystem_info['metadata_used'] = line.split(USED)[1].strip()
-                filesystem_info['metadata_percentage'] = util.utils.get_percentage(filesystem_info['metadata_size'], filesystem_info['metadata_used'])
+                filesystem_info['metadata_percentage'] = util.utils.get_percentage(filesystem_info['metadata_size'],
+                                                                                   filesystem_info['metadata_used'])
             elif SYSTEM in line:
                 system_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['system_size'] = system_size
                 filesystem_info['system_used'] = line.split(USED)[1].strip()
-                filesystem_info['system_percentage'] = util.utils.get_percentage(filesystem_info['system_size'], filesystem_info['system_used'])
+                filesystem_info['system_percentage'] = util.utils.get_percentage(filesystem_info['system_size'],
+                                                                                 filesystem_info['system_used'])
 
         return filesystem_info
 
@@ -314,10 +321,82 @@ def balance_filesystem(filter, percentage, mounted_point):
                                                  percentage=percentage))
 
     command = "{command} -{filter}={percentage} {mounted_point}".format(command=BTRFS_BALANCE_COMMAND,
-                                                                       filter=filter,
-                                                                       percentage=percentage,
-                                                                       mounted_point=mounted_point)
+                                                                        filter=filter,
+                                                                        percentage=percentage,
+                                                                        mounted_point=mounted_point)
 
     commandline_output = util.utils.execute_command(command)
     for line in commandline_output.split("\n"):
         logger.info(line)
+
+
+class BalanceManager(QThread):
+    """Indepented thread that will run the filesystem balancing process.
+
+    """
+    # Attributes
+    # pyqtSignal that will be emitted when this class requires to display
+    # a single information window on the screen
+    show_one_window = pyqtSignal('bool')
+
+    # pyqtSignal that will be emitted when this class requires that main
+    # window refreshes current filesystem statistics
+    refresh_filesystem_statistics = pyqtSignal()
+
+    # Constructor
+    def __init__(self, percentage, mounted_point):
+        QThread.__init__(self)
+        self.__percentage = percentage
+        self.__mounted_point = mounted_point
+
+    # Methods
+    def run(self):
+        # Main window will be hidden
+        self.on_show_one_window(True)
+        info_dialog = window.windows.InfoWindow(None, "Balancing '{mounted_point}' mounted point. \n"
+                                                      "This window will be closed automatically \n"
+                                                      "when the operation is done. \n \n"
+                                                      "Please wait...".format(mounted_point=self.__mounted_point))
+        # Displaying info window
+        info_dialog.show()
+
+        # Balances the filesystem
+        self.__balance_filesystem()
+
+        # Hiding info window
+        info_dialog.hide()
+
+        # Main window will be shown again
+        self.on_show_one_window(False)
+
+        # Refreshing current filesystem statistics
+        self.on_refresh_filesystem_statistics()
+
+    def __balance_filesystem(self):
+        """Wraps all the operations to balance the filesystem.
+
+        """
+        # Balancing data
+        balance_filesystem(
+            BTRFS_BALANCE_DATA_USAGE_FILTER,
+            self.__percentage,
+            self.__mounted_point)
+        # Balancing metadata
+        balance_filesystem(
+            BTRFS_BALANCE_METADATA_USAGE_FILTER,
+            self.__percentage,
+            self.__mounted_point)
+
+    def on_show_one_window(self, one_window):
+        """Emits a QT Signal to hide or show the rest of application windows.
+
+        Arguments:
+            one_window (boolean): Information window should be unique?.
+        """
+        self.show_one_window.emit(one_window)
+
+    def on_refresh_filesystem_statistics(self):
+        """Emits a QT Signal to refresh filesystem statistics in main window.
+
+        """
+        self.refresh_filesystem_statistics.emit()

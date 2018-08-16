@@ -22,10 +22,10 @@ import sys
 import filesystem.filesystem
 import util.utils
 import util.settings
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor
-from PyQt5 import uic, QtCore
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5 import uic
+from PyQt5.QtCore import Qt
 
 
 class PasswordWindow(QMainWindow):
@@ -141,6 +141,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
+            self.button_upgrade_system.clicked.connect(self.upgrade_system)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -153,8 +154,8 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the balance method.
 
         """
-        self.__balancer = BalanceThread(self.__current_filesystem.data_percentage,
-                                        self.__current_filesystem.mounted_points[0])
+        self.__balancer = filesystem.filesystem.BalanceManager(self.__current_filesystem.data_percentage,
+                                                               self.__current_filesystem.mounted_points[0])
         self.__balancer.show_one_window.connect(self.manage_window)
         self.__balancer.refresh_filesystem_statistics.connect(self.refresh_filesystem_statistics)
         self.__balancer.start()
@@ -201,113 +202,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.progressbar_metadata.setValue(filesystem.metadata_percentage)
         self.progressbar_system.setValue(filesystem.system_percentage)
 
-
-class BalanceThread(QThread):
-    """Indepented thread that will run the filesystem balancing process.
-
-    """
-    # Attributes
-    # pyqtSignal that will be emitted when this class requires to display
-    # a single information window on the screen
-    show_one_window = pyqtSignal('bool')
-
-    # pyqtSignal that will be emitted when this class requires that main
-    # window refreshes current filesystem statistics
-    refresh_filesystem_statistics = pyqtSignal()
-
-    # Constructor
-    def __init__(self, percentage, mounted_point):
-        QThread.__init__(self)
-        self.__percentage = percentage
-        self.__mounted_point = mounted_point
-
-    # Methods
-    def run(self):
-        # Main window will be hidden
-        self.on_show_one_window(True)
-        info_dialog = InfoWindow(None, "Balancing '{mounted_point}' mounted point. \n"
-                                       "This window will be closed automatically \n"
-                                       "when the operation is done. \n \n"
-                                       "Please wait...".format(mounted_point=self.__mounted_point))
-        # Displaying info window
-        info_dialog.show()
-
-        # Balances the filesystem
-        self.__balance_filesystem()
-
-        # Hiding info window
-        info_dialog.hide()
-
-        # Main window will be shown again
-        self.on_show_one_window(False)
-
-        # Refreshing current filesystem statistics
-        self.on_refresh_filesystem_statistics()
-
-    def __balance_filesystem(self):
-        """Wraps all the operations to balance the filesystem.
+    def upgrade_system(self):
+        """Runs the system upgrade operation.
 
         """
-        # Balancing data
-        filesystem.filesystem.balance_filesystem(
-            filesystem.filesystem.BTRFS_BALANCE_DATA_USAGE_FILTER,
-            self.__percentage,
-            self.__mounted_point)
-        # Balancing metadata
-        filesystem.filesystem.balance_filesystem(
-            filesystem.filesystem.BTRFS_BALANCE_METADATA_USAGE_FILTER,
-            self.__percentage,
-            self.__mounted_point)
-
-    def on_show_one_window(self, one_window):
-        """Emits a QT Signal to hide or show the rest of application windows.
-
-        Arguments:
-            one_window (boolean): Information window should be unique?.
-        """
-        self.show_one_window.emit(one_window)
-
-    def on_refresh_filesystem_statistics(self):
-        """Emits a QT Signal to refresh filesystem statistics in main window.
-
-        """
-        self.refresh_filesystem_statistics.emit()
-
-
-class InfoWindow(QDialog):
-    """Window to display information.
-
-    """
-    # Constructor
-    def __init__(self, parent, information):
-        QDialog.__init__(self, parent)
-        # Setting window flags, f.i. this window won't have a close button
-        self.setWindowFlags(
-            QtCore.Qt.Window |
-            QtCore.Qt.CustomizeWindowHint |
-            QtCore.Qt.WindowTitleHint |
-            QtCore.Qt.WindowMinimizeButtonHint |
-            QtCore.Qt.WindowStaysOnTopHint
-        )
-        self.parent = parent
-        # Initializing the window
-        self.init_ui(information)
-
-    def init_ui(self, information):
-        """Initializes the Graphic User Interface.
-
-        """
-        # Loading User Interface
-        uic.loadUi("ui/InfoWindow.ui", self)
-
-        # Centering the window
-        qt_rectangle = self.frameGeometry()
-        center_point = QDesktopWidget().availableGeometry().center()
-        qt_rectangle.moveCenter(center_point)
-        self.move(qt_rectangle.topLeft())
-
-        # Setting information
-        self.label_info.setText(information)
 
 
 if __name__ == '__main__':
