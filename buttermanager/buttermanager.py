@@ -22,6 +22,7 @@ import sys
 import filesystem.filesystem
 import util.utils
 import util.settings
+import manager.upgrader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor
 from PyQt5 import uic
@@ -105,6 +106,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__current_filesystem_uuid = None
         # Balancer that will balance the current filesystem if it is needed
         self.__balancer = None
+        # Upgrader that will upgrade the system if it is needed
+        self.__upgrader = None
         # Initializing the application
         self.init_ui()
 
@@ -206,6 +209,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the system upgrade operation.
 
         """
+        self.__upgrader = manager.upgrader.Upgrader()
+        self.__upgrader.show_one_window.connect(self.manage_window)
+        self.__upgrader.start()
 
 
 if __name__ == '__main__':
