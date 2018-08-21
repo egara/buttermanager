@@ -120,16 +120,20 @@ class ButtermanagerMainWindow(QMainWindow):
         # Initializing the application
         self.init_ui()
 
-        # Install the custom output stream
+        # Installing the custom output stream to write all the console content to the
+        # QTextEdit component
         sys.stdout = EmittingStream(text_written=self.normal_output_written)
 
     def __del__(self):
-        # Restore sys.stdout
+        """Restores sys.stdout.
+
+        """
         sys.stdout = sys.__stdout__
 
     def normal_output_written(self, text):
-        """Append text to the QTextEdit."""
-        # Maybe QTextEdit.append() works as well, but this is how I do it:
+        """Appends text to the QTextEdit text_edit_console.
+
+        """
         cursor = self.text_edit_console.textCursor()
         cursor.movePosition(QTextCursor.End)
         cursor.insertText(text)
