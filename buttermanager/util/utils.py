@@ -92,11 +92,12 @@ class Logger(object):
 
 
 # Module's methods
-def execute_command(command):
+def execute_command(command, console=False):
     """Executes a shell command.
 
     Arguments:
         command (string): Command to be executed.
+        console (boolean): The command output needs to be redirected to the console.
 
     Returns:
         string: Command line output encoded in UTF-8.
@@ -113,8 +114,15 @@ def execute_command(command):
         echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
-        # result is Bytes type, so it is needed to decode Unicode string using UTF-8
-        commandline_output = result.stdout.read().decode('utf-8')
+
+        if not console:
+            # result is Bytes type, so it is needed to decode Unicode string using UTF-8
+            commandline_output = result.stdout.read().decode('utf-8')
+        else:
+            for line in iter(result.stdout.readline, b''):  # replace '' with b'' for Python 3
+                sys.stdout.write(line.decode('utf-8'))
+            commandline_output = None
+
         return commandline_output
     else:
         # Logger

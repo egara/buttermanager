@@ -21,11 +21,15 @@
 """This module gathers all the managers built for the application.
 
 """
-from PyQt5.QtCore import QThread, pyqtSignal
+import util.utils
+from PyQt5.QtCore import QThread
+
+#Constants
+ARCH_PACMAN_COMMAND = "sudo -S pacman -Syu --noconfirm"
 
 
 class Upgrader(QThread):
-    """Indepented thread that will run the system upgrading process.
+    """Independent thread that will run the system upgrading process.
 
     """
     # Attributes
@@ -36,7 +40,11 @@ class Upgrader(QThread):
 
     # Methods
     def run(self):
-        # Upgrading the filesystem
-        # self.__balance_filesystem()
-        # Todo:
-        print("This is a tes!!!!!!")
+        # Upgrading the system
+        self.__upgrade_system()
+
+    def __upgrade_system(self):
+        """Wraps all the operations to upgrade the system.
+
+        """
+        util.utils.execute_command(ARCH_PACMAN_COMMAND, console=True)
