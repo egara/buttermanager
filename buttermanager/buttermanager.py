@@ -145,19 +145,23 @@ class ButtermanagerMainWindow(QMainWindow):
             uic.loadUi("ui/MainWindow.ui", self)
 
             # Setting maximum and minimum  size for the main window
-            self.setMinimumHeight(600)
+            self.setMinimumHeight(490)
             self.setMinimumWidth(800)
-            # self.setMaximumHeight(550)
-            # self.setMaximumWidth(800)
+            self.setMaximumHeight(490)
+            self.setMaximumWidth(800)
+
+            # Hiding terminal
+            self.button_close_terminal.hide()
+            self.text_edit_console.hide()
+
+            # Adjusting the window
+            self.adjustSize()
 
             # Centering the window
             qt_rectangle = self.frameGeometry()
             center_point = QDesktopWidget().availableGeometry().center()
             qt_rectangle.moveCenter(center_point)
             self.move(qt_rectangle.topLeft())
-
-            # Adjusting the window
-            self.adjustSize()
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
@@ -173,6 +177,7 @@ class ButtermanagerMainWindow(QMainWindow):
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
             self.button_upgrade_system.clicked.connect(self.upgrade_system)
+            self.button_close_terminal.clicked.connect(self.close_terminal)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -237,8 +242,39 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the system upgrade operation.
 
         """
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(600)
+        self.setMinimumWidth(800)
+        self.setMaximumHeight(600)
+        self.setMaximumWidth(800)
+
+        # Showing terminal
+        self.button_close_terminal.show()
+        self.text_edit_console.show()
+
+        # Adjusting the window
+        self.adjustSize()
+
+        # Upgrading the system
         self.__upgrader = manager.upgrader.Upgrader()
         self.__upgrader.start()
+
+    def close_terminal(self):
+        """Runs the system upgrade operation.
+
+        """
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(490)
+        self.setMinimumWidth(800)
+        self.setMaximumHeight(490)
+        self.setMaximumWidth(800)
+
+        # Hiding terminal
+        self.button_close_terminal.hide()
+        self.text_edit_console.hide()
+
+        # Adjusting the window
+        self.adjustSize()
 
 
 if __name__ == '__main__':

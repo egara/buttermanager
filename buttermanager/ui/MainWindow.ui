@@ -373,11 +373,24 @@
        <widget class="QTextEdit" name="text_edit_console">
         <property name="geometry">
          <rect>
-          <x>4</x>
-          <y>454</y>
-          <width>771</width>
-          <height>101</height>
+          <x>0</x>
+          <y>474</y>
+          <width>781</width>
+          <height>81</height>
          </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="button_close_terminal">
+        <property name="geometry">
+         <rect>
+          <x>760</x>
+          <y>450</y>
+          <width>20</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>-</string>
         </property>
        </widget>
       </widget>
