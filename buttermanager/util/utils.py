@@ -123,7 +123,7 @@ def execute_command(command, console=False):
             # The output will be written in stdout in real time
             # It is good for operations that need to display the output
             # in the GUI terminal of the application in real time
-            for line in iter(result.stdout.readline, b''):  # replace '' with b'' for Python 3
+            for line in iter(result.stdout.readline, b''):
                 sys.stdout.write(line.decode('utf-8'))
             commandline_output = None
 
