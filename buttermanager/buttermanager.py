@@ -24,9 +24,18 @@ import util.utils
 import util.settings
 import manager.upgrader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QTextCursor
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal, QObject
+
+
+class EmittingStream(QObject):
+
+    text_written = pyqtSignal(str)
+
+    def write(self, text):
+        self.text_written.emit(str(text))
 
 
 class PasswordWindow(QMainWindow):
@@ -111,6 +120,22 @@ class ButtermanagerMainWindow(QMainWindow):
         # Initializing the application
         self.init_ui()
 
+        # Install the custom output stream
+        sys.stdout = EmittingStream(text_written=self.normal_output_written)
+
+    def __del__(self):
+        # Restore sys.stdout
+        sys.stdout = sys.__stdout__
+
+    def normal_output_written(self, text):
+        """Append text to the QTextEdit."""
+        # Maybe QTextEdit.append() works as well, but this is how I do it:
+        cursor = self.text_edit_console.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        cursor.insertText(text)
+        self.text_edit_console.setTextCursor(cursor)
+        self.text_edit_console.ensureCursorVisible()
+
     def init_ui(self):
         """Initializes the Graphic User Interface.
 
@@ -120,16 +145,19 @@ class ButtermanagerMainWindow(QMainWindow):
             uic.loadUi("ui/MainWindow.ui", self)
 
             # Setting maximum and minimum  size for the main window
-            self.setMinimumHeight(550)
+            self.setMinimumHeight(600)
             self.setMinimumWidth(800)
-            self.setMaximumHeight(550)
-            self.setMaximumWidth(800)
+            # self.setMaximumHeight(550)
+            # self.setMaximumWidth(800)
 
             # Centering the window
             qt_rectangle = self.frameGeometry()
             center_point = QDesktopWidget().availableGeometry().center()
             qt_rectangle.moveCenter(center_point)
             self.move(qt_rectangle.topLeft())
+
+            # Adjusting the window
+            self.adjustSize()
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
@@ -210,7 +238,6 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         self.__upgrader = manager.upgrader.Upgrader()
-        self.__upgrader.show_one_window.connect(self.manage_window)
         self.__upgrader.start()
 
 

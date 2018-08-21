@@ -21,7 +21,6 @@
 """This module gathers all the managers built for the application.
 
 """
-import window.windows
 from PyQt5.QtCore import QThread, pyqtSignal
 
 
@@ -30,9 +29,6 @@ class Upgrader(QThread):
 
     """
     # Attributes
-    # pyqtSignal that will be emitted when this class requires to display
-    # a single information window on the screen
-    show_one_window = pyqtSignal('bool')
 
     # Constructor
     def __init__(self):
@@ -40,27 +36,7 @@ class Upgrader(QThread):
 
     # Methods
     def run(self):
-        # Main window will be hidden
-        self.on_show_one_window(True)
-        console_window = window.windows.ConsoleWindow(None)
-        # Displaying console window
-        console_window.show()
-
         # Upgrading the filesystem
         # self.__balance_filesystem()
         # Todo:
-        #print("This is a tes!!!!!!")
-
-        # Hiding console window
-        # console_window.hide()
-
-        # Main window will be shown again
-        # self.on_show_one_window(False)
-
-    def on_show_one_window(self, one_window):
-        """Emits a QT Signal to hide or show the rest of application windows.
-
-        Arguments:
-            one_window (boolean): Information window should be unique?.
-        """
-        self.show_one_window.emit(one_window)
+        print("This is a tes!!!!!!")
