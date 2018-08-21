@@ -116,9 +116,13 @@ def execute_command(command, console=False):
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
         if not console:
+            # The whole output will be returned
             # result is Bytes type, so it is needed to decode Unicode string using UTF-8
             commandline_output = result.stdout.read().decode('utf-8')
         else:
+            # The output will be written in stdout in real time
+            # It is good for operations that need to display the output
+            # in the GUI terminal of the application in real time
             for line in iter(result.stdout.readline, b''):  # replace '' with b'' for Python 3
                 sys.stdout.write(line.decode('utf-8'))
             commandline_output = None
