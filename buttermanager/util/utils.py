@@ -109,8 +109,7 @@ def execute_command(command, console=False):
     if "sudo" in program:
         sudo_position = program.index("sudo")
         single_command = program[sudo_position + 2]
-    path = shutil.which(single_command)
-    if path is not None:
+    if exist_program(single_command):
         echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
@@ -203,3 +202,19 @@ def convert_to_bytes(number_unit):
         factor = factor
 
     return number_unit['number'] * factor
+
+
+def exist_program(program):
+    """Checks if a program is installed on the system.
+
+    Arguments:
+        program (string): Program to check
+
+    Returns:
+        bool: True if the program is installed, False otherwise
+
+    >>> exist_program('ls')
+    True
+    """
+    path = shutil.which(program)
+    return path is not None
