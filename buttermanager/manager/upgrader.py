@@ -21,10 +21,12 @@
 """This module gathers all the managers built for the application.
 
 """
+import filesystem.snapshot
+import sys
 import util.utils
 from PyQt5.QtCore import QThread
 
-#Constants
+# Constants
 ARCH_PACMAN_COMMAND = "sudo -S pacman -Syu --noconfirm"
 
 
@@ -37,6 +39,8 @@ class Upgrader(QThread):
     # Constructor
     def __init__(self):
         QThread.__init__(self)
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
     # Methods
     def run(self):
@@ -47,4 +51,19 @@ class Upgrader(QThread):
         """Wraps all the operations to upgrade the system.
 
         """
-        util.utils.execute_command(ARCH_PACMAN_COMMAND, console=True)
+        self.__logger.info("Starting system upgrading process.")
+        sys.stdout.write("Starting system upgrading process. Please wait...")
+        sys.stdout.write("\n")
+
+        # Creates all the snapshots needed before upgrading the system
+        # Todo: Snapshots should be defined in a config file by the user
+        snapshot_one = filesystem.snapshot.Snapshot("/mnt/defvol/_active/rootvol/", "/mnt/defvol/_snapshots/", "root")
+        snapshots = [snapshot_one]
+        for snapshot in snapshots:
+            snapshot.create_snapshot()
+
+        # Upgrades the system
+        # util.utils.execute_command(ARCH_PACMAN_COMMAND, console=True)
+
+        self.__logger.info("System upgrading process finished.")
+        sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
