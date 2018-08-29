@@ -38,7 +38,11 @@ MB = "MiB"  # Megabytes
 KB = "KiB"  # Kilobytes
 B = "B"     # Bytes
 BYTE_SIZE = 1024
-
+OS_DEBIAN = "DEBIAN"
+DEBIAN_PM = "apt"
+OS_ARCH = "ARCH"
+ARCH_PM = "pacman"
+SNAP_PM = "snap"
 
 # Classes
 class NoCommandFound(Exception):
@@ -69,6 +73,12 @@ class ConfigManager:
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
             os.makedirs(util.settings.application_path)
+
+        # Checking OS
+        if exist_program(DEBIAN_PM):
+            util.settings.user_os = OS_DEBIAN
+        elif exist_program(ARCH_PM):
+            util.settings.user_os = OS_ARCH
 
 
 class Logger(object):

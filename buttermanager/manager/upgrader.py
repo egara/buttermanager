@@ -28,6 +28,8 @@ from PyQt5.QtCore import QThread
 
 # Constants
 ARCH_PACMAN_COMMAND = "sudo -S pacman -Syu --noconfirm"
+DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
+DEBIAN_APT_UPGRADE_COMMAND = "sudo -S apt upgrade -y"
 
 
 class Upgrader(QThread):
@@ -63,8 +65,20 @@ class Upgrader(QThread):
             snapshot.create_snapshot()
 
         # Upgrades the system
-        # util.utils.execute_command(ARCH_PACMAN_COMMAND, console=True)
+        upgrading_command = ""
+        if util.settings.user_os == util.utils.OS_ARCH:
+            upgrading_command = ARCH_PACMAN_COMMAND
+        elif util.settings.user_os == util.utils.OS_DEBIAN:
+            # First, it is necessary to update the system
+            sys.stdout.write("Updating the system. Please wait...")
+            sys.stdout.write("\n")
+            util.utils.execute_command(DEBIAN_APT_UPDATE_COMMAND, console=True)
+            sys.stdout.write("\n")
+            upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
 
-        # Removes all the snapshots not needed any more
+        util.utils.execute_command(upgrading_command, console=True)
+
+        # Todo: Removes all the snapshots not needed any more
+
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")

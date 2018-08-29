@@ -26,3 +26,4 @@
 application_name = ""
 application_path = ""
 user_password = ""
+user_os = ""
