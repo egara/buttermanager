@@ -22,9 +22,9 @@
 
 It provides also Snapshot class.
 """
-import util.utils
-import sys
+import os
 import time
+import util.utils
 
 # Constants
 BTRFS_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume snapshot -r"
@@ -80,10 +80,14 @@ class Snapshot:
                                                subvolume_dest=self.subvolume_dest)
         self.__logger.info(info_message)
 
-        # Todo: First see how many snapshots are with the same name
-        # Todo: Then, create the snapshot using the full name
-        snapshot_full_name = "{snapshot_name}-{current_date}-KK".format(snapshot_name=self.snapshot_name,
+        # Checking how many snapshots are with the same name
+        snapshot_full_name = "{snapshot_name}-{current_date}".format(snapshot_name=self.snapshot_name,
                                                                         current_date=self.__current_date)
+        snapshots_with_same_name = [file for file in os.listdir(self.subvolume_dest) if snapshot_full_name in file]
+
+        # Adding number to the full name
+        snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
+                                                                    number=len(snapshots_with_same_name))
         command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
             command=BTRFS_SNAPSHOT_COMMAND,
             subvolume_origin=self.subvolume_origin,

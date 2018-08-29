@@ -65,5 +65,6 @@ class Upgrader(QThread):
         # Upgrades the system
         # util.utils.execute_command(ARCH_PACMAN_COMMAND, console=True)
 
+        # Removes all the snapshots not needed any more
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
