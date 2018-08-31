@@ -80,6 +80,10 @@ class ConfigManager:
         elif exist_program(ARCH_PM):
             util.settings.user_os = OS_ARCH
 
+        # Number of snapshots to keep
+        # TODO: Obtain this value from a config file
+        util.settings.snapshots_to_keep = 2
+
 
 class Logger(object):
     """Creates the logs of the application.

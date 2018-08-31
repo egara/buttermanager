@@ -27,9 +27,20 @@ import util.utils
 from PyQt5.QtCore import QThread
 
 # Constants
-ARCH_PACMAN_COMMAND = "sudo -S pacman -Syu --noconfirm"
+import util.utils
+import util.settings
+
+ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
 DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
 DEBIAN_APT_UPGRADE_COMMAND = "sudo -S apt upgrade -y"
+ARCH_YAOURT_UPGRADE_COMMAND = "sudo -S yaourt -Syua --noconfirm"
+ARCH_YAOURT_COMMAND = "yaourt"
+ARCH_YAY_UPGRADE_COMMAND = "sudo -S yay -Syu --noconfirm"
+ARCH_YAY_COMMAND = "yay"
+ARCH_TRIZEN_UPGRADE_COMMAND = "sudo -S trizen -Syua --noconfirm"
+ARCH_TRIZEN_COMMAND = "trizen"
+SNAP_COMMAND = "snap"
+SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
 
 
 class Upgrader(QThread):
@@ -59,7 +70,10 @@ class Upgrader(QThread):
 
         # Creates all the snapshots needed before upgrading the system
         # Todo: Snapshots should be defined in a config file by the user
-        snapshot_one = filesystem.snapshot.Snapshot("/mnt/defvol/_active/rootvol/", "/mnt/defvol/_snapshots/", "root")
+        snapshot_one = filesystem.snapshot.Snapshot("/mnt/defvol/_active/rootvol/",
+                                                    "/mnt/defvol/_snapshots/",
+                                                    "root",
+                                                    util.settings.snapshots_to_keep)
         snapshots = [snapshot_one]
         for snapshot in snapshots:
             snapshot.create_snapshot()
@@ -67,7 +81,7 @@ class Upgrader(QThread):
         # Upgrades the system
         upgrading_command = ""
         if util.settings.user_os == util.utils.OS_ARCH:
-            upgrading_command = ARCH_PACMAN_COMMAND
+            upgrading_command = ARCH_PACMAN_UPGRADE_COMMAND
         elif util.settings.user_os == util.utils.OS_DEBIAN:
             # First, it is necessary to update the system
             sys.stdout.write("Updating the system. Please wait...")
@@ -78,7 +92,22 @@ class Upgrader(QThread):
 
         util.utils.execute_command(upgrading_command, console=True)
 
+        # Upgrades AUR if distro is ArchLinux or derivatives
+        if util.settings.user_os == util.utils.OS_ARCH:
+            if utils.exist_program(ARCH_YAY_COMMAND):
+                util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
+            elif utils.exist_program(ARCH_TRIZEN_COMMAND):
+                util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
+            elif utils.exist_program(ARCH_YAOURT_COMMAND):
+                util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
+
+        # Upgrades snap packages
+        if utils.exist_program(SNAP_COMMAND):
+            util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
+
         # Todo: Removes all the snapshots not needed any more
+        for snapshot in snapshots:
+            snapshot.create_snapshot()
 
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
