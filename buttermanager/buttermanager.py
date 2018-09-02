@@ -249,8 +249,8 @@ class ButtermanagerMainWindow(QMainWindow):
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(600)
         self.setMinimumWidth(800)
-        self.setMaximumHeight(600)
-        self.setMaximumWidth(800)
+        # self.setMaximumHeight(600)
+        # self.setMaximumWidth(800)
 
         # Showing terminal
         self.button_close_terminal.show()

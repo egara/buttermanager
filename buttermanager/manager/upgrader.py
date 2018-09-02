@@ -76,6 +76,7 @@ class Upgrader(QThread):
                                                     util.settings.snapshots_to_keep)
         snapshots = [snapshot_one]
         for snapshot in snapshots:
+            pass
             snapshot.create_snapshot()
 
         # Upgrades the system
@@ -90,24 +91,32 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
 
+        sys.stdout.write("Upgrading the system. Please wait...")
+        sys.stdout.write("\n")
         util.utils.execute_command(upgrading_command, console=True)
 
         # Upgrades AUR if distro is ArchLinux or derivatives
         if util.settings.user_os == util.utils.OS_ARCH:
-            if utils.exist_program(ARCH_YAY_COMMAND):
+            sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
+            sys.stdout.write("\n")
+            if util.utils.exist_program(ARCH_YAY_COMMAND):
                 util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
-            elif utils.exist_program(ARCH_TRIZEN_COMMAND):
+            elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
                 util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
-            elif utils.exist_program(ARCH_YAOURT_COMMAND):
+            elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
                 util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
 
         # Upgrades snap packages
-        if utils.exist_program(SNAP_COMMAND):
+        if util.utils.exist_program(SNAP_COMMAND):
+            sys.stdout.write("Updating snaps. Please wait...")
+            sys.stdout.write("\n")
             util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
 
-        # Todo: Removes all the snapshots not needed any more
+        # Removes all the snapshots not needed any more
+        sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
+        sys.stdout.write("\n")
         for snapshot in snapshots:
-            snapshot.create_snapshot()
+            snapshot.delete_snapshot()
 
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")

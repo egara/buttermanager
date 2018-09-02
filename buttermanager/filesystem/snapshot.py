@@ -22,12 +22,14 @@
 
 It provides also Snapshot class.
 """
+import glob
 import os
 import time
 import util.utils
 
 # Constants
-BTRFS_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume snapshot -r"
+BTRFS_CREATE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume snapshot -r"
+BTRFS_DELETE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume delete"
 
 
 # Classes
@@ -88,7 +90,7 @@ class Snapshot:
         snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
                                                                     number=len(snapshots_with_same_name))
         command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
-            command=BTRFS_SNAPSHOT_COMMAND,
+            command=BTRFS_CREATE_SNAPSHOT_COMMAND,
             subvolume_origin=self.subvolume_origin,
             subvolume_dest=self.subvolume_dest,
             snapshot_full_name=snapshot_full_name
@@ -105,21 +107,20 @@ class Snapshot:
         self.__logger.info(info_message)
 
         # Checking how many snapshots are with the same name ordered by date
-        # snapshots = os.listdir(self.subvolume_dest).sort(key=os.path.getmtime())
+        snapshots = glob.glob("{snapshot_directory}/*".format(snapshot_directory=self.subvolume_dest))
+        snapshots.sort(key=os.path.getmtime)
+        snapshots_whit_same_name = [file for file in snapshots if self.snapshot_name in file]
 
-        snapshot_full_name = "{snapshot_name}-{current_date}".format(snapshot_name=self.snapshot_name,
-                                                                        current_date=self.__current_date)
-        snapshots_with_same_name = [file for file in os.listdir(self.subvolume_dest) if snapshot_full_name in file]
-
-        # Adding number to the full name
-        snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
-                                                                    number=len(snapshots_with_same_name))
-        command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
-            command=BTRFS_SNAPSHOT_COMMAND,
-            subvolume_origin=self.subvolume_origin,
-            subvolume_dest=self.subvolume_dest,
-            snapshot_full_name=snapshot_full_name
-        )
-        util.utils.execute_command(command, console=True)
+        # Removing all the snapshots needed starting with the oldest one until reach
+        # the limit defined by the user
+        snapshots_to_delete = len(snapshots_whit_same_name) - self.snapshots_to_keep
+        index = 0
+        while snapshots_to_delete > 0:
+            command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots_whit_same_name[index])
+            util.utils.execute_command(command, console=True)
+            info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots_whit_same_name[index])
+            self.__logger.info(info_message)
+            snapshots_to_delete -= 1
+            index += 1
 
 # Module's methods
