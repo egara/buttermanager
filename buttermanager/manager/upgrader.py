@@ -24,7 +24,8 @@
 import filesystem.snapshot
 import sys
 import util.utils
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSignal
+
 
 # Constants
 import util.utils
@@ -49,6 +50,15 @@ class Upgrader(QThread):
     """
     # Attributes
 
+    # pyqtSignal that will be emitted when this class requires that main
+    # window disables all the buttons
+    disable_buttons = pyqtSignal()
+
+    # pyqtSignal that will be emitted when this class requires that main
+    # window enables all the buttons
+    enable_buttons = pyqtSignal()
+
+
     # Constructor
     def __init__(self):
         QThread.__init__(self)
@@ -64,6 +74,8 @@ class Upgrader(QThread):
         """Wraps all the operations to upgrade the system.
 
         """
+        self.on_start_upgrading()
+
         self.__logger.info("Starting system upgrading process.")
         sys.stdout.write("Starting system upgrading process. Please wait...")
         sys.stdout.write("\n")
@@ -76,7 +88,6 @@ class Upgrader(QThread):
                                                     util.settings.snapshots_to_keep)
         snapshots = [snapshot_one]
         for snapshot in snapshots:
-            pass
             snapshot.create_snapshot()
 
         # Upgrades the system
@@ -120,3 +131,17 @@ class Upgrader(QThread):
 
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
+
+        self.on_finish_upgrading()
+
+    def on_start_upgrading(self):
+        """Emits a QT Signal to disable all the buttons in main window.
+
+        """
+        self.disable_buttons.emit()
+
+    def on_finish_upgrading(self):
+        """Emits a QT Signal to enable all the buttons in main window.
+
+        """
+        self.enable_buttons.emit()

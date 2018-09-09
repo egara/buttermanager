@@ -261,6 +261,8 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Upgrading the system
         self.__upgrader = manager.upgrader.Upgrader()
+        self.__upgrader.disable_buttons.connect(self.__disable_buttons)
+        self.__upgrader.enable_buttons.connect(self.__enable_buttons)
         self.__upgrader.start()
 
     def close_terminal(self):
@@ -279,6 +281,22 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Adjusting the window
         self.adjustSize()
+
+    def __disable_buttons(self):
+        """Disable all the buttons of the GUI.
+
+        """
+        self.button_balance.setEnabled(False)
+        self.button_upgrade_system.setEnabled(False)
+        self.button_close_terminal.setEnabled(False)
+
+    def __enable_buttons(self):
+        """Enable all the buttons of the GUI.
+
+        """
+        self.button_balance.setEnabled(True)
+        self.button_upgrade_system.setEnabled(True)
+        self.button_close_terminal.setEnabled(True)
 
 
 if __name__ == '__main__':
