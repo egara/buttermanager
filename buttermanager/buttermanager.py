@@ -197,6 +197,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__balancer = filesystem.filesystem.BalanceManager(self.__current_filesystem.data_percentage,
                                                                self.__current_filesystem.mounted_points[0])
         self.__balancer.show_one_window.connect(self.manage_window)
+        # Connecting the signal emitted by the balancer with this slot
         self.__balancer.refresh_filesystem_statistics.connect(self.refresh_filesystem_statistics)
         self.__balancer.start()
 
@@ -261,8 +262,13 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Upgrading the system
         self.__upgrader = manager.upgrader.Upgrader()
+        # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
+        # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.enable_buttons.connect(self.__enable_buttons)
+        # Connecting the signal emitted by the upgrader with this slot
+        self.__upgrader.refresh_filesystem_statistics.connect(self.refresh_filesystem_statistics)
+
         self.__upgrader.start()
 
     def close_terminal(self):
