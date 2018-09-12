@@ -328,22 +328,18 @@
          <widget class="QListWidget" name="list_snapshots">
           <property name="geometry">
            <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>701</width>
-            <height>431</height>
+            <x>10</x>
+            <y>10</y>
+            <width>691</width>
+            <height>401</height>
            </rect>
           </property>
-          <item>
-           <property name="text">
-            <string>snapshot1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>snapshot2</string>
-           </property>
-          </item>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
          </widget>
          <widget class="QPushButton" name="button_snapshot">
           <property name="geometry">

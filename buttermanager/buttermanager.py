@@ -178,6 +178,9 @@ class ButtermanagerMainWindow(QMainWindow):
             # Displaying all the info related to the filesystem selected by default
             self.fill_filesystem_info(self.__current_filesystem)
 
+            # Displaying snapshots
+            self.fill_snapshots()
+
             # Button event
             self.button_balance.clicked.connect(self.balance_filesystem)
             self.button_upgrade_system.clicked.connect(self.upgrade_system)
@@ -303,6 +306,13 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_balance.setEnabled(True)
         self.button_upgrade_system.setEnabled(True)
         self.button_close_terminal.setEnabled(True)
+
+    def fill_snapshots(self):
+        """Fills snapshots information in the GUI.
+
+        """
+        list = ['snapshot1', 'snapshot2', 'snapshot3', 'snapshot4']
+        self.list_snapshots.addItems(list)
 
 
 if __name__ == '__main__':
