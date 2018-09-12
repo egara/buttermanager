@@ -22,15 +22,15 @@
 
 It provides also NoCommandFound exception class.
 """
-
-import subprocess
-import shutil
-import util.settings
-import pathlib
-import os
+import filesystem.snapshot
 import logging
 import logging.handlers
+import os
+import pathlib
+import shutil
+import subprocess
 import sys
+import util.settings
 
 # Constants
 GB = "GiB"  # Gigabytes
@@ -84,6 +84,13 @@ class ConfigManager:
         # TODO: Obtain this value from a config file
         util.settings.snapshots_to_keep = 2
 
+        # Snapshots
+        # Todo: Snapshots should be defined in a config file by the user
+        snapshot_one = filesystem.snapshot.Snapshot("/mnt/defvol/_active/rootvol/",
+                                                    "/mnt/defvol/_snapshots/",
+                                                    "root",
+                                                    util.settings.snapshots_to_keep)
+        util.settings.snapshots = [snapshot_one]
 
 class Logger(object):
     """Creates the logs of the application.

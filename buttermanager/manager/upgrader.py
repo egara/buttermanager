@@ -85,13 +85,8 @@ class Upgrader(QThread):
         sys.stdout.write("\n")
 
         # Creates all the snapshots needed before upgrading the system
-        # Todo: Snapshots should be defined in a config file by the user
-        snapshot_one = filesystem.snapshot.Snapshot("/mnt/defvol/_active/rootvol/",
-                                                    "/mnt/defvol/_snapshots/",
-                                                    "root",
-                                                    util.settings.snapshots_to_keep)
-        snapshots = [snapshot_one]
-        for snapshot in snapshots:
+
+        for snapshot in util.settings.snapshots:
             snapshot.create_snapshot()
 
         # Upgrades the system
@@ -130,7 +125,7 @@ class Upgrader(QThread):
         # Removes all the snapshots not needed any more
         sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
         sys.stdout.write("\n")
-        for snapshot in snapshots:
+        for snapshot in util.settings.snapshots:
             snapshot.delete_snapshot()
 
         self.__logger.info("System upgrading process finished.")
