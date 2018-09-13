@@ -311,8 +311,10 @@ class ButtermanagerMainWindow(QMainWindow):
         """Fills snapshots information in the GUI.
 
         """
-        list = ['snapshot1', 'snapshot2', 'snapshot3', 'snapshot4']
-        self.list_snapshots.addItems(list)
+        snapshots = []
+        for snapshot in util.settings.snapshots:
+            snapshots.extend(snapshot.get_all_snapshots_with_the_same_name())
+        self.list_snapshots.addItems(snapshots)
 
 
 if __name__ == '__main__':

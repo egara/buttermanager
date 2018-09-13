@@ -107,20 +107,32 @@ class Snapshot:
         self.__logger.info(info_message)
 
         # Checking how many snapshots are with the same name ordered by date
+        snapshots = self.get_all_snapshots_with_the_same_name()
+
+        # Removing all the snapshots needed starting with the oldest one until reach
+        # the limit defined by the user
+        snapshots_to_delete = len(snapshots) - self.snapshots_to_keep
+        index = 0
+        while snapshots_to_delete > 0:
+            command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
+            util.utils.execute_command(command, console=True)
+            info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
+            self.__logger.info(info_message)
+            snapshots_to_delete -= 1
+            index += 1
+
+    def get_all_snapshots_with_the_same_name(self):
+        """Retrieves all the snapshots with name self.snapshot_name stored within self.subvolume_dest.
+
+        Returns:
+            list (:obj:`list` of :obj:`str`): paths to the snapshots.
+        """
+        # Checking how many snapshots are with the same name ordered by date
         snapshots = glob.glob("{snapshot_directory}/*".format(snapshot_directory=self.subvolume_dest))
         snapshots.sort(key=os.path.getmtime)
         snapshots_whit_same_name = [file for file in snapshots if self.snapshot_name in file]
 
-        # Removing all the snapshots needed starting with the oldest one until reach
-        # the limit defined by the user
-        snapshots_to_delete = len(snapshots_whit_same_name) - self.snapshots_to_keep
-        index = 0
-        while snapshots_to_delete > 0:
-            command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots_whit_same_name[index])
-            util.utils.execute_command(command, console=True)
-            info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots_whit_same_name[index])
-            self.__logger.info(info_message)
-            snapshots_to_delete -= 1
-            index += 1
+        return snapshots_whit_same_name
+
 
 # Module's methods
