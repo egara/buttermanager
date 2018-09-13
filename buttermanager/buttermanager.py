@@ -24,10 +24,9 @@ import util.utils
 import util.settings
 import manager.upgrader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-from PyQt5.QtGui import QCursor, QTextCursor
+from PyQt5.QtGui import QCursor, QTextCursor, QIcon
 from PyQt5 import uic
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize
 
 
 class EmittingStream(QObject):
@@ -167,6 +166,12 @@ class ButtermanagerMainWindow(QMainWindow):
             qt_rectangle.moveCenter(center_point)
             self.move(qt_rectangle.topLeft())
 
+            # Snapshot buttons
+            self.button_take_snapshot.setIcon(QIcon('images/add_16px_icon.png'))
+            self.button_take_snapshot.setIconSize(QSize(16, 16))
+            self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
+            self.button_delete_snapshot.setIconSize(QSize(16, 16))
+
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
             self.__current_filesystem_uuid = uuid_filesystems[0]
@@ -181,7 +186,7 @@ class ButtermanagerMainWindow(QMainWindow):
             # Displaying snapshots
             self.fill_snapshots()
 
-            # Button event
+            # Button events
             self.button_balance.clicked.connect(self.balance_filesystem)
             self.button_upgrade_system.clicked.connect(self.upgrade_system)
             self.button_close_terminal.clicked.connect(self.close_terminal)

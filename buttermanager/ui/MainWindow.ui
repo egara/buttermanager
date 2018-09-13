@@ -66,6 +66,9 @@
             <height>34</height>
            </rect>
           </property>
+          <property name="toolTip">
+           <string>Balance the selected filesystem</string>
+          </property>
           <property name="text">
            <string>Balance</string>
           </property>
@@ -78,6 +81,9 @@
             <width>121</width>
             <height>34</height>
            </rect>
+          </property>
+          <property name="toolTip">
+           <string>Upgrade the system creating a previous snapshot and removing old snapshots according to configuration</string>
           </property>
           <property name="text">
            <string>Upgrade System</string>
@@ -352,6 +358,41 @@
           </property>
           <property name="text">
            <string>Take snapshot</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_take_snapshot">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>173</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Take a BTRFS snapshot</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_delete_snapshot">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>213</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </widget>
