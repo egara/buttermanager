@@ -140,7 +140,7 @@ class Upgrader(QThread):
         sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
         sys.stdout.write("\n")
         for snapshot in util.settings.snapshots:
-            snapshot.delete_snapshot()
+            snapshot.delete_snapshots()
 
         sys.stdout.write("\n")
         sys.stdout.write("--------")

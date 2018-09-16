@@ -20,6 +20,7 @@
 
 import sys
 import filesystem.filesystem
+import filesystem.snapshot
 import util.utils
 import util.settings
 import manager.upgrader
@@ -190,6 +191,8 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_balance.clicked.connect(self.balance_filesystem)
             self.button_upgrade_system.clicked.connect(self.upgrade_system)
             self.button_close_terminal.clicked.connect(self.close_terminal)
+            self.button_take_snapshot.clicked.connect(self.take_snapshot)
+            self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -316,10 +319,31 @@ class ButtermanagerMainWindow(QMainWindow):
         """Fills snapshots information in the GUI.
 
         """
+        # Clearing the list
+        self.list_snapshots.clear()
+
+        # Adding the snapshots to the list
         snapshots = []
         for snapshot in util.settings.snapshots:
             snapshots.extend(snapshot.get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
+
+    def take_snapshot(self):
+        """Takes a BTRFS subvolume snapshot.
+
+        """
+        pass
+
+    def delete_snapshots(self):
+        """Deletes one or several BTRFS subvolume snapshots.
+
+        """
+        snapshots_to_delete = self.list_snapshots.selectedItems()
+        for snap in snapshots_to_delete:
+            filesystem.snapshot.delete_specific_snapshot(snap.text())
+
+        # Refreshing snapshots
+        self.fill_snapshots()
 
 
 if __name__ == '__main__':
