@@ -275,7 +275,7 @@ class ButtermanagerMainWindow(QMainWindow):
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.enable_buttons.connect(self.__enable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
-        self.__upgrader.refresh_filesystem_statistics.connect(self.refresh_filesystem_statistics)
+        self.__upgrader.refresh_gui.connect(self.refresh_gui)
 
         self.__upgrader.start()
 
@@ -316,10 +316,20 @@ class ButtermanagerMainWindow(QMainWindow):
         """Fills snapshots information in the GUI.
 
         """
+        # Resetting snapshots in the GUI
         snapshots = []
+        self.list_snapshots.addItems(snapshots)
+        # Loading the snapshots detected
         for snapshot in util.settings.snapshots:
             snapshots.extend(snapshot.get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
+
+    def refresh_gui(self):
+        """Refresh all the GUI elements.
+
+        """
+        self.refresh_filesystem_statistics()
+        self.fill_snapshots()
 
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ class Upgrader(QThread):
 
     # pyqtSignal that will be emitted when this class requires that main
     # window refreshes current filesystem statistics
-    refresh_filesystem_statistics = pyqtSignal()
+    refresh_gui = pyqtSignal()
 
     # Constructor
     def __init__(self):
@@ -148,8 +148,8 @@ class Upgrader(QThread):
         self.__logger.info("System upgrading process finished.")
         sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
 
-        # Refreshing current filesystem statistics
-        self.on_refresh_filesystem_statistics()
+        # Refreshing GUI
+        self.on_refresh_gui()
 
         # Finishing the upgrading process. Enabling all the buttons.
         self.on_enable_gui_buttons()
@@ -166,8 +166,8 @@ class Upgrader(QThread):
         """
         self.enable_buttons.emit()
 
-    def on_refresh_filesystem_statistics(self):
+    def on_refresh_gui(self):
         """Emits a QT Signal to refresh filesystem statistics in main window.
 
         """
-        self.refresh_filesystem_statistics.emit()
+        self.refresh_gui.emit()
