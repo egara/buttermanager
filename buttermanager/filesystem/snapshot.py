@@ -24,6 +24,7 @@ It provides also Snapshot class.
 """
 import glob
 import os
+import sys
 import time
 import util.utils
 
@@ -97,7 +98,7 @@ class Snapshot:
         )
         util.utils.execute_command(command, console=True)
 
-    def delete_snapshot(self):
+    def delete_snapshots(self):
         """Deletes all the snapshots needed to keep the desired number set by the user.
 
         """
@@ -136,3 +137,19 @@ class Snapshot:
 
 
 # Module's methods
+def delete_specific_snapshot(snapshot_full_path):
+    """Deletes a specific snapshot.
+
+    Arguments:
+        snapshot_full_path (string): path to the snapshot that user wants to delete.
+
+    """
+    # Logger
+    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    info_message = "Deleting snapshot {snapshot}".format(snapshot=snapshot_full_path)
+    logger.info(info_message)
+
+    command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshot_full_path)
+    util.utils.execute_command(command)
+    info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshot_full_path)
+    logger.info(info_message)
