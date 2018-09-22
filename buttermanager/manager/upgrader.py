@@ -63,10 +63,12 @@ class Upgrader(QThread):
     refresh_gui = pyqtSignal()
 
     # Constructor
-    def __init__(self):
+    def __init__(self, dont_remove_snapshots):
         QThread.__init__(self)
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        # Dont' remove snapshots when upgrading the system
+        self.__dont_remove_snapthosts = dont_remove_snapshots
 
     # Methods
     def run(self):
@@ -133,14 +135,15 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
 
-        # Removes all the snapshots not needed any more
-        sys.stdout.write("\n")
-        sys.stdout.write("--------")
-        sys.stdout.write("\n")
-        sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
-        sys.stdout.write("\n")
-        for snapshot in util.settings.snapshots:
-            snapshot.delete_snapshots()
+        # Removes all the snapshots not needed any more it it is needed
+        if not self.__dont_remove_snapthosts:
+            sys.stdout.write("\n")
+            sys.stdout.write("--------")
+            sys.stdout.write("\n")
+            sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
+            sys.stdout.write("\n")
+            for snapshot in util.settings.snapshots:
+                snapshot.delete_snapshots()
 
         sys.stdout.write("\n")
         sys.stdout.write("--------")

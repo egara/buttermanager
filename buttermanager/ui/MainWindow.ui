@@ -326,6 +326,19 @@
            <string>?</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
+          <property name="geometry">
+           <rect>
+            <x>173</x>
+            <y>376</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Don't remove any snapshot</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_snapshots">
          <attribute name="title">
