@@ -34,7 +34,7 @@ BTRFS_DELETE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume delete"
 
 
 # Classes
-class Snapshot:
+class Subvolume:
     """BTRFS Snapshot.
 
     """

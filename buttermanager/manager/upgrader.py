@@ -21,7 +21,6 @@
 """This module gathers all the managers built for the application.
 
 """
-import filesystem.snapshot
 import sys
 import util.utils
 from PyQt5.QtCore import QThread, pyqtSignal
