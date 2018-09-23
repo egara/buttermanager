@@ -89,7 +89,7 @@ class Upgrader(QThread):
 
         # Creates all the snapshots needed before upgrading the system
 
-        for snapshot in util.settings.snapshots:
+        for snapshot in util.settings.subvolumes:
             snapshot.create_snapshot()
 
         # Upgrades the system
@@ -141,7 +141,7 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
             sys.stdout.write("\n")
-            for snapshot in util.settings.snapshots:
+            for snapshot in util.settings.subvolumes:
                 snapshot.delete_snapshots()
 
         sys.stdout.write("\n")

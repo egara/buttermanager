@@ -86,11 +86,12 @@ class ConfigManager:
 
         # Snapshots
         # Todo: Snapshots should be defined in a config file by the user
-        snapshot_one = filesystem.snapshot.Subvolume("/mnt/defvol/_active/rootvol/",
+        subvolume_one = filesystem.snapshot.Subvolume("/mnt/defvol/_active/rootvol/",
                                                     "/mnt/defvol/_snapshots/",
                                                     "root",
                                                      util.settings.snapshots_to_keep)
-        util.settings.snapshots = [snapshot_one]
+        util.settings.subvolumes = [subvolume_one]
+
 
 class Logger(object):
     """Creates the logs of the application.

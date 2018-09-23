@@ -18,12 +18,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import filesystem.filesystem
 import filesystem.snapshot
+import manager.upgrader
+import sys
 import util.utils
 import util.settings
-import manager.upgrader
+import window.windows
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon
 from PyQt5 import uic
@@ -330,8 +331,8 @@ class ButtermanagerMainWindow(QMainWindow):
         snapshots = []
         self.list_snapshots.addItems(snapshots)
         # Loading the snapshots detected
-        for snapshot in util.settings.snapshots:
-            snapshots.extend(snapshot.get_all_snapshots_with_the_same_name())
+        for subvolume in util.settings.subvolumes:
+            snapshots.extend(subvolume.get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
 
     def refresh_gui(self):
@@ -345,7 +346,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """Takes a BTRFS subvolume snapshot.
 
         """
-        pass
+        snapshot_window = window.windows.SnapshotWindow(self)
+        # Displaying snapshot window
+        snapshot_window.show()
 
     def delete_snapshots(self):
         """Deletes one or several BTRFS subvolume snapshots.

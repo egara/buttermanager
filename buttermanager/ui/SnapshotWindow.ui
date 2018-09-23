@@ -55,7 +55,7 @@
     <string>One spec&amp;ific subvolume</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="combobox_subvolume">
+  <widget class="QComboBox" name="combobox_subvolumes">
    <property name="geometry">
     <rect>
      <x>113</x>

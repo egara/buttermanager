@@ -21,6 +21,7 @@
 """This module gathers all the additional windows for displaying information in the application.
 
 """
+import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog
 from PyQt5 import uic, QtCore
 
@@ -60,3 +61,65 @@ class InfoWindow(QDialog):
 
         # Setting information
         self.label_info.setText(information)
+
+
+class SnapshotWindow(QDialog):
+    """Window to select a subvolume to take a snapshot.
+
+    """
+    # Constructor
+    def __init__(self, parent):
+        QDialog.__init__(self, parent)
+        self.parent = parent
+        self.__snapshots = {}
+        for subvolume in util.settings.subvolumes:
+            self.__snapshots[subvolume.subvolume_origin] = subvolume
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/SnapshotWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Loading GUI components
+        self.enable_all_subvolumes()
+
+        # Retrieveing subvolumes
+        subvolumes = []
+        for subvolume in self.__snapshots:
+            subvolumes.append(subvolume)
+        self.combobox_subvolumes.addItems(subvolumes)
+
+        # Button events
+        self.radiobutton_all_subvolumes.clicked.connect(self.enable_all_subvolumes)
+        self.radiobutton_one_subvolume.clicked.connect(self.enable_one_subvolume)
+
+    def enable_all_subvolumes(self):
+        """Enables all subvolumes option.
+
+        """
+        self.radiobutton_all_subvolumes.setEnabled(True)
+        self.radiobutton_all_subvolumes.setChecked(True)
+        self.radiobutton_one_subvolume.setEnabled(True)
+        self.radiobutton_one_subvolume.setChecked(False)
+        self.combobox_subvolumes.setEnabled(False)
+
+    def enable_one_subvolume(self):
+        """Enables one subvolume option.
+
+        """
+        self.radiobutton_all_subvolumes.setEnabled(True)
+        self.radiobutton_all_subvolumes.setChecked(False)
+        self.radiobutton_one_subvolume.setEnabled(True)
+        self.radiobutton_one_subvolume.setChecked(True)
+        self.combobox_subvolumes.setEnabled(True)
