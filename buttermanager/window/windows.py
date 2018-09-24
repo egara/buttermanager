@@ -22,7 +22,7 @@
 
 """
 import util.settings
-from PyQt5.QtWidgets import QDesktopWidget, QDialog
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow
 from PyQt5 import uic, QtCore
 
 
@@ -63,17 +63,21 @@ class InfoWindow(QDialog):
         self.label_info.setText(information)
 
 
-class SnapshotWindow(QDialog):
+class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
 
     """
     # Constructor
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QMainWindow.__init__(self, parent)
         self.parent = parent
-        self.__snapshots = {}
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        # Subvolumes
+        self.__subvolumes = {}
         for subvolume in util.settings.subvolumes:
-            self.__snapshots[subvolume.subvolume_origin] = subvolume
+            self.__subvolumes[subvolume.subvolume_origin] = subvolume
 
         # Initializing the window
         self.init_ui()
@@ -96,13 +100,15 @@ class SnapshotWindow(QDialog):
 
         # Retrieveing subvolumes
         subvolumes = []
-        for subvolume in self.__snapshots:
+        for subvolume in self.__subvolumes:
             subvolumes.append(subvolume)
         self.combobox_subvolumes.addItems(subvolumes)
 
         # Button events
         self.radiobutton_all_subvolumes.clicked.connect(self.enable_all_subvolumes)
         self.radiobutton_one_subvolume.clicked.connect(self.enable_one_subvolume)
+        self.button_ok.clicked.connect(self.take_snapshot)
+        self.button_cancel.clicked.connect(self.cancel)
 
     def enable_all_subvolumes(self):
         """Enables all subvolumes option.
@@ -123,3 +129,15 @@ class SnapshotWindow(QDialog):
         self.radiobutton_one_subvolume.setEnabled(True)
         self.radiobutton_one_subvolume.setChecked(True)
         self.combobox_subvolumes.setEnabled(True)
+
+    def take_snapshot(self):
+        """Takes a snapshot of the selected subvolume.
+
+        """
+        self.__logger.info(self.combobox_subvolumes.currentText())
+
+    def cancel(self):
+        """Closes the window.
+
+        """
+        self.close()

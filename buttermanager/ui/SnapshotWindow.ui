@@ -1,104 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SnapshotWindow</class>
- <widget class="QDialog" name="SnapshotWindow">
+ <widget class="QMainWindow" name="SnapshotWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>301</height>
+    <width>640</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Take a snapshot</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>250</y>
-     <width>621</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QRadioButton" name="radiobutton_all_subvolumes">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>34</y>
+      <width>311</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>All s&amp;ubvolumes</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radiobutton_one_subvolume">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>64</y>
+      <width>261</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>One speci&amp;fic subvolume</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="combobox_subvolumes">
+    <property name="geometry">
+     <rect>
+      <x>113</x>
+      <y>94</y>
+      <width>411</width>
+      <height>32</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_ok">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>220</y>
+      <width>88</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>OK</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_cancel">
+    <property name="geometry">
+     <rect>
+      <x>545</x>
+      <y>220</y>
+      <width>88</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cancel</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QRadioButton" name="radiobutton_all_subvolumes">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>50</y>
-     <width>311</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>A&amp;ll subvolumes</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radiobutton_one_subvolume">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>80</y>
-     <width>261</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>One spec&amp;ific subvolume</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="combobox_subvolumes">
-   <property name="geometry">
-    <rect>
-     <x>113</x>
-     <y>110</y>
-     <width>411</width>
-     <height>32</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>SnapshotWindow</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>SnapshotWindow</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
