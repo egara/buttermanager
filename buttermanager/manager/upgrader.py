@@ -58,7 +58,7 @@ class Upgrader(QThread):
     enable_buttons = pyqtSignal()
 
     # pyqtSignal that will be emitted when this class requires that main
-    # window refreshes current filesystem statistics
+    # window refreshes GUI
     refresh_gui = pyqtSignal()
 
     # Constructor

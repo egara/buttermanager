@@ -24,6 +24,7 @@
 import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow
 from PyQt5 import uic, QtCore
+from PyQt5.QtCore import pyqtSignal
 
 
 class InfoWindow(QDialog):
@@ -67,6 +68,10 @@ class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
 
     """
+    # pyqtSignal that will be emitted when this class requires that main
+    # window refreshes GUI
+    refresh_gui = pyqtSignal()
+
     # Constructor
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
@@ -134,10 +139,23 @@ class SnapshotWindow(QMainWindow):
         """Takes a snapshot of the selected subvolume.
 
         """
-        self.__logger.info(self.combobox_subvolumes.currentText())
+        subvolume_selected = self.combobox_subvolumes.currentText()
+        self.__subvolumes[subvolume_selected].create_snapshot()
+
+        # Refreshing GUI
+        self.on_refresh_gui()
+
+        # Closes the window
+        self.cancel()
 
     def cancel(self):
         """Closes the window.
 
         """
         self.close()
+
+    def on_refresh_gui(self):
+        """Emits a QT Signal to refresh main window GUI.
+
+        """
+        self.refresh_gui.emit()

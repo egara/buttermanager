@@ -347,6 +347,8 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         snapshot_window = window.windows.SnapshotWindow(self)
+        # Connecting the signal emitted by the snapshot window with this slot
+        snapshot_window.refresh_gui.connect(self.refresh_gui)
         # Displaying snapshot window
         snapshot_window.show()
 
