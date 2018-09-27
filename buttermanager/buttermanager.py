@@ -309,6 +309,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system.setEnabled(False)
         self.button_close_terminal.setEnabled(False)
         self.checkbox_dont_remove_snapshots.setEnabled(False)
+        self.button_take_snapshot.setEnabled(False)
+        self.button_delete_snapshot.setEnabled(False)
 
     def __enable_buttons(self):
         """Enable all the buttons of the GUI.
@@ -318,6 +320,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system.setEnabled(True)
         self.button_close_terminal.setEnabled(True)
         self.checkbox_dont_remove_snapshots.setEnabled(True)
+        self.button_take_snapshot.setEnabled(True)
+        self.button_delete_snapshot.setEnabled(True)
 
     def fill_snapshots(self):
         """Fills snapshots information in the GUI.
