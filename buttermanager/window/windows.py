@@ -139,8 +139,12 @@ class SnapshotWindow(QMainWindow):
         """Takes a snapshot of the selected subvolume.
 
         """
-        subvolume_selected = self.combobox_subvolumes.currentText()
-        self.__subvolumes[subvolume_selected].create_snapshot()
+        if self.radiobutton_all_subvolumes.isChecked():
+            for subvolume in self.__subvolumes:
+                self.__subvolumes[subvolume].create_snapshot()
+        else:
+            subvolume_selected = self.combobox_subvolumes.currentText()
+            self.__subvolumes[subvolume_selected].create_snapshot()
 
         # Refreshing GUI
         self.on_refresh_gui()
