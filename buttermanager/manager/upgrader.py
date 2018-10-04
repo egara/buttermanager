@@ -30,6 +30,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import util.utils
 import util.settings
 
+ARCH_PACMAN_REFRESH_REPOSITORIES = "sudo -S pacman -Sy"
 ARCH_PACMAN_CHECK_UPDATES = "sudo -S pacman -Qu"
 ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
 DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
@@ -195,6 +196,8 @@ class Upgrader(QThread):
 
         updates = False
         if util.settings.user_os == util.utils.OS_ARCH:
+            refresh_repositories_command = ARCH_PACMAN_REFRESH_REPOSITORIES
+            util.utils.execute_command(refresh_repositories_command)
             check_for_updates_command = ARCH_PACMAN_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
 
