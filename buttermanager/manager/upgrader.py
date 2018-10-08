@@ -24,12 +24,10 @@
 import sys
 import util.utils
 from PyQt5.QtCore import QThread, pyqtSignal
-
-
-# Constants
 import util.utils
 import util.settings
 
+# Constants
 ARCH_PACMAN_REFRESH_REPOSITORIES = "sudo -S pacman -Sy"
 ARCH_PACMAN_CHECK_UPDATES = "sudo -S pacman -Qu"
 ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
@@ -64,12 +62,16 @@ class Upgrader(QThread):
     refresh_gui = pyqtSignal()
 
     # Constructor
-    def __init__(self, dont_remove_snapshots):
+    def __init__(self, dont_remove_snapshots, include_aur, include_snap):
         QThread.__init__(self)
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Dont' remove snapshots when upgrading the system
         self.__dont_remove_snapthosts = dont_remove_snapshots
+        # Include AUR packages upgrade
+        self.__include_aur = include_aur
+        # Include snap packages upgrade
+        self.__include_snap = include_snap
 
     # Methods
     def run(self):
@@ -121,26 +123,28 @@ class Upgrader(QThread):
 
             # Upgrades AUR if distro is ArchLinux or derivatives
             if util.settings.user_os == util.utils.OS_ARCH:
-                sys.stdout.write("\n")
-                sys.stdout.write("--------")
-                sys.stdout.write("\n")
-                sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
-                sys.stdout.write("\n")
-                if util.utils.exist_program(ARCH_YAY_COMMAND):
-                    util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
-                elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
-                    util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
-                elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
-                    util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
+                if self.__include_aur:
+                    sys.stdout.write("\n")
+                    sys.stdout.write("--------")
+                    sys.stdout.write("\n")
+                    sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
+                    sys.stdout.write("\n")
+                    if util.utils.exist_program(ARCH_YAY_COMMAND):
+                        util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
+                    elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
+                        util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
+                    elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
+                        util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
 
             # Upgrades snap packages
-            if util.utils.exist_program(SNAP_COMMAND):
-                sys.stdout.write("\n")
-                sys.stdout.write("--------")
-                sys.stdout.write("\n")
-                sys.stdout.write("Updating snaps. Please wait...")
-                sys.stdout.write("\n")
-                util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
+            if self.__include_snap:
+                if util.utils.exist_program(SNAP_COMMAND):
+                    sys.stdout.write("\n")
+                    sys.stdout.write("--------")
+                    sys.stdout.write("\n")
+                    sys.stdout.write("Updating snaps. Please wait...")
+                    sys.stdout.write("\n")
+                    util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
 
             # Removes all the snapshots not needed any more it it is needed
             if not self.__dont_remove_snapthosts:
@@ -163,8 +167,8 @@ class Upgrader(QThread):
 
         else:
             # There are not system updates
-            self.__logger.info("There are not system updates.")
-            sys.stdout.write("There are not system updates. You can close the terminal output now.")
+            self.__logger.info("Your system is up to date.")
+            sys.stdout.write("Your system is up to date. You can close the terminal output now.")
 
         # Finishing the upgrading process. Enabling all the buttons.
         self.on_enable_gui_buttons()

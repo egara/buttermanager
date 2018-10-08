@@ -30,6 +30,8 @@ from PyQt5.QtGui import QCursor, QTextCursor, QIcon
 from PyQt5 import uic
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize
 
+# Constants
+SNAP_COMMAND = "snap"
 
 class EmittingStream(QObject):
 
@@ -188,6 +190,12 @@ class ButtermanagerMainWindow(QMainWindow):
             # Displaying snapshots
             self.fill_snapshots()
 
+            # Displaying settings
+            if util.settings.user_os == util.utils.OS_ARCH:
+                self.checkbox_aur.show()
+            else:
+                self.checkbox_aur.hide()
+
             # Button events
             self.button_balance.clicked.connect(self.balance_filesystem)
             self.button_upgrade_system.clicked.connect(self.upgrade_system)
@@ -272,9 +280,16 @@ class ButtermanagerMainWindow(QMainWindow):
         # Adjusting the window
         self.adjustSize()
 
-        # Upgrading the system
+        # Gathering user settings
         dont_remove_snapshots = self.checkbox_dont_remove_snapshots.isChecked()
-        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots)
+        include_aur = False
+        if util.settings.user_os == util.utils.OS_ARCH:
+            include_aur = self.checkbox_aur.isChecked()
+        include_snap = False
+        if util.utils.exist_program(SNAP_COMMAND):
+            include_snap = self.checkbox_snap.isChecked()
+        # Upgrading the system
+        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur, include_snap)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot

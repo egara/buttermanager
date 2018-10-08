@@ -326,19 +326,6 @@
            <string>?</string>
           </property>
          </widget>
-         <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
-          <property name="geometry">
-           <rect>
-            <x>173</x>
-            <y>376</y>
-            <width>201</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Don't remove any snapshot</string>
-          </property>
-         </widget>
         </widget>
         <widget class="QWidget" name="tab_snapshots">
          <attribute name="title">
@@ -413,6 +400,65 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
+         <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>335</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Don't remove any snapshot</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_settings_upgrade">
+          <property name="geometry">
+           <rect>
+            <x>22</x>
+            <y>310</y>
+            <width>141</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="text">
+           <string>Upgrade System</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkbox_aur">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>381</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Include AUR packages</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkbox_snap">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>358</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Include snap packages</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">
