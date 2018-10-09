@@ -459,6 +459,29 @@
            <string>Include snap packages</string>
           </property>
          </widget>
+         <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>336</y>
+            <width>41</width>
+            <height>21</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_snapshots_to_keep">
+          <property name="geometry">
+           <rect>
+            <x>246</x>
+            <y>336</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Snapshots to keep</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">

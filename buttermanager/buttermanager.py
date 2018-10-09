@@ -190,7 +190,16 @@ class ButtermanagerMainWindow(QMainWindow):
             # Displaying snapshots
             self.fill_snapshots()
 
-            # Displaying settings
+            # Displaying settings options
+            self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
+
+            if self.checkbox_dont_remove_snapshots.isChecked():
+                self.label_snapshots_to_keep.hide()
+                self.spinbox_snapshots_to_keep.hide()
+            else:
+                self.label_snapshots_to_keep.show()
+                self.spinbox_snapshots_to_keep.show()
+
             if util.settings.user_os == util.utils.OS_ARCH:
                 self.checkbox_aur.show()
             else:
@@ -202,6 +211,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_close_terminal.clicked.connect(self.close_terminal)
             self.button_take_snapshot.clicked.connect(self.take_snapshot)
             self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+            self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -381,6 +391,14 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Refreshing GUI
         self.refresh_gui()
+
+    def dont_remove_snapshots(self):
+        if self.checkbox_dont_remove_snapshots.isChecked():
+            self.label_snapshots_to_keep.hide()
+            self.spinbox_snapshots_to_keep.hide()
+        else:
+            self.label_snapshots_to_keep.show()
+            self.spinbox_snapshots_to_keep.show()
 
 
 if __name__ == '__main__':
