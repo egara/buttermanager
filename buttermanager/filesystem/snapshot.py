@@ -39,13 +39,12 @@ class Subvolume:
 
     """
     # Constructor
-    def __init__(self, subvolume_origin, subvolume_dest, snapshot_name, snapshots_to_keep):
+    def __init__(self, subvolume_origin, subvolume_dest, snapshot_name):
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         self.__subvolume_origin = subvolume_origin
         self.__subvolume_dest = subvolume_dest
         self.__snapshot_name = snapshot_name
-        self.__snapshots_to_keep = snapshots_to_keep
         self.__current_date = time.strftime('%Y%m%d')
 
     # Private attributes
@@ -63,11 +62,6 @@ class Subvolume:
     @property
     def snapshot_name(self):
         return self.__snapshot_name
-
-    # Number of snapshots to keep
-    @property
-    def snapshots_to_keep(self):
-        return self.__snapshots_to_keep
 
     # Methods
     # Private methods
@@ -98,8 +92,11 @@ class Subvolume:
         )
         util.utils.execute_command(command, console=True)
 
-    def delete_snapshots(self):
+    def delete_snapshots(self, snapshots_to_keep):
         """Deletes all the snapshots needed to keep the desired number set by the user.
+
+        Arguments:
+            snapshots_to_keep (int): number of snapshots to keep in the filesystem.
 
         """
         info_message = "Deleting snapshot of {subvolume_origin} in {subvolume_dest}. " \
@@ -112,7 +109,7 @@ class Subvolume:
 
         # Removing all the snapshots needed starting with the oldest one until reach
         # the limit defined by the user
-        snapshots_to_delete = len(snapshots) - self.snapshots_to_keep
+        snapshots_to_delete = len(snapshots) - snapshots_to_keep
         index = 0
         while snapshots_to_delete > 0:
             command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
