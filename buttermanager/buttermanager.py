@@ -465,6 +465,17 @@ class ButtermanagerMainWindow(QMainWindow):
         subvolume_selected = self.combobox_subvolumes.currentText()
         self.__subvolumes[subvolume_selected].subvolume_dest = new_snapshot_where
         self.__subvolumes[subvolume_selected].snapshot_name = new_snapshot_prefix
+
+        # TODO: Store new values in config file
+        
+        # Refreshing components
+        self.__refresh_subvolumes()
+        self.refresh_gui()
+
+    def __refresh_subvolumes(self):
+        """Refreshes subvolumes.
+
+        """
         util.settings.subvolumes = []
         for subvolume in self.__subvolumes:
             new_subvolume = filesystem.snapshot.Subvolume(self.__subvolumes[subvolume].subvolume_origin,
