@@ -177,6 +177,9 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_snapshot.setIconSize(QSize(16, 16))
 
             # Subvolume buttons
+            self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
+            self.button_save_subvolume.setIconSize(QSize(16, 16))
+            self.button_save_subvolume.hide()
             self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
             self.button_edit_subvolume.setIconSize(QSize(16, 16))
             self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
@@ -232,6 +235,8 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
             self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
             self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
+            self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
+            self.button_save_subvolume.clicked.connect(self.save_subvolume)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -413,6 +418,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.refresh_gui()
 
     def dont_remove_snapshots(self):
+        """Actions when user checks don't remove snapshots.
+
+        """
         if self.checkbox_dont_remove_snapshots.isChecked():
             self.label_snapshots_to_keep.hide()
             self.spinbox_snapshots_to_keep.hide()
@@ -421,9 +429,32 @@ class ButtermanagerMainWindow(QMainWindow):
             self.spinbox_snapshots_to_keep.show()
 
     def snapshots_to_keep_valuechange(self):
+        """Actions when user changes the value of the snapshots to keep.
+
+        """
         # Storing value in settings
         util.settings.snapshots_to_keep = self.spinbox_snapshots_to_keep.value()
         # TODO: Storing value in the configuration file
+
+    def edit_subvolume(self):
+        """Actions when user wants to edit a defined subvolume.
+
+        """
+        self.button_save_subvolume.show()
+        self.button_edit_subvolume.hide()
+        self.button_delete_subvolume.hide()
+        self.line_edit_snapshot_where.setDisabled(False)
+        self.line_edit_snapshot_prefix.setDisabled(False)
+
+    def save_subvolume(self):
+        """Actions when user finishes to edit a subvolume.
+
+        """
+        self.button_save_subvolume.hide()
+        self.button_edit_subvolume.show()
+        self.button_delete_subvolume.show()
+        self.line_edit_snapshot_where.setDisabled(True)
+        self.line_edit_snapshot_prefix.setDisabled(True)
 
 
 if __name__ == '__main__':

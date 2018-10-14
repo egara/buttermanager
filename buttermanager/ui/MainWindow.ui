@@ -522,7 +522,7 @@
            </rect>
           </property>
           <property name="readOnly">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
          <widget class="QLineEdit" name="line_edit_snapshot_prefix">
@@ -535,7 +535,7 @@
            </rect>
           </property>
           <property name="readOnly">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
          <widget class="QPushButton" name="button_edit_subvolume">
@@ -548,7 +548,7 @@
            </rect>
           </property>
           <property name="toolTip">
-           <string>Remove one or several BTRF snapshots</string>
+           <string>Edit subvolume configuration</string>
           </property>
           <property name="text">
            <string/>
@@ -564,7 +564,7 @@
            </rect>
           </property>
           <property name="toolTip">
-           <string>Remove one or several BTRF snapshots</string>
+           <string>Remove the selected subvolume</string>
           </property>
           <property name="text">
            <string/>
@@ -619,6 +619,22 @@
           </property>
           <property name="text">
            <string>(Prefix of the snapshot stored)</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_save_subvolume">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>37</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Apply changes</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </widget>
