@@ -482,6 +482,107 @@
            <string>Snapshots to keep</string>
           </property>
          </widget>
+         <widget class="QLabel" name="label_settings_subvolumes">
+          <property name="geometry">
+           <rect>
+            <x>22</x>
+            <y>10</y>
+            <width>141</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="text">
+           <string>Subvolumes</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="combobox_subvolumes">
+          <property name="geometry">
+           <rect>
+            <x>21</x>
+            <y>38</y>
+            <width>411</width>
+            <height>32</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="line_edit_snapshot_where">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>80</y>
+            <width>411</width>
+            <height>32</height>
+           </rect>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="line_edit_snapshot_prefix">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>121</y>
+            <width>411</width>
+            <height>32</height>
+           </rect>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_edit_subvolume">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>37</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_delete_subvolume">
+          <property name="geometry">
+           <rect>
+            <x>507</x>
+            <y>37</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_add_subvolume">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>180</y>
+            <width>111</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add subvolume</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">
