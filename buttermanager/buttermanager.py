@@ -218,6 +218,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_take_snapshot.clicked.connect(self.take_snapshot)
             self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
             self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
+            self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -405,6 +406,11 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             self.label_snapshots_to_keep.show()
             self.spinbox_snapshots_to_keep.show()
+
+    def snapshots_to_keep_valuechange(self):
+        # Storing value in settings
+        util.settings.snapshots_to_keep = self.spinbox_snapshots_to_keep.value()
+        # TODO: Storing value in the configuration file
 
 
 if __name__ == '__main__':
