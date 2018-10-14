@@ -112,6 +112,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.parent = parent
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        # Retrieving subvolumes
+        self.__subvolumes = {}
+        for subvolume in util.settings.subvolumes:
+            self.__subvolumes[subvolume.subvolume_origin] = subvolume
         # Current filesystem (it will be initialize in initialize method)
         self.__current_filesystem = None
         # Current filesystem uuid (it will be initialize in initialize method)
@@ -186,17 +190,14 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_subvolume.setIconSize(QSize(16, 16))
 
             # Retrieving subvolumes
-            subvolumes = {}
-            for subvolume in util.settings.subvolumes:
-                subvolumes[subvolume.subvolume_origin] = subvolume
             list_subvolumes = []
-            for subvolume in subvolumes:
+            for subvolume in self.__subvolumes:
                 list_subvolumes.append(subvolume)
-            self.combobox_subvolumes.addItems(subvolumes)
+            self.combobox_subvolumes.addItems(list_subvolumes)
             self.line_edit_snapshot_where.setDisabled(True)
-            self.line_edit_snapshot_where.setText(subvolumes[list_subvolumes[0]].subvolume_dest)
+            self.line_edit_snapshot_where.setText(self.__subvolumes[list_subvolumes[0]].subvolume_dest)
             self.line_edit_snapshot_prefix.setDisabled(True)
-            self.line_edit_snapshot_prefix.setText(subvolumes[list_subvolumes[0]].snapshot_name)
+            self.line_edit_snapshot_prefix.setText(self.__subvolumes[list_subvolumes[0]].snapshot_name)
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
@@ -440,6 +441,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Actions when user wants to edit a defined subvolume.
 
         """
+        # Buttons management
         self.button_save_subvolume.show()
         self.button_edit_subvolume.hide()
         self.button_delete_subvolume.hide()
@@ -450,11 +452,25 @@ class ButtermanagerMainWindow(QMainWindow):
         """Actions when user finishes to edit a subvolume.
 
         """
+        # Buttons management
         self.button_save_subvolume.hide()
         self.button_edit_subvolume.show()
         self.button_delete_subvolume.show()
         self.line_edit_snapshot_where.setDisabled(True)
         self.line_edit_snapshot_prefix.setDisabled(True)
+
+        # Storing the modified values
+        new_snapshot_where = self.line_edit_snapshot_where.text()
+        new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
+        subvolume_selected = self.combobox_subvolumes.currentText()
+        self.__subvolumes[subvolume_selected].subvolume_dest = new_snapshot_where
+        self.__subvolumes[subvolume_selected].snapshot_name = new_snapshot_prefix
+        util.settings.subvolumes = []
+        for subvolume in self.__subvolumes:
+            new_subvolume = filesystem.snapshot.Subvolume(self.__subvolumes[subvolume].subvolume_origin,
+                                                          self.__subvolumes[subvolume].subvolume_dest,
+                                                          self.__subvolumes[subvolume].snapshot_name)
+            util.settings.subvolumes.append(new_subvolume)
 
 
 if __name__ == '__main__':
