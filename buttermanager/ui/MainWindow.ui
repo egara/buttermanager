@@ -583,6 +583,44 @@
            <string>Add subvolume</string>
           </property>
          </widget>
+         <widget class="QLabel" name="label_settings_subvolumes_where">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>86</y>
+            <width>301</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>(Path where the snapshot of the subvolume is stored)</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_settings_subvolumes_prefix">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>126</y>
+            <width>301</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>(Prefix of the snapshot stored)</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">

@@ -182,6 +182,19 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
             self.button_delete_subvolume.setIconSize(QSize(16, 16))
 
+            # Retrieving subvolumes
+            subvolumes = {}
+            for subvolume in util.settings.subvolumes:
+                subvolumes[subvolume.subvolume_origin] = subvolume
+            list_subvolumes = []
+            for subvolume in subvolumes:
+                list_subvolumes.append(subvolume)
+            self.combobox_subvolumes.addItems(subvolumes)
+            self.line_edit_snapshot_where.setDisabled(True)
+            self.line_edit_snapshot_where.setText(subvolumes[list_subvolumes[0]].subvolume_dest)
+            self.line_edit_snapshot_prefix.setDisabled(True)
+            self.line_edit_snapshot_prefix.setText(subvolumes[list_subvolumes[0]].snapshot_name)
+
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
             self.__current_filesystem_uuid = uuid_filesystems[0]
