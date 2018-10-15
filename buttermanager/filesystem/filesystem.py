@@ -324,14 +324,14 @@ def balance_filesystem(filter, percentage, mounted_point):
                                                                         filter=filter,
                                                                         percentage=percentage,
                                                                         mounted_point=mounted_point)
-
+    logger.info("Command executed {command}".format(command=command))
     commandline_output = util.utils.execute_command(command)
     for line in commandline_output.split("\n"):
         logger.info(line)
 
 
 class BalanceManager(QThread):
-    """Indepented thread that will run the filesystem balancing process.
+    """Independent thread that will run the filesystem balancing process.
 
     """
     # Attributes
@@ -344,9 +344,10 @@ class BalanceManager(QThread):
     refresh_filesystem_statistics = pyqtSignal()
 
     # Constructor
-    def __init__(self, percentage, mounted_point):
+    def __init__(self, data_percentage, metadata_percentage, mounted_point):
         QThread.__init__(self)
-        self.__percentage = percentage
+        self.__data_percentage = data_percentage
+        self.__metadata_percentage = metadata_percentage
         self.__mounted_point = mounted_point
 
     # Methods
@@ -379,12 +380,12 @@ class BalanceManager(QThread):
         # Balancing data
         balance_filesystem(
             BTRFS_BALANCE_DATA_USAGE_FILTER,
-            self.__percentage,
+            self.__data_percentage,
             self.__mounted_point)
         # Balancing metadata
         balance_filesystem(
             BTRFS_BALANCE_METADATA_USAGE_FILTER,
-            self.__percentage,
+            self.__metadata_percentage,
             self.__mounted_point)
 
     def on_show_one_window(self, one_window):

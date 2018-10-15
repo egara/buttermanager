@@ -251,6 +251,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         self.__balancer = filesystem.filesystem.BalanceManager(self.__current_filesystem.data_percentage,
+                                                               self.__current_filesystem.metadata_percentage,
                                                                self.__current_filesystem.mounted_points[0])
         self.__balancer.show_one_window.connect(self.manage_window)
         # Connecting the signal emitted by the balancer with this slot
