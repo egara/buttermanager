@@ -189,16 +189,6 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
             self.button_delete_subvolume.setIconSize(QSize(16, 16))
 
-            # Retrieving subvolumes
-            list_subvolumes = []
-            for subvolume in self.__subvolumes:
-                list_subvolumes.append(subvolume)
-            self.combobox_subvolumes.addItems(list_subvolumes)
-            self.line_edit_snapshot_where.setDisabled(True)
-            self.line_edit_snapshot_where.setText(self.__subvolumes[list_subvolumes[0]].subvolume_dest)
-            self.line_edit_snapshot_prefix.setDisabled(True)
-            self.line_edit_snapshot_prefix.setText(self.__subvolumes[list_subvolumes[0]].snapshot_name)
-
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
             self.__current_filesystem_uuid = uuid_filesystems[0]
@@ -213,8 +203,25 @@ class ButtermanagerMainWindow(QMainWindow):
             # Displaying snapshots
             self.fill_snapshots()
 
-            # Displaying settings options
+            # BEGIN -- Displaying settings options
+            # Retrieving subvolumes
+            list_subvolumes = []
+            for subvolume in self.__subvolumes:
+                list_subvolumes.append(subvolume)
+            self.combobox_subvolumes.addItems(list_subvolumes)
+            self.line_edit_snapshot_where.setDisabled(True)
+            self.line_edit_snapshot_where.setText(self.__subvolumes[list_subvolumes[0]].subvolume_dest)
+            self.line_edit_snapshot_prefix.setDisabled(True)
+            self.line_edit_snapshot_prefix.setText(self.__subvolumes[list_subvolumes[0]].snapshot_name)
+
+            # Retrieving snapshots to keep
             self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
+
+            # Retrieving remove snapshots decision
+            if util.settings.remove_snapshots == 0:
+                self.checkbox_dont_remove_snapshots.setChecked(True)
+            else:
+                self.checkbox_dont_remove_snapshots.setChecked(False)
 
             if self.checkbox_dont_remove_snapshots.isChecked():
                 self.label_snapshots_to_keep.hide()
@@ -223,10 +230,28 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.label_snapshots_to_keep.show()
                 self.spinbox_snapshots_to_keep.show()
 
+            # Retrieving snap packages upgrade decision
+            if util.settings.snap_packages == 0:
+                self.checkbox_snap.setChecked(False)
+            else:
+                self.checkbox_snap.setChecked(True)
+
+            if util.utils.exist_program(SNAP_COMMAND):
+                self.checkbox_snap.show()
+            else:
+                self.checkbox_snap.hide()
+
+            # Retrieving AUR packages upgrade decision
+            if util.settings.aur_repository == 0:
+                self.checkbox_aur.setChecked(False)
+            else:
+                self.checkbox_aur.setChecked(True)
+
             if util.settings.user_os == util.utils.OS_ARCH:
                 self.checkbox_aur.show()
             else:
                 self.checkbox_aur.hide()
+            # END -- Displaying settings options
 
             # Button events
             self.button_balance.clicked.connect(self.balance_filesystem)

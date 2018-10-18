@@ -44,6 +44,7 @@ OS_ARCH = "ARCH"
 ARCH_PM = "pacman"
 SNAP_PM = "snap"
 
+
 # Classes
 class NoCommandFound(Exception):
     """Exception raised when a needed program is not installed in the system.
@@ -61,6 +62,8 @@ class ConfigManager:
 
     # Constructor
     def __init__(self):
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
@@ -72,24 +75,38 @@ class ConfigManager:
         """
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
+            self.__logger.info("Application directory does not exist. Creating directory...")
             os.makedirs(util.settings.application_path)
+
+        # Todo: Create a buttermanager.yaml file with basic configuration
 
         # Checking OS
         if exist_program(DEBIAN_PM):
             util.settings.user_os = OS_DEBIAN
         elif exist_program(ARCH_PM):
             util.settings.user_os = OS_ARCH
+        self.__logger.info("Checking OS. {os} found".format(os=util.settings.user_os))
 
-        # Number of snapshots to keep
-        # TODO: Obtain this value from a config file
-        util.settings.snapshots_to_keep = 2
+        # Creating a properties manager to manage all the application properties
+        self.__logger.info("Creating PropertiesManager...")
+        util.settings.properties_manager = util.settings.PropertiesManager()
 
-        # Snapshots
-        # Todo: Snapshots should be defined in a config file by the user
-        subvolume_one = filesystem.snapshot.Subvolume("/mnt/defvol/_active/rootvol/",
-                                                      "/mnt/defvol/_snapshots/",
-                                                      "root")
-        util.settings.subvolumes = [subvolume_one]
+        # Retrieving configuration...
+        self.__logger.info("Retrieving user's configuration from buttermanager.yaml file and loading it in memory...")
+        # Do the user want to remove snapshots during the upgrading process)
+        util.settings.remove_snapshots = int(util.settings.properties_manager.get_property('remove_snapshots'))
+
+        # Number of snapshots to keep after the upgrading process
+        util.settings.snapshots_to_keep = int(util.settings.properties_manager.get_property('snapshots_to_keep'))
+
+        # Do the user want to update snap packages during the upgrading process)
+        util.settings.snap_packages = int(util.settings.properties_manager.get_property('snap_packages'))
+
+        # Do the user want to update AUR packages during the upgrading process)
+        util.settings.aur_repository = int(util.settings.properties_manager.get_property('aur_repository'))
+
+        # Subvolumes to manage
+        util.settings.subvolumes = get_subvolumes()
 
 
 class Logger(object):
@@ -239,3 +256,22 @@ def exist_program(program):
     """
     path = shutil.which(program)
     return path is not None
+
+
+def get_subvolumes():
+    """Gets the subvolumes defined by the user in the properties file.
+
+    Returns:
+        list (:obj:`list` of :obj:`Subvolume`): subvolumes objects defined by the user.
+    """
+    subvolumes = []
+    subvolumes_orig_raw = util.settings.properties_manager.get_property('subvolumes_orig')
+    subvolumes_dest_raw = util.settings.properties_manager.get_property('subvolumes_dest')
+    subvolumes_prefix_raw = util.settings.properties_manager.get_property('subvolumes_prefix')
+    subvolumes_orig = subvolumes_orig_raw.split("|")
+    subvolumes_dest = subvolumes_dest_raw.split("|")
+    subvolumes_prefix = subvolumes_prefix_raw.split("|")
+    for index, subvolume_orig in enumerate(subvolumes_orig):
+        subvolume = filesystem.snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
+        subvolumes.append(subvolume)
+    return subvolumes
