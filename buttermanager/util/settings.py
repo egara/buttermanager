@@ -65,13 +65,13 @@ class PropertiesManager:
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Setting global values related to the application
-        conf_file_path = '{application_path}/{conf_file}'.format(application_path=util.settings.application_path,
+        self.__conf_file_path = '{application_path}/{conf_file}'.format(application_path=application_path,
                                                                  conf_file=self.CONF_FILE)
         self.__user_settings = []
         # Reading configuration file (buttermanager.yaml file within ~/.buttermanager directory)
-        if os.path.exists(conf_file_path):
-            with open(conf_file_path) as configuration:
-                self.__user_settings = yaml.load(configuration)
+        if os.path.exists(self.__conf_file_path):
+            conf_file = open(self.__conf_file_path)
+            self.__user_settings = yaml.load(conf_file)
         else:
             self.__logger.info("Warning: There is no configuration file...")
 
@@ -96,4 +96,14 @@ class PropertiesManager:
             property (string): Property to set its value.
             value (string): Value to be set
         """
+        self.__logger.info("Setting property {property} with value {value}".format(property=property, value=value))
+        # Setting property in memory
+        self.__user_settings[property] = value
+
+        # Setting property in buttermanager.yaml file
+        if os.path.exists(self.__conf_file_path):
+            conf_file = open(self.__conf_file_path, 'w')
+            yaml.dump(self.__user_settings, conf_file)
+        else:
+            self.__logger.info("Warning: There is no configuration file...")
         pass

@@ -261,6 +261,8 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
             self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
             self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
+            self.checkbox_snap.clicked.connect(self.include_snap)
+            self.checkbox_aur.clicked.connect(self.include_aur)
             self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
             self.button_save_subvolume.clicked.connect(self.save_subvolume)
 
@@ -448,20 +450,42 @@ class ButtermanagerMainWindow(QMainWindow):
         """Actions when user checks don't remove snapshots.
 
         """
+        # Storing value in settings
         if self.checkbox_dont_remove_snapshots.isChecked():
             self.label_snapshots_to_keep.hide()
             self.spinbox_snapshots_to_keep.hide()
+            util.settings.properties_manager.set_property('remove_snapshots', 0)
         else:
             self.label_snapshots_to_keep.show()
             self.spinbox_snapshots_to_keep.show()
+            util.settings.properties_manager.set_property('remove_snapshots', 1)
 
     def snapshots_to_keep_valuechange(self):
         """Actions when user changes the value of the snapshots to keep.
 
         """
         # Storing value in settings
-        util.settings.snapshots_to_keep = self.spinbox_snapshots_to_keep.value()
-        # TODO: Storing value in the configuration file
+        util.settings.properties_manager.set_property('snapshots_to_keep', self.spinbox_snapshots_to_keep.value())
+
+    def include_snap(self):
+        """Actions when user checks include snap packages.
+
+        """
+        # Storing value in settings
+        if self.checkbox_snap.isChecked():
+            util.settings.properties_manager.set_property('snap_packages', 1)
+        else:
+            util.settings.properties_manager.set_property('snap_packages', 0)
+
+    def include_aur(self):
+        """Actions when user checks include AUR packages.
+
+        """
+        # Storing value in settings
+        if self.checkbox_aur.isChecked():
+            util.settings.properties_manager.set_property('aur_repository', 1)
+        else:
+            util.settings.properties_manager.set_property('aur_repository', 0)
 
     def edit_subvolume(self):
         """Actions when user wants to edit a defined subvolume.
