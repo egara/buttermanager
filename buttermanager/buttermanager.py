@@ -391,10 +391,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.checkbox_dont_remove_snapshots.setEnabled(False)
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
-        self.buttton_add_subvolume.setEnabled(False)
-        self.buttton_delete_subvolume.setEnabled(False)
-        self.buttton_edit_subvolume.setEnabled(False)
-        self.buttton_save_subvolume.setEnabled(False)
+        self.button_add_subvolume.setEnabled(False)
+        self.button_delete_subvolume.setEnabled(False)
+        self.button_edit_subvolume.setEnabled(False)
+        self.button_save_subvolume.setEnabled(False)
 
     def __enable_buttons(self):
         """Enable all the buttons of the GUI.
@@ -406,10 +406,10 @@ class ButtermanagerMainWindow(QMainWindow):
         self.checkbox_dont_remove_snapshots.setEnabled(True)
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
-        self.buttton_add_subvolume.setEnabled(True)
-        self.buttton_delete_subvolume.setEnabled(True)
-        self.buttton_edit_subvolume.setEnabled(True)
-        self.buttton_save_subvolume.setEnabled(True)
+        self.button_add_subvolume.setEnabled(True)
+        self.button_delete_subvolume.setEnabled(True)
+        self.button_edit_subvolume.setEnabled(True)
+        self.button_save_subvolume.setEnabled(True)
 
     def take_snapshot(self):
         """Takes a BTRFS subvolume snapshot.
