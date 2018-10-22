@@ -106,7 +106,12 @@ class ConfigManager:
         util.settings.aur_repository = int(util.settings.properties_manager.get_property('aur_repository'))
 
         # Subvolumes to manage
-        util.settings.subvolumes = get_subvolumes()
+        subvolumes_list = get_subvolumes()
+        subvolumes = {}
+        for subvolume in subvolumes_list:
+            subvolumes[subvolume.subvolume_origin] = subvolume
+
+        util.settings.subvolumes = subvolumes
 
 
 class Logger(object):

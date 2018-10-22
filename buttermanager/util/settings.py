@@ -43,7 +43,9 @@ snap_packages = 1
 # Do user want to upgrade packages from AUR? 0=False 1=True
 aur_repository = 1
 # Subvolumes managed by the application
-subvolumes = []
+# It will be a dictionary:
+# Key=origin path for the subvolume; Value=Subvolume object
+subvolumes = {}
 # Properties Manager
 properties_manager = None
 
@@ -72,6 +74,7 @@ class PropertiesManager:
         if os.path.exists(self.__conf_file_path):
             conf_file = open(self.__conf_file_path)
             self.__user_settings = yaml.load(conf_file)
+            conf_file.close()
         else:
             self.__logger.info("Warning: There is no configuration file...")
 
@@ -94,7 +97,7 @@ class PropertiesManager:
 
         Arguments:
             property (string): Property to set its value.
-            value (string): Value to be set
+            value (string): Value to be set.
         """
         self.__logger.info("Setting property {property} with value {value}".format(property=property, value=value))
         # Setting property in memory
@@ -104,6 +107,49 @@ class PropertiesManager:
         if os.path.exists(self.__conf_file_path):
             conf_file = open(self.__conf_file_path, 'w')
             yaml.dump(self.__user_settings, conf_file)
+            conf_file.close()
+        else:
+            self.__logger.info("Warning: There is no configuration file...")
+        pass
+
+    def set_subvolume(self, subvolume_selected, snapshot_where, snapshot_prefix):
+        """Sets the value of a subvolume.
+
+        Arguments:
+            subvolume_selected (string): Subvolume selected to be set with the new values.
+            snapshot_where (string): Path where the snapshot is going to be stored.
+            snapshot_prefix (string): Prefix used to store the snapshot of a specific subvolume.
+        """
+        self.__logger.info("Setting subvolume {subvolume} with new values: where {where}; prefix{prefix}".format(
+            subvolume=subvolume_selected, where=snapshot_where, prefix=snapshot_prefix))
+        # Setting subvolume in memory
+        subvolumes[subvolume_selected].subvolume_dest = snapshot_where
+        subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
+        subvolumes_orig = ""
+        subvolumes_dest = ""
+        subvolumes_prefix = ""
+        index = 0
+
+        for subvolume in subvolumes:
+            subvolumes_orig += subvolumes[subvolume].subvolume_origin
+            subvolumes_dest += subvolumes[subvolume].subvolume_dest
+            subvolumes_prefix += subvolumes[subvolume].snapshot_name
+            if index + 1 < len(subvolumes):
+                subvolumes_orig += "|"
+                subvolumes_dest += "|"
+                subvolumes_prefix += "|"
+            else:
+                index += 1
+
+        self.__user_settings['subvolumes_orig'] = subvolumes_orig
+        self.__user_settings['subvolumes_dest'] = subvolumes_dest
+        self.__user_settings['subvolumes_prefix'] = subvolumes_prefix
+
+        # Setting property in buttermanager.yaml file
+        if os.path.exists(self.__conf_file_path):
+            conf_file = open(self.__conf_file_path, 'w')
+            yaml.dump(self.__user_settings, conf_file)
+            conf_file.close()
         else:
             self.__logger.info("Warning: There is no configuration file...")
         pass

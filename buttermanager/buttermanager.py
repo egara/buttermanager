@@ -112,10 +112,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.parent = parent
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
-        # Retrieving subvolumes
-        self.__subvolumes = {}
-        for subvolume in util.settings.subvolumes:
-            self.__subvolumes[subvolume.subvolume_origin] = subvolume
         # Current filesystem (it will be initialize in initialize method)
         self.__current_filesystem = None
         # Current filesystem uuid (it will be initialize in initialize method)
@@ -205,14 +201,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
             # BEGIN -- Displaying settings options
             # Retrieving subvolumes
-            list_subvolumes = []
-            for subvolume in self.__subvolumes:
-                list_subvolumes.append(subvolume)
-            self.combobox_subvolumes.addItems(list_subvolumes)
-            self.line_edit_snapshot_where.setDisabled(True)
-            self.line_edit_snapshot_where.setText(self.__subvolumes[list_subvolumes[0]].subvolume_dest)
-            self.line_edit_snapshot_prefix.setDisabled(True)
-            self.line_edit_snapshot_prefix.setText(self.__subvolumes[list_subvolumes[0]].snapshot_name)
+            self.fill_subvolumes()
 
             # Retrieving snapshots to keep
             self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
@@ -410,29 +399,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.buttton_edit_subvolume.setEnabled(True)
         self.buttton_save_subvolume.setEnabled(True)
 
-    def fill_snapshots(self):
-        """Fills snapshots information in the GUI.
-
-        """
-        # Resetting snapshots in the GUI
-        # Clearing the list
-        self.list_snapshots.clear()
-
-        # Adding the snapshots to the list
-        snapshots = []
-        self.list_snapshots.addItems(snapshots)
-        # Loading the snapshots detected
-        for subvolume in util.settings.subvolumes:
-            snapshots.extend(subvolume.get_all_snapshots_with_the_same_name())
-        self.list_snapshots.addItems(snapshots)
-
-    def refresh_gui(self):
-        """Refresh all the GUI elements.
-
-        """
-        self.refresh_filesystem_statistics()
-        self.fill_snapshots()
-
     def take_snapshot(self):
         """Takes a BTRFS subvolume snapshot.
 
@@ -521,25 +487,47 @@ class ButtermanagerMainWindow(QMainWindow):
         new_snapshot_where = self.line_edit_snapshot_where.text()
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
-        self.__subvolumes[subvolume_selected].subvolume_dest = new_snapshot_where
-        self.__subvolumes[subvolume_selected].snapshot_name = new_snapshot_prefix
+        util.settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix)
 
-        # TODO: Store new values in config file
-        
         # Refreshing components
-        self.__refresh_subvolumes()
         self.refresh_gui()
 
-    def __refresh_subvolumes(self):
-        """Refreshes subvolumes.
+    def fill_snapshots(self):
+        """Fills snapshots information in the GUI.
 
         """
-        util.settings.subvolumes = []
-        for subvolume in self.__subvolumes:
-            new_subvolume = filesystem.snapshot.Subvolume(self.__subvolumes[subvolume].subvolume_origin,
-                                                          self.__subvolumes[subvolume].subvolume_dest,
-                                                          self.__subvolumes[subvolume].snapshot_name)
-            util.settings.subvolumes.append(new_subvolume)
+        # Resetting snapshots in the GUI
+        # Clearing the list
+        self.list_snapshots.clear()
+
+        # Adding the snapshots to the list
+        snapshots = []
+        self.list_snapshots.addItems(snapshots)
+        # Loading the snapshots detected
+        for subvolume in util.settings.subvolumes:
+            snapshots.extend(util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name())
+        self.list_snapshots.addItems(snapshots)
+
+    def fill_subvolumes(self):
+        """Fills subvolumes in the GUI.
+
+        """
+        list_subvolumes = []
+        for subvolume in util.settings.subvolumes:
+            list_subvolumes.append(subvolume)
+        self.combobox_subvolumes.addItems(list_subvolumes)
+        self.line_edit_snapshot_where.setDisabled(True)
+        self.line_edit_snapshot_where.setText(util.settings.subvolumes[list_subvolumes[0]].subvolume_dest)
+        self.line_edit_snapshot_prefix.setDisabled(True)
+        self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[list_subvolumes[0]].snapshot_name)
+
+    def refresh_gui(self):
+        """Refresh all the GUI elements.
+
+        """
+        self.refresh_filesystem_statistics()
+        self.fill_snapshots()
+        self.fill_subvolumes()
 
 
 if __name__ == '__main__':
