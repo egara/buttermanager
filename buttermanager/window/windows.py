@@ -22,7 +22,7 @@
 
 """
 import util.settings
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import pyqtSignal, QSize
 from PyQt5.QtGui import QIcon
@@ -199,8 +199,20 @@ class SubvolumeWindow(QMainWindow):
         self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
 
         # Button events
+        self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
         self.button_ok.clicked.connect(self.add_subvolume)
         self.button_cancel.clicked.connect(self.cancel)
+
+    def add_subvolume_orig(self):
+        # directory = str(QFileDialog.getExistingDirectory(self, "Select the subvolume"))
+        # print(directory)
+
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.Directory)
+        dialog.setOption(QFileDialog.ShowDirsOnly, True)
+
+        if dialog.exec_():
+            self.line_subvolume_origin.setText(dialog.selectedFiles())
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
