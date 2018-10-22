@@ -24,7 +24,8 @@
 import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow
 from PyQt5 import uic, QtCore
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QSize
+from PyQt5.QtGui import QIcon
 
 
 class InfoWindow(QDialog):
@@ -140,6 +141,72 @@ class SnapshotWindow(QMainWindow):
         else:
             subvolume_selected = self.combobox_subvolumes.currentText()
             util.settings.subvolumes[subvolume_selected].create_snapshot()
+
+        # Refreshing GUI
+        self.on_refresh_gui()
+
+        # Closes the window
+        self.cancel()
+
+    def cancel(self):
+        """Closes the window.
+
+        """
+        self.close()
+
+    def on_refresh_gui(self):
+        """Emits a QT Signal to refresh main window GUI.
+
+        """
+        self.refresh_gui.emit()
+
+
+class SubvolumeWindow(QMainWindow):
+    """Window to add a new subvolume to be managed byt the application.
+
+    """
+    # pyqtSignal that will be emitted when this class requires that main
+    # window refreshes GUI
+    refresh_gui = pyqtSignal()
+
+    # Constructor
+    def __init__(self, parent):
+        QMainWindow.__init__(self, parent)
+        self.parent = parent
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/SubvolumeWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Loading icons
+        self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
+        self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
+        self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
+        self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
+
+        # Button events
+        self.button_ok.clicked.connect(self.add_subvolume)
+        self.button_cancel.clicked.connect(self.cancel)
+
+    def add_subvolume(self):
+        """Adds a new subvolume to be managed by the application.
+
+        """
+        # Todo: Do it!!
 
         # Refreshing GUI
         self.on_refresh_gui()

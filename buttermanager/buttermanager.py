@@ -264,6 +264,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
             self.checkbox_snap.clicked.connect(self.include_snap)
             self.checkbox_aur.clicked.connect(self.include_aur)
+            self.button_add_subvolume.clicked.connect(self.add_subvolume)
             self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
             self.button_save_subvolume.clicked.connect(self.save_subvolume)
 
@@ -431,6 +432,17 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Refreshing GUI
         self.refresh_gui()
+
+    def add_subvolume(self):
+        """Adds a new subvolume to be managed by the application.
+
+        """
+        subvolume_window = window.windows.SubvolumeWindow(self)
+        # Connecting the signal emitted by the subvolume window with this slot
+        # Todo
+        # snapshot_window.refresh_gui.connect(self.refresh_gui)
+        # Displaying snapshot window
+        subvolume_window.show()
 
     def dont_remove_snapshots(self):
         """Actions when user checks don't remove snapshots.
