@@ -79,7 +79,7 @@ class ConfigManager:
             self.__logger.info("Application directory does not exist. Creating directory...")
             os.makedirs(util.settings.application_path)
 
-            # Create a buttermanager.yaml file with basic configuration
+            # Create a buttermanager.yaml file with default values
             config_file_as_dictionary = '''
                 aur_repository: 0
                 remove_snapshots: 1
