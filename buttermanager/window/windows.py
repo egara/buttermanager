@@ -79,11 +79,6 @@ class SnapshotWindow(QMainWindow):
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
-        # Subvolumes
-        self.__subvolumes = {}
-        for subvolume in util.settings.subvolumes:
-            self.__subvolumes[subvolume.subvolume_origin] = subvolume
-
         # Initializing the window
         self.init_ui()
 
@@ -105,7 +100,7 @@ class SnapshotWindow(QMainWindow):
 
         # Retrieveing subvolumes
         subvolumes = []
-        for subvolume in self.__subvolumes:
+        for subvolume in util.settings.subvolumes:
             subvolumes.append(subvolume)
         self.combobox_subvolumes.addItems(subvolumes)
 
@@ -140,11 +135,11 @@ class SnapshotWindow(QMainWindow):
 
         """
         if self.radiobutton_all_subvolumes.isChecked():
-            for subvolume in self.__subvolumes:
-                self.__subvolumes[subvolume].create_snapshot()
+            for subvolume in util.settings.subvolumes:
+                util.settings.subvolumes[subvolume].create_snapshot()
         else:
             subvolume_selected = self.combobox_subvolumes.currentText()
-            self.__subvolumes[subvolume_selected].create_snapshot()
+            util.settings.subvolumes[subvolume_selected].create_snapshot()
 
         # Refreshing GUI
         self.on_refresh_gui()
