@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import util.settings
+import yaml
 
 # Constants
 GB = "GiB"  # Gigabytes
@@ -78,7 +79,22 @@ class ConfigManager:
             self.__logger.info("Application directory does not exist. Creating directory...")
             os.makedirs(util.settings.application_path)
 
-        # Todo: Create a buttermanager.yaml file with basic configuration
+            # Create a buttermanager.yaml file with basic configuration
+            config_file_as_dictionary = '''
+                aur_repository: 0
+                remove_snapshots: 1
+                snap_packages: 0
+                snapshots_to_keep: 3
+                subvolumes_dest:
+                subvolumes_orig:
+                subvolumes_prefix:
+            '''
+            config_file_dictionary = yaml.load(config_file_as_dictionary)
+            conf_file_path = '{application_path}/{conf_file}'.format(application_path=util.settings.application_path,
+                                                                     conf_file=util.settings.CONF_FILE)
+            conf_file = open(conf_file_path, 'w')
+            yaml.dump(config_file_dictionary, conf_file)
+            conf_file.close()
 
         # Checking OS
         if exist_program(DEBIAN_PM):
@@ -273,10 +289,12 @@ def get_subvolumes():
     subvolumes_orig_raw = util.settings.properties_manager.get_property('subvolumes_orig')
     subvolumes_dest_raw = util.settings.properties_manager.get_property('subvolumes_dest')
     subvolumes_prefix_raw = util.settings.properties_manager.get_property('subvolumes_prefix')
-    subvolumes_orig = subvolumes_orig_raw.split("|")
-    subvolumes_dest = subvolumes_dest_raw.split("|")
-    subvolumes_prefix = subvolumes_prefix_raw.split("|")
-    for index, subvolume_orig in enumerate(subvolumes_orig):
-        subvolume = filesystem.snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
-        subvolumes.append(subvolume)
+    if subvolumes_orig_raw is not None:
+        subvolumes_orig = subvolumes_orig_raw.split("|")
+        subvolumes_dest = subvolumes_dest_raw.split("|")
+        subvolumes_prefix = subvolumes_prefix_raw.split("|")
+        for index, subvolume_orig in enumerate(subvolumes_orig):
+            subvolume = filesystem.snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
+            subvolumes.append(subvolume)
+
     return subvolumes

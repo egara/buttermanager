@@ -506,7 +506,7 @@
           <property name="geometry">
            <rect>
             <x>21</x>
-            <y>38</y>
+            <y>122</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -516,7 +516,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>80</y>
+            <y>164</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -529,7 +529,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>121</y>
+            <y>205</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -542,7 +542,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>37</y>
+            <y>121</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -558,7 +558,7 @@
           <property name="geometry">
            <rect>
             <x>507</x>
-            <y>37</y>
+            <y>121</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -574,7 +574,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>180</y>
+            <y>40</y>
             <width>111</width>
             <height>34</height>
            </rect>
@@ -587,7 +587,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>86</y>
+            <y>170</y>
             <width>301</width>
             <height>18</height>
            </rect>
@@ -606,7 +606,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>126</y>
+            <y>210</y>
             <width>301</width>
             <height>18</height>
            </rect>
@@ -625,7 +625,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>37</y>
+            <y>121</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -635,6 +635,26 @@
           </property>
           <property name="text">
            <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_existing_subvolumes">
+          <property name="geometry">
+           <rect>
+            <x>22</x>
+            <y>99</y>
+            <width>161</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+            <underline>false</underline>
+           </font>
+          </property>
+          <property name="text">
+           <string>Existing subvolumes</string>
           </property>
          </widget>
         </widget>

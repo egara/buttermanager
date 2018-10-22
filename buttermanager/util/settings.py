@@ -25,6 +25,9 @@ import os
 import yaml
 import util.utils
 
+# Global module constants
+CONF_FILE = "buttermanager.yaml"
+
 # Global module attributes
 # Application name
 application_name = ""
@@ -59,16 +62,13 @@ class PropertiesManager:
     The keys of the dictionary will be the properties name in the yaml file. The values will be te values
     in the yaml file for every property.
     """
-    # Constants
-    CONF_FILE = "buttermanager.yaml"
-
     # Constructor
     def __init__(self):
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Setting global values related to the application
         self.__conf_file_path = '{application_path}/{conf_file}'.format(application_path=application_path,
-                                                                 conf_file=self.CONF_FILE)
+                                                                        conf_file=CONF_FILE)
         self.__user_settings = []
         # Reading configuration file (buttermanager.yaml file within ~/.buttermanager directory)
         if os.path.exists(self.__conf_file_path):

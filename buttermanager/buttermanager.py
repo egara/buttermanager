@@ -177,13 +177,25 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_snapshot.setIconSize(QSize(16, 16))
 
             # Subvolume buttons
-            self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
-            self.button_save_subvolume.setIconSize(QSize(16, 16))
-            self.button_save_subvolume.hide()
-            self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
-            self.button_edit_subvolume.setIconSize(QSize(16, 16))
-            self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
-            self.button_delete_subvolume.setIconSize(QSize(16, 16))
+            # They will be shown only if some subvolume is defined by the user
+            if len(util.settings.subvolumes) > 0:
+                self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
+                self.button_save_subvolume.setIconSize(QSize(16, 16))
+                self.button_save_subvolume.hide()
+                self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
+                self.button_edit_subvolume.setIconSize(QSize(16, 16))
+                self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_subvolume.setIconSize(QSize(16, 16))
+            else:
+                self.label_existing_subvolumes.hide()
+                self.button_save_subvolume.hide()
+                self.button_edit_subvolume.hide()
+                self.button_delete_subvolume.hide()
+                self.combobox_subvolumes.hide()
+                self.line_edit_snapshot_where.hide()
+                self.label_settings_subvolumes_where.hide()
+                self.line_edit_snapshot_prefix.hide()
+                self.label_settings_subvolumes_prefix.hide()
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
@@ -513,13 +525,14 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         list_subvolumes = []
-        for subvolume in util.settings.subvolumes:
-            list_subvolumes.append(subvolume)
-        self.combobox_subvolumes.addItems(list_subvolumes)
-        self.line_edit_snapshot_where.setDisabled(True)
-        self.line_edit_snapshot_where.setText(util.settings.subvolumes[list_subvolumes[0]].subvolume_dest)
-        self.line_edit_snapshot_prefix.setDisabled(True)
-        self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[list_subvolumes[0]].snapshot_name)
+        if len(util.settings.subvolumes) > 0:
+            for subvolume in util.settings.subvolumes:
+                list_subvolumes.append(subvolume)
+            self.combobox_subvolumes.addItems(list_subvolumes)
+            self.line_edit_snapshot_where.setDisabled(True)
+            self.line_edit_snapshot_where.setText(util.settings.subvolumes[list_subvolumes[0]].subvolume_dest)
+            self.line_edit_snapshot_prefix.setDisabled(True)
+            self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[list_subvolumes[0]].snapshot_name)
 
     def refresh_gui(self):
         """Refresh all the GUI elements.
