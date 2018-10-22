@@ -80,6 +80,7 @@ class ConfigManager:
             os.makedirs(util.settings.application_path)
 
             # Create a buttermanager.yaml file with default values
+            self.__logger.info("buttermanager.yaml configuration file doesn't exist. Creating one...")
             config_file_as_dictionary = '''
                 aur_repository: 0
                 remove_snapshots: 1
