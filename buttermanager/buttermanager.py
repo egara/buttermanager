@@ -269,6 +269,16 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_save_subvolume.clicked.connect(self.save_subvolume)
             self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
 
+            # If no subvolumes are defined, warning the user
+            if len(util.settings.subvolumes) == 0:
+                info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes added.\n"
+                                                                     "If you upgrade the filesystem, no snapshots will\n"
+                                                                     "be created. If you want to create automatically\n"
+                                                                     "snapshots during the upgrading process, go to\n"
+                                                                     "Settings and Add a subvolume.")
+                info_dialog.show()
+
+
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
