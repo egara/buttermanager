@@ -42,8 +42,8 @@ class Subvolume:
     def __init__(self, subvolume_origin, subvolume_dest, snapshot_name):
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
-        self.__subvolume_origin = subvolume_origin
-        self.subvolume_dest = subvolume_dest
+        self.__subvolume_origin = subvolume_origin if subvolume_origin[-1] == '/' else subvolume_origin + '/'
+        self.__subvolume_dest = subvolume_dest if subvolume_dest[-1] == '/' else subvolume_dest + '/'
         self.snapshot_name = snapshot_name
         self.__current_date = time.strftime('%Y%m%d')
 
@@ -52,6 +52,11 @@ class Subvolume:
     @property
     def subvolume_origin(self):
         return self.__subvolume_origin
+
+    # Path where the snapshot of the subvolume is stored
+    @property
+    def subvolume_dest(self):
+        return self.__subvolume_dest
 
     # Methods
     # Private methods
