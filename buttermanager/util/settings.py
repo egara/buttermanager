@@ -110,17 +110,25 @@ class PropertiesManager:
     def set_subvolume(self, subvolume_selected, snapshot_where, snapshot_prefix):
         """Sets the value of a subvolume.
 
+        If snapshot_where = None and snapshot_prefix = None, then the subvolume
+        will be removed
+
         Arguments:
             subvolume_selected (string): Subvolume selected to be set with the new values.
-            snapshot_where (string): Path where the snapshot is going to be stored.
-            snapshot_prefix (string): Prefix used to store the snapshot of a specific subvolume.
+            snapshot_where (string): Path where the snapshot is going to be stored. None if the subvolume is removed
+            snapshot_prefix (string): Prefix used to store the snapshot of a specific subvolume. None if the subvolume
+            is removed
         """
         self.__logger.info("Setting subvolume {subvolume} with new values: where {where}; prefix{prefix}".format(
             subvolume=subvolume_selected, where=snapshot_where, prefix=snapshot_prefix))
         if subvolume_selected in subvolumes:
-            # Setting subvolume in memory
-            subvolumes[subvolume_selected].subvolume_dest = snapshot_where
-            subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
+            if not snapshot_where and not snapshot_prefix:
+                # The subvolume has to be removed from memory
+                subvolumes.pop(subvolume_selected, 'None')
+            else:
+                # Modifying subvolume in memory
+                subvolumes[subvolume_selected].subvolume_dest = snapshot_where
+                subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
         else:
             subvolumes[subvolume_selected] = filesystem.snapshot.Subvolume(subvolume_selected,
                                                                            snapshot_where,

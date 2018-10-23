@@ -267,6 +267,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_add_subvolume.clicked.connect(self.add_subvolume)
             self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
             self.button_save_subvolume.clicked.connect(self.save_subvolume)
+            self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -511,6 +512,17 @@ class ButtermanagerMainWindow(QMainWindow):
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
         util.settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix)
+
+        # Refreshing components
+        self.refresh_gui()
+
+    def delete_subvolume(self):
+        """Actions when user wants to delete a subvolume.
+
+        """
+        # Storing the modified values
+        subvolume_selected = self.combobox_subvolumes.currentText()
+        util.settings.properties_manager.set_subvolume(subvolume_selected, None, None)
 
         # Refreshing components
         self.refresh_gui()
