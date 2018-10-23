@@ -272,7 +272,8 @@ class ButtermanagerMainWindow(QMainWindow):
             # If no subvolumes are defined, warning the user
             if len(util.settings.subvolumes) == 0:
                 info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes added.\n"
-                                                                     "If you upgrade the filesystem, no snapshots will\n"
+                                                                     "If you upgrade the filesystem, no snapshots "
+                                                                     "will\n"
                                                                      "be created. If you want to create automatically\n"
                                                                      "snapshots during the upgrading process, go to\n"
                                                                      "Settings and Add a subvolume.")
