@@ -24,6 +24,7 @@
 import os
 import yaml
 import util.utils
+import filesystem
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
@@ -104,13 +105,7 @@ class PropertiesManager:
         self.__user_settings[property] = value
 
         # Setting property in buttermanager.yaml file
-        if os.path.exists(self.__conf_file_path):
-            conf_file = open(self.__conf_file_path, 'w')
-            yaml.dump(self.__user_settings, conf_file)
-            conf_file.close()
-        else:
-            self.__logger.info("Warning: There is no configuration file...")
-        pass
+        self.__store_configuration()
 
     def set_subvolume(self, subvolume_selected, snapshot_where, snapshot_prefix):
         """Sets the value of a subvolume.
@@ -122,9 +117,14 @@ class PropertiesManager:
         """
         self.__logger.info("Setting subvolume {subvolume} with new values: where {where}; prefix{prefix}".format(
             subvolume=subvolume_selected, where=snapshot_where, prefix=snapshot_prefix))
-        # Setting subvolume in memory
-        subvolumes[subvolume_selected].subvolume_dest = snapshot_where
-        subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
+        if subvolume_selected in subvolumes:
+            # Setting subvolume in memory
+            subvolumes[subvolume_selected].subvolume_dest = snapshot_where
+            subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
+        else:
+            subvolumes[subvolume_selected] = filesystem.snapshot.Subvolume(subvolume_selected,
+                                                                           snapshot_where,
+                                                                           snapshot_prefix)
         subvolumes_orig = ""
         subvolumes_dest = ""
         subvolumes_prefix = ""
@@ -138,13 +138,19 @@ class PropertiesManager:
                 subvolumes_orig += "|"
                 subvolumes_dest += "|"
                 subvolumes_prefix += "|"
-            else:
-                index += 1
+            index += 1
 
         self.__user_settings['subvolumes_orig'] = subvolumes_orig
         self.__user_settings['subvolumes_dest'] = subvolumes_dest
         self.__user_settings['subvolumes_prefix'] = subvolumes_prefix
 
+        # Setting property in buttermanager.yaml file
+        self.__store_configuration()
+
+    def __store_configuration(self):
+        """Stores configuration file.
+
+        """
         # Setting property in buttermanager.yaml file
         if os.path.exists(self.__conf_file_path):
             conf_file = open(self.__conf_file_path, 'w')
@@ -152,4 +158,3 @@ class PropertiesManager:
             conf_file.close()
         else:
             self.__logger.info("Warning: There is no configuration file...")
-        pass

@@ -65,6 +65,42 @@ class InfoWindow(QDialog):
         self.label_info.setText(information)
 
 
+class GeneralInfoWindow(QDialog):
+    """Window to display generic information.
+
+    """
+    # Constructor
+    def __init__(self, parent, information):
+        QDialog.__init__(self, parent)
+        # Setting window flags, f.i. this window won't have a close button
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
+        self.parent = parent
+
+        # Initializing the window
+        self.init_ui(information)
+
+    def init_ui(self, information):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/GeneralInfoWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        self.label_info.setText(information)
+
+
 class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
 
@@ -200,31 +236,56 @@ class SubvolumeWindow(QMainWindow):
 
         # Button events
         self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
+        self.button_add_subvolume_dest.clicked.connect(self.add_subvolume_dest)
         self.button_ok.clicked.connect(self.add_subvolume)
         self.button_cancel.clicked.connect(self.cancel)
 
     def add_subvolume_orig(self):
-        # directory = str(QFileDialog.getExistingDirectory(self, "Select the subvolume"))
-        # print(directory)
+        """Adds the origin path for the subvolume to manage.
 
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.Directory)
-        dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        """
+        # Creating a QFileDialog to select the directory
+        # Only directories will be allowed
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
 
-        if dialog.exec_():
-            self.line_subvolume_origin.setText(dialog.selectedFiles())
+        if file_dialog.exec_():
+            self.line_subvolume_origin.setText(file_dialog.selectedFiles()[0])
+
+    def add_subvolume_dest(self):
+        """Adds the destination where the snapshot of the subvolume will be stored.
+
+        """
+        # Creating a QFileDialog to select the directory
+        # Only directories will be allowed
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
+
+        if file_dialog.exec_():
+            self.line_subvolume_dest.setText(file_dialog.selectedFiles()[0])
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
 
         """
-        # Todo: Do it!!
+        # All the fields must be filled
+        origin = self.line_subvolume_origin.text()
+        dest = self.line_subvolume_dest.text()
+        name = self.line_snapshot_name.text()
+        if not origin or not dest or not name:
+            info_dialog = GeneralInfoWindow(self, "Please, fill all the fields.")
+            info_dialog.show()
+        else:
+            # Adding a new subvolume
+            util.settings.properties_manager.set_subvolume(origin, dest, name)
 
-        # Refreshing GUI
-        self.on_refresh_gui()
+            # Refreshing GUI
+            self.on_refresh_gui()
 
-        # Closes the window
-        self.cancel()
+            # Closes the window
+            self.cancel()
 
     def cancel(self):
         """Closes the window.

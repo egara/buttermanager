@@ -439,8 +439,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         subvolume_window = window.windows.SubvolumeWindow(self)
         # Connecting the signal emitted by the subvolume window with this slot
-        # Todo
-        # snapshot_window.refresh_gui.connect(self.refresh_gui)
+        subvolume_window.refresh_gui.connect(self.refresh_gui)
         # Displaying snapshot window
         subvolume_window.show()
 
@@ -536,6 +535,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """Fills subvolumes in the GUI.
 
         """
+        # Resetting combo
+        self.combobox_subvolumes.clear()
+        # Adding the new subvolumes to the combobox
         list_subvolumes = []
         if len(util.settings.subvolumes) > 0:
             for subvolume in util.settings.subvolumes:
