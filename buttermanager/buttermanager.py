@@ -177,25 +177,13 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_delete_snapshot.setIconSize(QSize(16, 16))
 
             # Subvolume buttons
-            # They will be shown only if some subvolume is defined by the user
-            if len(util.settings.subvolumes) > 0:
-                self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
-                self.button_save_subvolume.setIconSize(QSize(16, 16))
-                self.button_save_subvolume.hide()
-                self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
-                self.button_edit_subvolume.setIconSize(QSize(16, 16))
-                self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
-                self.button_delete_subvolume.setIconSize(QSize(16, 16))
-            else:
-                self.label_existing_subvolumes.hide()
-                self.button_save_subvolume.hide()
-                self.button_edit_subvolume.hide()
-                self.button_delete_subvolume.hide()
-                self.combobox_subvolumes.hide()
-                self.line_edit_snapshot_where.hide()
-                self.label_settings_subvolumes_where.hide()
-                self.line_edit_snapshot_prefix.hide()
-                self.label_settings_subvolumes_prefix.hide()
+            self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
+            self.button_save_subvolume.setIconSize(QSize(16, 16))
+            self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
+            self.button_edit_subvolume.setIconSize(QSize(16, 16))
+            self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
+            self.button_delete_subvolume.setIconSize(QSize(16, 16))
+            self.refresh_subvolume_buttons()
 
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
@@ -571,6 +559,31 @@ class ButtermanagerMainWindow(QMainWindow):
             self.line_edit_snapshot_prefix.setDisabled(True)
             self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[list_subvolumes[0]].snapshot_name)
 
+    def refresh_subvolume_buttons(self):
+        """Shows or hide subvolume buttons in the GUI.
+
+        """
+        # They will be shown only if some subvolume is defined by the user
+        if len(util.settings.subvolumes) > 0:
+            self.button_save_subvolume.hide()
+            self.button_edit_subvolume.show()
+            self.button_delete_subvolume.show()
+            self.combobox_subvolumes.show()
+            self.line_edit_snapshot_where.show()
+            self.label_settings_subvolumes_where.show()
+            self.line_edit_snapshot_prefix.show()
+            self.label_settings_subvolumes_prefix.show()
+        else:
+            self.label_existing_subvolumes.hide()
+            self.button_save_subvolume.hide()
+            self.button_edit_subvolume.hide()
+            self.button_delete_subvolume.hide()
+            self.combobox_subvolumes.hide()
+            self.line_edit_snapshot_where.hide()
+            self.label_settings_subvolumes_where.hide()
+            self.line_edit_snapshot_prefix.hide()
+            self.label_settings_subvolumes_prefix.hide()
+
     def refresh_gui(self):
         """Refresh all the GUI elements.
 
@@ -578,7 +591,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.refresh_filesystem_statistics()
         self.fill_snapshots()
         self.fill_subvolumes()
-
+        self.refresh_subvolume_buttons()
 
 if __name__ == '__main__':
     # Creating application instance
