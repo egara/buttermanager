@@ -127,7 +127,7 @@ class PropertiesManager:
                 subvolumes.pop(subvolume_selected, 'None')
             else:
                 # Modifying subvolume in memory
-                subvolumes[subvolume_selected].subvolume_dest = snapshot_where
+                subvolumes[subvolume_selected].subvolume_dest = snapshot_where if snapshot_where[-1] == '/' else snapshot_where + '/'
                 subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
         else:
             subvolumes[subvolume_selected] = filesystem.snapshot.Subvolume(subvolume_selected,

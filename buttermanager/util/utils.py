@@ -290,7 +290,7 @@ def get_subvolumes():
     subvolumes_orig_raw = util.settings.properties_manager.get_property('subvolumes_orig')
     subvolumes_dest_raw = util.settings.properties_manager.get_property('subvolumes_dest')
     subvolumes_prefix_raw = util.settings.properties_manager.get_property('subvolumes_prefix')
-    if subvolumes_orig_raw is not None:
+    if subvolumes_orig_raw is not None and subvolumes_orig_raw is not "":
         subvolumes_orig = subvolumes_orig_raw.split("|")
         subvolumes_dest = subvolumes_dest_raw.split("|")
         subvolumes_prefix = subvolumes_prefix_raw.split("|")

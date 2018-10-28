@@ -485,8 +485,10 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('aur_repository', 0)
 
     def on_combobox_subvolumes_changed(self):
-        self.line_edit_snapshot_where.setText(util.settings.subvolumes[self.combobox_subvolumes.currentText()].subvolume_dest)
-        self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[self.combobox_subvolumes.currentText()].snapshot_name)
+        current_subvolume = self.combobox_subvolumes.currentText()
+        if current_subvolume:
+            self.line_edit_snapshot_where.setText(util.settings.subvolumes[current_subvolume].subvolume_dest)
+            self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[current_subvolume].snapshot_name)
 
     def edit_subvolume(self):
         """Actions when user wants to edit a defined subvolume.
@@ -596,6 +598,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.fill_snapshots()
         self.fill_subvolumes()
         self.refresh_subvolume_buttons()
+
 
 if __name__ == '__main__':
     # Creating application instance
