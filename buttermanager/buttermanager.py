@@ -256,6 +256,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
             self.button_save_subvolume.clicked.connect(self.save_subvolume)
             self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
+            self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
 
             # If no subvolumes are defined, warning the user
             if len(util.settings.subvolumes) == 0:
@@ -266,7 +267,6 @@ class ButtermanagerMainWindow(QMainWindow):
                                                                      "snapshots during the upgrading process, go to\n"
                                                                      "Settings and Add a subvolume.")
                 info_dialog.show()
-
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
@@ -483,6 +483,10 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('aur_repository', 1)
         else:
             util.settings.properties_manager.set_property('aur_repository', 0)
+
+    def on_combobox_subvolumes_changed(self):
+        self.line_edit_snapshot_where.setText(util.settings.subvolumes[self.combobox_subvolumes.currentText()].subvolume_dest)
+        self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[self.combobox_subvolumes.currentText()].snapshot_name)
 
     def edit_subvolume(self):
         """Actions when user wants to edit a defined subvolume.
