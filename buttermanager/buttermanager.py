@@ -33,12 +33,16 @@ from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize
 # Constants
 SNAP_COMMAND = "snap"
 
+
 class EmittingStream(QObject):
 
     text_written = pyqtSignal(str)
 
     def write(self, text):
         self.text_written.emit(str(text))
+
+    def flush(self):
+        pass
 
 
 class PasswordWindow(QMainWindow):
