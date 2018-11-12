@@ -26,7 +26,7 @@ import util.utils
 import util.settings
 import window.windows
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-from PyQt5.QtGui import QCursor, QTextCursor, QIcon
+from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap
 from PyQt5 import uic
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize
 
@@ -245,6 +245,9 @@ class ButtermanagerMainWindow(QMainWindow):
             else:
                 self.checkbox_aur.hide()
             # END -- Displaying settings options
+
+            # Displaying logo within About tab
+            self.label_logo.setPixmap(QPixmap('images/accept_16px_icon.png'))
 
             # Button events
             self.button_balance.clicked.connect(self.balance_filesystem)

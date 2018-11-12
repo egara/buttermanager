@@ -662,6 +662,110 @@
          <attribute name="title">
           <string>About</string>
          </attribute>
+         <widget class="QLabel" name="label_logo">
+          <property name="geometry">
+           <rect>
+            <x>365</x>
+            <y>70</y>
+            <width>50</width>
+            <height>50</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Logo</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_app_name">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>180</y>
+            <width>200</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>ButterManager (A BTRFS Tool)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_app_version">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>200</y>
+            <width>200</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>v1.0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_app_developer">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>220</y>
+            <width>200</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Eloy García Almadén</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_app_email">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>240</y>
+            <width>200</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>eloy.garcia.pca@gmail.com</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
         </widget>
        </widget>
        <widget class="QTextEdit" name="text_edit_console">
