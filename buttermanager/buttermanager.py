@@ -69,6 +69,9 @@ class PasswordWindow(QMainWindow):
         # Loading User Interface
         uic.loadUi("ui/PasswordWindow.ui", self)
 
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -154,6 +157,9 @@ class ButtermanagerMainWindow(QMainWindow):
         try:
             # Loading User Interface
             uic.loadUi("ui/MainWindow.ui", self)
+
+            # Setting the window icon
+            self.setWindowIcon(QIcon('images/buttermanager50.png'))
 
             # Setting maximum and minimum  size for the main window
             self.setMinimumHeight(490)
@@ -247,7 +253,7 @@ class ButtermanagerMainWindow(QMainWindow):
             # END -- Displaying settings options
 
             # Displaying logo within About tab
-            self.label_logo.setPixmap(QPixmap('images/accept_16px_icon.png'))
+            self.label_logo.setPixmap(QPixmap('images/buttermanager50.png'))
 
             # Button events
             self.button_balance.clicked.connect(self.balance_filesystem)
