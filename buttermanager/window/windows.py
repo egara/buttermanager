@@ -231,16 +231,16 @@ class SubvolumeWindow(QMainWindow):
         # Loading icons
         # Something is wrong with QT5 and QFileDialog crashes in Plasma 5
         # so the buttons will be hidden by now
-        self.button_add_subvolume_orig.hide()
-        self.button_add_subvolume_dest.hide()
-        # self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        # self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
-        # self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        # self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
+        # self.button_add_subvolume_orig.hide()
+        # self.button_add_subvolume_dest.hide()
+        self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
+        self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
+        self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
+        self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
 
         # Button events
-        # self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
-        # self.button_add_subvolume_dest.clicked.connect(self.add_subvolume_dest)
+        self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
+        self.button_add_subvolume_dest.clicked.connect(self.add_subvolume_dest)
         self.button_ok.clicked.connect(self.add_subvolume)
         self.button_cancel.clicked.connect(self.cancel)
 
