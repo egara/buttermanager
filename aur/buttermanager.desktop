@@ -1,11 +1,12 @@
 [Desktop Entry]
-Version=3.1
-Name=WallpaperDownloader
-GenericName=Wallpaper Downloader
-Comment=Download, manage and change your wallpapers automatically from the Internet
-Keywords=wallpaper;gallery;internet;download;downloader;changer;picture;desktop
-Exec=/usr/bin/wallpaperdownloader.sh
-Icon=/opt/wallpaperdownloader/gui/wallpaperdownloader.svg
+Version=1.0
+Name=ButterManager
+GenericName=ButterManager
+Comment=ButterManager, a BTRFS tool for snapshoting, balancing and managing safe system upgrades.
+Keywords=BTRFS;btrfs;system;filesystem;snapshot;balance;tool;gui
+Exec=python /opt/buttermanager/buttermanager.py
+Path=/opt/buttermanager/
+Icon=/opt/buttermanager/gui/buttermanager.svg
 Terminal=false
 Type=Application
-Categories=Utility;
+Categories=Utility;System;
