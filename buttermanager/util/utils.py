@@ -63,12 +63,12 @@ class ConfigManager:
 
     # Constructor
     def __init__(self):
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
         util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
 
     def configure(self):
         """Configures the application.
