@@ -38,18 +38,7 @@ package() {
 	# Copying all the structure to the destination directory
 	cp -ar "$srcdir/$pkgname/$pkgname/" "$pkgdir/opt/$pkgname/"
 
-        # Root python files
-	# install -Dm644 "$srcdir/$pkgname/$pkgname/*.py" "$pkgdir/opt/$pkgname/"
-
-        # Directories
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/filesystem" "$pkgdir/opt/$pkgname/filesystem"
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/images" "$pkgdir/opt/$pkgname/images"
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/manager" "$pkgdir/opt/$pkgname/manager"
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/ui" "$pkgdir/opt/$pkgname/ui"
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/util" "$pkgdir/opt/$pkgname/util"
-        # install -Dm644 "$srcdir/$pkgname/$pkgname/window" "$pkgdir/opt/$pkgname/window"
-
-  	# .desktop file and icon
+  	# Copying .desktop file and icon
   	install -Dm644 "$srcdir/$pkgname/aur/$pkgname.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
 	install -Dm644 "$srcdir/$pkgname/aur/$pkgname.svg" "$pkgdir/opt/$pkgname/gui/$pkgname.svg"
 }
