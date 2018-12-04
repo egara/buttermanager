@@ -67,20 +67,13 @@ class ConfigManager:
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
         util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
 
-    def configure(self):
-        """Configures the application.
-
-        """
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
-            self.__logger.info("Application directory does not exist. Creating directory...")
+            # Application directory does not exist. Creating directory...
             os.makedirs(util.settings.application_path)
 
-            # Create a buttermanager.yaml file with default values
-            self.__logger.info("buttermanager.yaml configuration file doesn't exist. Creating one...")
+            # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''
                 aur_repository: 0
                 remove_snapshots: 1
@@ -97,6 +90,13 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+
+    def configure(self):
+        """Configures the application.
+
+        """
         # Checking OS
         if exist_program(DEBIAN_PM):
             util.settings.user_os = OS_DEBIAN
