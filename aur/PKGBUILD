@@ -9,7 +9,7 @@ url="https://github.com/egara/buttermanager"
 license=('GPL')
 groups=()
 depends=('btrfs-progs' 'python>=3')
-makedepends=('git' 'python-setuptools')
+makedepends=('python>=3' 'git' 'python-setuptools')
 checkdepends=()
 optdepends=()
 provides=()
