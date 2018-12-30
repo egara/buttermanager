@@ -7,7 +7,10 @@ ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and 
 1.0
 
 ## Caveats ##
-For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read this](https://github.com/egara/arch-btrfs-installation).
+- For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read 
+this](https://github.com/egara/arch-btrfs-installation).
+
+- ButterManager works with **Debian**, **Ubuntu and derivatives** and **Arch Linux** so far.
 
 ## Managing snpashots ##
 You will be able to define all the subvolumes you want to create snapshots and the path for their storage. Then, using ButterManager you will create and delete snapshots of those subvolumes at your will.
