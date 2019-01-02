@@ -80,6 +80,7 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 1.1 ###
 
 - RHEL / Fedora, OpenSUSE / SUSE support added.
+- New window implemented for displaying serious problems related to the proper functioning ob ButterManager.
 
 ### Version 1.0 ###
 
