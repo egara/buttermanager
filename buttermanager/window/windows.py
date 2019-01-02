@@ -22,6 +22,7 @@
 
 """
 import util.settings
+import sys
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import pyqtSignal, QSize
@@ -302,3 +303,50 @@ class SubvolumeWindow(QMainWindow):
 
         """
         self.refresh_gui.emit()
+
+
+class ProblemsFoundWindow(QMainWindow):
+    """Window to display problems found.
+
+    Those problems will cause the application exits.
+    """
+
+    # Constructor
+    def __init__(self, parent, information):
+        QMainWindow.__init__(self, parent)
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
+        self.parent = parent
+
+        # Initializing the window
+        self.init_ui(information)
+
+    def init_ui(self, information):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/ProblemsFoundWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        self.label_info.setText(information)
+
+        # Button events
+        self.button_ok.clicked.connect(self.exit)
+
+    def exit(self):
+        """Exits the application.
+
+        """
+        self.close()
+        sys.exit()

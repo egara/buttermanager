@@ -285,8 +285,13 @@ class ButtermanagerMainWindow(QMainWindow):
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
-            # Exits the application
-            sys.exit()
+
+            self.hide()
+
+            info_dialog = window.windows.ProblemsFoundWindow(self.parent, "These programs need to be installed for \n"
+                                                                   "the proper functioning of ButterManager:\n"
+                                                                   "btrfs, findmnt.\n")
+            info_dialog.show()
 
     def balance_filesystem(self):
         """Runs the balance method.
