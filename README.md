@@ -4,21 +4,23 @@
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-1.0
+1.1
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read 
 this](https://github.com/egara/arch-btrfs-installation).
 
-- ButterManager works with **Debian**, **Ubuntu and derivatives** and **Arch Linux** so far.
+- ButterManager works with **Debian**, **Ubuntu / derivatives (Linux Mint, KDE Neon, ElementaryOS, Zorin, Deepin...)**, **OpenSUSE / SUSE**, **RHEL / Fedora** and **Arch Linux** so far.
 
-## Managing snpashots ##
+## Main Functionalities ##
+
+### Managing snpashots ###
 You will be able to define all the subvolumes you want to create snapshots and the path for their storage. Then, using ButterManager you will create and delete snapshots of those subvolumes at your will.
 
-## Balancing BTRFS filesystems ##
+### Balancing BTRFS filesystems ###
 As new snapshots are created in the system, the free space of the filesystem decreases and it is necessary to perform a system balancing regularly. With ButterManager you can perform these balances at any time and visualize the real space that is occupied.
 
-## Upgrading the system ##
+### Upgrading the system ###
 You will be able to upgrade your system and create new snapshots automatically when this operation is performed. Doing so, if something goes wrong, you will have a snapshot before the upgrade you can use to go back. You will be able to set the maximum number of snapshots in your system and ButterManager will maintain this number with every upgrade.
 
 ## Installation ##
@@ -72,6 +74,23 @@ Or
 
   ```
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
+
+## Changelog ##
+
+### Version 1.1 ###
+
+- RHEL / Fedora, OpenSUSE / SUSE support added.
+
+### Version 1.0 ###
+
+- Initial release.
+- It supports Arch Linux, Debian, Ubuntu and derivatives.
+- Safely system upgrade.
+- BTRFS filesystems detection and visualization.
+- Snapshots management.
+- BTRFS filesystems balancing.
+- Application packaged in AUR.
+- Ubuntu Snap Package implemented for universal use in the rest of Linux distributions.
 
 ## Contact ##
 If you want to contact me, you can do it using this e-mail address <eloy.garcia.pca@gmail.com>.
