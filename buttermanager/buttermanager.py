@@ -288,7 +288,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
             self.hide()
 
-            info_dialog = window.windows.ProblemsFoundWindow(self.parent, "These programs need to be installed for \n"
+            info_dialog = window.windows.ProblemsFoundWindow(self, "These programs need to be installed for \n"
                                                                    "the proper functioning of ButterManager:\n"
                                                                    "btrfs, findmnt.\n")
             info_dialog.show()
