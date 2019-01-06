@@ -98,9 +98,9 @@ class PasswordWindow(QMainWindow):
         # Exiting password window
         self.hide()
 
-        # Showing main window
-        butter_manager_window = ButtermanagerMainWindow(self)
-        butter_manager_window.show()
+        # Creating main window
+        # Main window will only be displayed if everything goes right
+        ButtermanagerMainWindow(self)
 
     def exit(self):
         # Exits the application
@@ -180,113 +180,122 @@ class ButtermanagerMainWindow(QMainWindow):
             qt_rectangle.moveCenter(center_point)
             self.move(qt_rectangle.topLeft())
 
-            # Snapshot buttons
-            self.button_take_snapshot.setIcon(QIcon('images/add_16px_icon.png'))
-            self.button_take_snapshot.setIconSize(QSize(16, 16))
-            self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
-            self.button_delete_snapshot.setIconSize(QSize(16, 16))
-
-            # Subvolume buttons
-            self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
-            self.button_save_subvolume.setIconSize(QSize(16, 16))
-            self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
-            self.button_edit_subvolume.setIconSize(QSize(16, 16))
-            self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
-            self.button_delete_subvolume.setIconSize(QSize(16, 16))
-            self.refresh_subvolume_buttons()
-
             # Retrieving BTRFS Filesystems uuid
             uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
-            self.__current_filesystem_uuid = uuid_filesystems[0]
-            self.combobox_filesystem.addItems(uuid_filesystems)
-            self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
-            self.__logger.info("BTRFS filesystems found in the system:")
-            self.__logger.info(str(self.__current_filesystem))
+            if len(uuid_filesystems) > 0:
+                self.__current_filesystem_uuid = uuid_filesystems[0]
+                self.combobox_filesystem.addItems(uuid_filesystems)
+                self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
+                self.__logger.info("BTRFS filesystems found in the system:")
+                self.__logger.info(str(self.__current_filesystem))
 
-            # Displaying all the info related to the filesystem selected by default
-            self.fill_filesystem_info(self.__current_filesystem)
+                # Displaying all the info related to the filesystem selected by default
+                self.fill_filesystem_info(self.__current_filesystem)
 
-            # Displaying snapshots
-            self.fill_snapshots()
+                # Displaying snapshots
+                self.fill_snapshots()
 
-            # BEGIN -- Displaying settings options
-            # Retrieving subvolumes
-            self.fill_subvolumes()
+                # BEGIN -- Displaying settings options
+                # Retrieving subvolumes
+                self.fill_subvolumes()
 
-            # Retrieving snapshots to keep
-            self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
+                # Retrieving snapshots to keep
+                self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
 
-            # Retrieving remove snapshots decision
-            if util.settings.remove_snapshots == 0:
-                self.checkbox_dont_remove_snapshots.setChecked(True)
+                # Retrieving remove snapshots decision
+                if util.settings.remove_snapshots == 0:
+                    self.checkbox_dont_remove_snapshots.setChecked(True)
+                else:
+                    self.checkbox_dont_remove_snapshots.setChecked(False)
+
+                if self.checkbox_dont_remove_snapshots.isChecked():
+                    self.label_snapshots_to_keep.hide()
+                    self.spinbox_snapshots_to_keep.hide()
+                else:
+                    self.label_snapshots_to_keep.show()
+                    self.spinbox_snapshots_to_keep.show()
+
+                # Retrieving snap packages upgrade decision
+                if util.settings.snap_packages == 0:
+                    self.checkbox_snap.setChecked(False)
+                else:
+                    self.checkbox_snap.setChecked(True)
+
+                if util.utils.exist_program(SNAP_COMMAND):
+                    self.checkbox_snap.show()
+                else:
+                    self.checkbox_snap.hide()
+
+                # Retrieving AUR packages upgrade decision
+                if util.settings.aur_repository == 0:
+                    self.checkbox_aur.setChecked(False)
+                else:
+                    self.checkbox_aur.setChecked(True)
+
+                if util.settings.user_os == util.utils.OS_ARCH:
+                    self.checkbox_aur.show()
+                else:
+                    self.checkbox_aur.hide()
+                # END -- Displaying settings options
+
+                # Setting buttons and icons
+                # Snapshot buttons
+                self.button_take_snapshot.setIcon(QIcon('images/add_16px_icon.png'))
+                self.button_take_snapshot.setIconSize(QSize(16, 16))
+                self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_snapshot.setIconSize(QSize(16, 16))
+
+                # Subvolume buttons
+                self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
+                self.button_save_subvolume.setIconSize(QSize(16, 16))
+                self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
+                self.button_edit_subvolume.setIconSize(QSize(16, 16))
+                self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_subvolume.setIconSize(QSize(16, 16))
+                self.refresh_subvolume_buttons()
+
+                # Displaying logo within About tab
+                self.label_logo.setPixmap(QPixmap('images/buttermanager50.png'))
+
+                # Button events
+                self.button_balance.clicked.connect(self.balance_filesystem)
+                self.button_upgrade_system.clicked.connect(self.upgrade_system)
+                self.button_close_terminal.clicked.connect(self.close_terminal)
+                self.button_take_snapshot.clicked.connect(self.take_snapshot)
+                self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+                self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
+                self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
+                self.checkbox_snap.clicked.connect(self.include_snap)
+                self.checkbox_aur.clicked.connect(self.include_aur)
+                self.button_add_subvolume.clicked.connect(self.add_subvolume)
+                self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
+                self.button_save_subvolume.clicked.connect(self.save_subvolume)
+                self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
+                self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
+
+                # If no subvolumes are defined, warning the user
+                if len(util.settings.subvolumes) == 0:
+                    info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes added.\n"
+                                                                         "If you upgrade the filesystem, no snapshots "
+                                                                         "will\n"
+                                                                         "be created. If you want to create automatically\n"
+                                                                         "snapshots during the upgrading process, go to\n"
+                                                                         "Settings and Add a subvolume.")
+                    info_dialog.show()
+
+                # If everything goes right, the main window is displayed
+                self.show()
             else:
-                self.checkbox_dont_remove_snapshots.setChecked(False)
+                self.__logger.info("The application couldn't start normally. No BTRFS file system found.")
 
-            if self.checkbox_dont_remove_snapshots.isChecked():
-                self.label_snapshots_to_keep.hide()
-                self.spinbox_snapshots_to_keep.hide()
-            else:
-                self.label_snapshots_to_keep.show()
-                self.spinbox_snapshots_to_keep.show()
-
-            # Retrieving snap packages upgrade decision
-            if util.settings.snap_packages == 0:
-                self.checkbox_snap.setChecked(False)
-            else:
-                self.checkbox_snap.setChecked(True)
-
-            if util.utils.exist_program(SNAP_COMMAND):
-                self.checkbox_snap.show()
-            else:
-                self.checkbox_snap.hide()
-
-            # Retrieving AUR packages upgrade decision
-            if util.settings.aur_repository == 0:
-                self.checkbox_aur.setChecked(False)
-            else:
-                self.checkbox_aur.setChecked(True)
-
-            if util.settings.user_os == util.utils.OS_ARCH:
-                self.checkbox_aur.show()
-            else:
-                self.checkbox_aur.hide()
-            # END -- Displaying settings options
-
-            # Displaying logo within About tab
-            self.label_logo.setPixmap(QPixmap('images/buttermanager50.png'))
-
-            # Button events
-            self.button_balance.clicked.connect(self.balance_filesystem)
-            self.button_upgrade_system.clicked.connect(self.upgrade_system)
-            self.button_close_terminal.clicked.connect(self.close_terminal)
-            self.button_take_snapshot.clicked.connect(self.take_snapshot)
-            self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
-            self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
-            self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
-            self.checkbox_snap.clicked.connect(self.include_snap)
-            self.checkbox_aur.clicked.connect(self.include_aur)
-            self.button_add_subvolume.clicked.connect(self.add_subvolume)
-            self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
-            self.button_save_subvolume.clicked.connect(self.save_subvolume)
-            self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
-            self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
-
-            # If no subvolumes are defined, warning the user
-            if len(util.settings.subvolumes) == 0:
-                info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes added.\n"
-                                                                     "If you upgrade the filesystem, no snapshots "
-                                                                     "will\n"
-                                                                     "be created. If you want to create automatically\n"
-                                                                     "snapshots during the upgrading process, go to\n"
-                                                                     "Settings and Add a subvolume.")
+                info_dialog = window.windows.ProblemsFoundWindow(self, "No BTRFS file system found. \n"
+                                                                       "The application will be closed.")
                 info_dialog.show()
 
         except util.utils.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
-
-            self.hide()
 
             info_dialog = window.windows.ProblemsFoundWindow(self, "These programs need to be installed for \n"
                                                                    "the proper functioning of ButterManager:\n"
