@@ -100,12 +100,12 @@ class ConfigManager:
 
         """
         # Checking OS
-        if exist_program(DEBIAN_PM):
+        if exist_program(SUSE_PM):
+            util.settings.user_os = OS_SUSE
+        elif exist_program(DEBIAN_PM):
             util.settings.user_os = OS_DEBIAN
         elif exist_program(ARCH_PM):
             util.settings.user_os = OS_ARCH
-        elif exist_program(SUSE_PM):
-            util.settings.user_os = OS_SUSE
         self.__logger.info("Checking OS. {os} found".format(os=util.settings.user_os))
 
         # Creating a properties manager to manage all the application properties
