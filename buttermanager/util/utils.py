@@ -44,6 +44,8 @@ DEBIAN_PM = "apt"
 OS_ARCH = "ARCH"
 ARCH_PM = "pacman"
 SNAP_PM = "snap"
+SUSE_PM = "zypper"
+OS_SUSE = "SUSE"
 
 
 # Classes
@@ -102,6 +104,8 @@ class ConfigManager:
             util.settings.user_os = OS_DEBIAN
         elif exist_program(ARCH_PM):
             util.settings.user_os = OS_ARCH
+        elif exist_program(SUSE_PM):
+            util.settings.user_os = OS_SUSE
         self.__logger.info("Checking OS. {os} found".format(os=util.settings.user_os))
 
         # Creating a properties manager to manage all the application properties

@@ -41,6 +41,7 @@ ARCH_TRIZEN_UPGRADE_COMMAND = "trizen -Syua --noconfirm"
 ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
 SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
+SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
 
 
 class Upgrader(QThread):
@@ -116,6 +117,8 @@ class Upgrader(QThread):
                 util.utils.execute_command(DEBIAN_APT_UPDATE_COMMAND, console=True)
                 sys.stdout.write("\n")
                 upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
+            elif util.settings.user_os == util.utils.OS_ARCH:
+                upgrading_command = SUSE_ZYPPER_UPGRADE_COMMAND
 
             sys.stdout.write("Upgrading the system. Please wait...")
             sys.stdout.write("\n")
