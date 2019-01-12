@@ -156,12 +156,13 @@ class Logger(object):
 
 
 # Module's methods
-def execute_command(command, console=False):
+def execute_command(command, console=False, root=False):
     """Executes a shell command.
 
     Arguments:
         command (string): Command to be executed.
         console (boolean): The command output needs to be redirected to the console.
+        root (boolean): The command is only accesible by root user
 
     Returns:
         string: Command line output encoded in UTF-8.
@@ -173,7 +174,7 @@ def execute_command(command, console=False):
     if "sudo" in program:
         sudo_position = program.index("sudo")
         single_command = program[sudo_position + 2]
-    if exist_program(single_command):
+    if exist_program(single_command, root=root):
         echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
@@ -268,11 +269,19 @@ def convert_to_bytes(number_unit):
     return number_unit['number'] * factor
 
 
-def exist_program(program):
+def exist_program(program, root=False):
     """Checks if a program is installed on the system.
+
+    Some problems have been detected in distributions like SUSE and OpenSUSE using
+    shutil.which function. There are some commands, like btrfs, that are only found
+    if sudo which is used instead of simply which from current user.
+    Because of that, root variable has been declared above. By default, root value
+    will be False, i.e. for those commands which are discoverable simply by using
+    which without sudo.
 
     Arguments:
         program (string): Program to check
+        root (boolean): The program to be checked is only usable by root user
 
     Returns:
         bool: True if the program is installed, False otherwise
@@ -280,8 +289,21 @@ def exist_program(program):
     >>> exist_program('ls')
     True
     """
-    path = shutil.which(program)
-    return path is not None
+    if root:
+        command = "sudo -S which " + program
+        # Checking if the program executed by the command is installed in the system
+        echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+        # run method receives a list, so it is necessary to convert command string into a list using split
+        result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+        # The whole output will be returned
+        # result is Bytes type, so it is needed to decode Unicode string using UTF-8
+        commandline_output = result.stdout.read().decode('utf-8')
+        exist = not commandline_output.startswith("which:")
+        return exist
+    else:
+        path = shutil.which(program)
+        return path is not None
 
 
 def get_subvolumes():

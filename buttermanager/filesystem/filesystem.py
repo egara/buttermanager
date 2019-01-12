@@ -151,7 +151,7 @@ class Filesystem:
         """
         try:
             devices = []
-            commandline_output = util.utils.execute_command(BTRFS_SHOW_COMMAND)
+            commandline_output = util.utils.execute_command(BTRFS_SHOW_COMMAND, root=True)
             filesystem_found = False
 
             for line in commandline_output.split("\n"):
@@ -239,7 +239,7 @@ class Filesystem:
                            'metadata_size': '0', 'metadata_used': '0', 'metadata_percentage': 0,
                            'system_size': '0', 'system_used': '0', 'system_percentage': 0}
         command = "{command} {point}".format(command=BTRFS_USAGE_COMMAND, point=mounted_point)
-        commandline_output = util.utils.execute_command(command)
+        commandline_output = util.utils.execute_command(command, root=True)
 
         for line in commandline_output.split("\n"):
             if DEVICE_SIZE in line:
@@ -295,7 +295,7 @@ def get_btrfs_filesystems(mounted=True):
     if mounted:
         command += " --mounted"
 
-    commandline_output = util.utils.execute_command(command)
+    commandline_output = util.utils.execute_command(command, root=True)
 
     for line in commandline_output.split("\n"):
         if UUID in line:
@@ -325,7 +325,7 @@ def balance_filesystem(filter, percentage, mounted_point):
                                                                         percentage=percentage,
                                                                         mounted_point=mounted_point)
     logger.info("Command executed {command}".format(command=command))
-    commandline_output = util.utils.execute_command(command)
+    commandline_output = util.utils.execute_command(command, root=True)
     for line in commandline_output.split("\n"):
         logger.info(line)
 
