@@ -74,7 +74,7 @@ class Subvolume:
             subvolume_dest=self.subvolume_dest,
             snapshot_full_name=snapshot_full_name
         )
-        util.utils.execute_command(command, console=True)
+        util.utils.execute_command(command, console=True, root=True)
 
     def delete_snapshots(self, snapshots_to_keep):
         """Deletes all the snapshots needed to keep the desired number set by the user.
@@ -97,7 +97,7 @@ class Subvolume:
         index = 0
         while snapshots_to_delete > 0:
             command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
-            util.utils.execute_command(command, console=True)
+            util.utils.execute_command(command, console=True, root=True)
             info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
             self.__logger.info(info_message)
             snapshots_to_delete -= 1
@@ -131,6 +131,6 @@ def delete_specific_snapshot(snapshot_full_path):
     logger.info(info_message)
 
     command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshot_full_path)
-    util.utils.execute_command(command)
+    util.utils.execute_command(command, root=True)
     info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshot_full_path)
     logger.info(info_message)
