@@ -803,14 +803,27 @@
        <widget class="QPushButton" name="button_close_terminal">
         <property name="geometry">
          <rect>
-          <x>760</x>
+          <x>320</x>
           <y>450</y>
-          <width>20</width>
+          <width>110</width>
           <height>24</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+          <kerning>true</kerning>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="text">
-         <string>-</string>
+         <string>Close Terminal</string>
         </property>
        </widget>
       </widget>
