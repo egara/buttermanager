@@ -120,7 +120,7 @@ class Upgrader(QThread):
             elif util.settings.user_os == util.utils.OS_SUSE:
                 upgrading_command = SUSE_ZYPPER_UPGRADE_COMMAND
 
-            if not upgrading_command:
+            if upgrading_command:
                 sys.stdout.write("Upgrading the system. Please wait...")
                 sys.stdout.write("\n")
                 util.utils.execute_command(upgrading_command, console=True)
