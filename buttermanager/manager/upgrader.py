@@ -117,12 +117,13 @@ class Upgrader(QThread):
                 util.utils.execute_command(DEBIAN_APT_UPDATE_COMMAND, console=True)
                 sys.stdout.write("\n")
                 upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
-            elif util.settings.user_os == util.utils.OS_ARCH:
+            elif util.settings.user_os == util.utils.OS_SUSE:
                 upgrading_command = SUSE_ZYPPER_UPGRADE_COMMAND
 
-            sys.stdout.write("Upgrading the system. Please wait...")
-            sys.stdout.write("\n")
-            util.utils.execute_command(upgrading_command, console=True)
+            if not upgrading_command:
+                sys.stdout.write("Upgrading the system. Please wait...")
+                sys.stdout.write("\n")
+                util.utils.execute_command(upgrading_command, console=True)
 
             # Upgrades AUR if distro is ArchLinux or derivatives
             if util.settings.user_os == util.utils.OS_ARCH:
@@ -213,7 +214,7 @@ class Upgrader(QThread):
                     updates = True
 
         else:
-            # TODO: Take into account Debian based distro
+            # TODO: Take into account Debian based distro, SUSE, etc
             updates = True
 
         return updates
