@@ -45,6 +45,7 @@ You can install ButterManager in different ways.
     python setup.py install --user
 
   ```
+  Please note that if you have several versions of python installed on your system, maybe you have to run explicity **python3 setup.py install --user** instead.
 
 4. For running ButterManager just:
 
@@ -53,6 +54,7 @@ You can install ButterManager in different ways.
     python buttermanager.py
 
   ```
+  Please note that if you have several versions of python installed on your system, maybe you have to run explicity **python3 buttermanager.py** instead.
 
 ### From AUR ###
 If you are an Arch Linux user, ButterManager is in AUR. Depending on your package manager for AUR, type:
@@ -80,7 +82,7 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 1.1 ###
 
 - RHEL / Fedora, OpenSUSE / SUSE support added.
-- New window implemented for displaying serious problems related to the proper functioning ob ButterManager.
+- New window implemented for displaying serious problems related to the proper functioning of ButterManager.
 
 ### Version 1.0 ###
 
