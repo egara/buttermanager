@@ -39,13 +39,15 @@ MB = "MiB"  # Megabytes
 KB = "KiB"  # Kilobytes
 B = "B"     # Bytes
 BYTE_SIZE = 1024
-OS_DEBIAN = "DEBIAN"
-DEBIAN_PM = "apt"
-OS_ARCH = "ARCH"
 ARCH_PM = "pacman"
-SNAP_PM = "snap"
+DEBIAN_PM = "apt"
 SUSE_PM = "zypper"
+FEDORA_PM = "dnf"
+SNAP_PM = "snap"
+OS_ARCH = "ARCH"
+OS_DEBIAN = "DEBIAN"
 OS_SUSE = "SUSE"
+OS_FEDORA = "FEDORA"
 
 
 # Classes

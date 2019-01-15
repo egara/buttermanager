@@ -42,6 +42,7 @@ ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
 SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
 SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
+FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
 
 
 class Upgrader(QThread):
