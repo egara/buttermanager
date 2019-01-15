@@ -108,6 +108,8 @@ class ConfigManager:
             util.settings.user_os = OS_DEBIAN
         elif exist_program(ARCH_PM):
             util.settings.user_os = OS_ARCH
+        elif exist_program(FEDORA_PM):
+            util.settings.user_os = OS_FEDORA
         self.__logger.info("Checking OS. {os} found".format(os=util.settings.user_os))
 
         # Creating a properties manager to manage all the application properties

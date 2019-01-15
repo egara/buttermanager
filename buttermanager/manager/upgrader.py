@@ -120,6 +120,8 @@ class Upgrader(QThread):
                 upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
             elif util.settings.user_os == util.utils.OS_SUSE:
                 upgrading_command = SUSE_ZYPPER_UPGRADE_COMMAND
+            elif util.settings.user_os == util.utils.OS_FEDORA:
+                upgrading_command = FEDORA_DNF_UPGRADE_COMMAND
 
             if upgrading_command:
                 sys.stdout.write("Upgrading the system. Please wait...")
