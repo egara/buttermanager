@@ -26,9 +26,9 @@ import util.utils
 import util.settings
 import window.windows
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap
+from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices
 from PyQt5 import uic
-from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
 
 # Constants
 SNAP_COMMAND = "snap"
@@ -272,6 +272,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_save_subvolume.clicked.connect(self.save_subvolume)
                 self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
                 self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
+                self.button_github.clicked.connect(self.go_to_github)
 
                 # If no subvolumes are defined, warning the user
                 if len(util.settings.subvolumes) == 0:
@@ -558,6 +559,13 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Refreshing components
         self.refresh_gui()
+
+    def go_to_github(self):
+        """Actions when user clicks on github button.
+
+        """
+        url = QUrl('https://github.com/egara/buttermanager')
+        QDesktopServices.openUrl(url)
 
     def fill_snapshots(self):
         """Fills snapshots information in the GUI.

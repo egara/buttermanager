@@ -726,7 +726,7 @@
           <property name="geometry">
            <rect>
             <x>290</x>
-            <y>220</y>
+            <y>230</y>
             <width>211</width>
             <height>16</height>
            </rect>
@@ -748,7 +748,7 @@
           <property name="geometry">
            <rect>
             <x>290</x>
-            <y>240</y>
+            <y>250</y>
             <width>211</width>
             <height>16</height>
            </rect>
@@ -770,7 +770,7 @@
           <property name="geometry">
            <rect>
             <x>290</x>
-            <y>280</y>
+            <y>300</y>
             <width>211</width>
             <height>16</height>
            </rect>
@@ -786,6 +786,34 @@
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_github">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>268</y>
+            <width>331</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <italic>true</italic>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: none;</string>
+          </property>
+          <property name="text">
+           <string>https://github.com/egara/buttermanager</string>
           </property>
          </widget>
         </widget>
