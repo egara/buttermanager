@@ -9,13 +9,6 @@ confinement: classic
 apps:
   buttermanager:
     command: bin/buttermanager.sh
-    plugs:
-     - x11
-     - desktop
-     - desktop-legacy
-     - wayland
-     - unity7
-     - home
 
 parts:
   # Pulls the code from the original source (master branch)
