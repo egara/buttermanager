@@ -46,6 +46,8 @@ snapshots_to_keep = 2
 snap_packages = 1
 # Do user want to upgrade packages from AUR? 0=False 1=True
 aur_repository = 1
+# Do user want to check for updates at startup? 0=False 1=True
+check_at_startup = 1
 # Subvolumes managed by the application
 # It will be a dictionary:
 # Key=origin path for the subvolume; Value=Subvolume object
@@ -60,7 +62,7 @@ class PropertiesManager:
     If no user settings are loaded yet, then the yaml file ~/.buttermanager/buttermanager.yaml will be
     read and parsed in self.__user_settings dictionary.
 
-    The keys of the dictionary will be the properties name in the yaml file. The values will be te values
+    The keys of the dictionary will be the properties name in the yaml file. The values will be the values
     in the yaml file for every property.
     """
     # Constructor
@@ -86,11 +88,11 @@ class PropertiesManager:
             property (string): Property to get its value.
 
         Returns:
-            string: The value of the property. Empty string if the property was not found.
+            string: The value of the property. 0 if the property was not found.
         """
         value = ""
         if len(self.__user_settings) > 0:
-            value = self.__user_settings.get(property, "")
+            value = self.__user_settings.get(property, 0)
         return value
 
     def set_property(self, property, value):

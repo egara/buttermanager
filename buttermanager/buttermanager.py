@@ -134,6 +134,14 @@ class ButtermanagerMainWindow(QMainWindow):
         # QTextEdit component
         sys.stdout = EmittingStream(text_written=self.normal_output_written)
 
+        # Show the updates window only if the user wants to
+        if util.settings.check_at_startup == 1:
+            updates_window = window.windows.UpdatesWindow(self)
+            # Connecting the signal emitted by the updates window with this slot
+            updates_window.upgrade_system.connect(self.upgrade_system)
+            # Displaying snapshot window
+            updates_window.show()
+
     def __del__(self):
         """Restores sys.stdout.
 
@@ -236,6 +244,17 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.checkbox_aur.show()
                 else:
                     self.checkbox_aur.hide()
+
+                # Retrieving check for updates at startup decision
+                if util.settings.check_at_startup == 0:
+                    self.checkbox_startup.setChecked(False)
+                else:
+                    self.checkbox_startup.setChecked(True)
+
+                if util.settings.user_os == util.utils.OS_ARCH:
+                    self.checkbox_startup.show()
+                else:
+                    self.checkbox_startup.hide()
                 # END -- Displaying settings options
 
                 # Setting buttons and icons
@@ -267,6 +286,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
                 self.checkbox_aur.clicked.connect(self.include_aur)
+                self.checkbox_startup.clicked.connect(self.include_startup)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
                 self.button_save_subvolume.clicked.connect(self.save_subvolume)
@@ -511,6 +531,16 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('aur_repository', 1)
         else:
             util.settings.properties_manager.set_property('aur_repository', 0)
+
+    def include_startup(self):
+        """Actions when user checks check updates at startup.
+
+        """
+        # Storing value in settings
+        if self.checkbox_startup.isChecked():
+            util.settings.properties_manager.set_property('check_at_startup', 1)
+        else:
+            util.settings.properties_manager.set_property('check_at_startup', 0)
 
     def on_combobox_subvolumes_changed(self):
         current_subvolume = self.combobox_subvolumes.currentText()

@@ -404,7 +404,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>335</y>
+            <y>309</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -417,7 +417,7 @@
           <property name="geometry">
            <rect>
             <x>22</x>
-            <y>310</y>
+            <y>284</y>
             <width>141</width>
             <height>18</height>
            </rect>
@@ -437,7 +437,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>381</y>
+            <y>355</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -450,7 +450,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>358</y>
+            <y>332</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -463,7 +463,7 @@
           <property name="geometry">
            <rect>
             <x>370</x>
-            <y>336</y>
+            <y>310</y>
             <width>41</width>
             <height>21</height>
            </rect>
@@ -473,7 +473,7 @@
           <property name="geometry">
            <rect>
             <x>246</x>
-            <y>336</y>
+            <y>310</y>
             <width>121</width>
             <height>20</height>
            </rect>
@@ -655,6 +655,19 @@
           </property>
           <property name="text">
            <string>Existing subvolumes</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkbox_startup">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>379</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Check updates at startup</string>
           </property>
          </widget>
         </widget>

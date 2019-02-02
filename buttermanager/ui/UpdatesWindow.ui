@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UpdatesWindow</class>
+ <widget class="QMainWindow" name="UpdatesWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>767</width>
+    <height>442</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Packages to update</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTextEdit" name="text_edit_console">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>60</y>
+      <width>751</width>
+      <height>341</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_updates">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>391</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Packages to update</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_upgrade_system">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>20</y>
+      <width>121</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Upgrade the system creating a previous snapshot and removing old snapshots according to configuration</string>
+    </property>
+    <property name="text">
+     <string>Upgrade System</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_cancel">
+    <property name="geometry">
+     <rect>
+      <x>669</x>
+      <y>20</y>
+      <width>88</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cancel</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
