@@ -169,6 +169,8 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             self.__logger.info("System upgrading process finished.")
             sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
+            sys.stdout.write("\n")
+            sys.stdout.write("\n")
 
             # Refreshing GUI
             self.on_refresh_gui()
