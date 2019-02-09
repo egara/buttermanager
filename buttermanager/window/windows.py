@@ -344,6 +344,9 @@ class UpdatesWindow(QMainWindow):
         elif util.settings.user_os == util.utils.OS_DEBIAN:
             check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n");
+            print("Heyyyyyyyyy:" + lines)
+            print("Number of lines:" + len(lines))
 
         for line in commandline_output.split("\n"):
             self.text_edit_console.moveCursor(QTextCursor.End)
