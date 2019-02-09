@@ -223,7 +223,7 @@ class Upgrader(QThread):
             check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
             lines = commandline_output.split("\n")
-            if len(lines) > 1:
+            if len(lines) > 2:
                 updates = True
 
         else:
