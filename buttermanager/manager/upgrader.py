@@ -33,6 +33,7 @@ ARCH_PACMAN_CHECK_UPDATES = "sudo -S pacman -Qu"
 ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
 DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
 DEBIAN_APT_UPGRADE_COMMAND = "sudo -S apt upgrade -y"
+DEBIAN_APT_CHECK_UPDATES = "sudo -S apt list --upgradable"
 ARCH_YAOURT_UPGRADE_COMMAND = "yaourt -Syua --noconfirm"
 ARCH_YAOURT_COMMAND = "yaourt"
 ARCH_YAY_UPGRADE_COMMAND = "yay -Syu --noconfirm"
@@ -216,8 +217,15 @@ class Upgrader(QThread):
                 if line:
                     updates = True
 
+        elif util.settings.user_os == util.utils.OS_DEBIAN:
+            check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 1:
+                updates = True
+
         else:
-            # TODO: Take into account Debian based distro, SUSE, etc
+            # TODO: Take into account SUSE, Fedora
             updates = True
 
         return updates

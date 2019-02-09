@@ -334,16 +334,21 @@ class UpdatesWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Checking updates
+        commandline_output = []
         if util.settings.user_os == util.utils.OS_ARCH:
             refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
             util.utils.execute_command(refresh_repositories_command)
             check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
 
-            for line in commandline_output.split("\n"):
-                self.text_edit_console.moveCursor(QTextCursor.End)
-                self.text_edit_console.insertHtml(line + '<br>')
-                self.text_edit_console.moveCursor(QTextCursor.End)
+        elif util.settings.user_os == util.utils.OS_DEBIAN:
+            check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        for line in commandline_output.split("\n"):
+            self.text_edit_console.moveCursor(QTextCursor.End)
+            self.text_edit_console.insertHtml(line + '<br>')
+            self.text_edit_console.moveCursor(QTextCursor.End)
 
         # Button events
         self.button_upgrade_system.clicked.connect(self.full_system_upgrade)
