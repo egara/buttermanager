@@ -251,7 +251,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 else:
                     self.checkbox_startup.setChecked(True)
 
-                if util.settings.user_os == util.utils.OS_ARCH:
+                if util.settings.user_os == util.utils.OS_ARCH or \
+                        util.settings.user_os == util.utils.OS_DEBIAN:
                     self.checkbox_startup.show()
                 else:
                     self.checkbox_startup.hide()
