@@ -180,6 +180,8 @@ class Upgrader(QThread):
             # There are not system updates
             self.__logger.info("Your system is up to date.")
             sys.stdout.write("Your system is up to date. You can close the terminal output now.")
+            sys.stdout.write("\n")
+            sys.stdout.write("\n")
 
         # Finishing the upgrading process. Enabling all the buttons.
         self.on_enable_gui_buttons()
