@@ -349,6 +349,10 @@ class UpdatesWindow(QMainWindow):
             check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
 
+        elif util.settings.user_os == util.utils.OS_FEDORA:
+            check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
         # TODO: remove
         lines = commandline_output.split("\n")
         self.__logger.info("Heyyyyyyyyy:" + str(lines))

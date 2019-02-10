@@ -45,6 +45,7 @@ SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
 SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
 SUSE_ZYPPER_CHECK_UPDATES = "sudo -S zypper list-updates"
 FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
+FEDORA_DNF_CHECK_UPDATES = "sudo -S dnf check-update"
 
 
 class Upgrader(QThread):
@@ -236,8 +237,14 @@ class Upgrader(QThread):
             if len(lines) > 4:
                 updates = True
 
+        elif util.settings.user_os == util.utils.OS_FEDORA:
+            check_for_updates_command = FEDORA_DNF_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 4:
+                updates = True
+
         else:
-            # TODO: Take into account Fedora
             updates = True
 
         return updates
