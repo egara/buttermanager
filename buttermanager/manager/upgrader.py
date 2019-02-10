@@ -43,6 +43,7 @@ ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
 SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
 SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
+SUSE_ZYPPER_CHECK_UPDATES = "sudo -S zypper list-updates"
 FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
 
 
@@ -226,8 +227,15 @@ class Upgrader(QThread):
             if len(lines) > 2:
                 updates = True
 
+        elif util.settings.user_os == util.utils.OS_SUSE:
+            check_for_updates_command = SUSE_ZYPPER_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 4:
+                updates = True
+
         else:
-            # TODO: Take into account SUSE, Fedora
+            # TODO: Take into account Fedora
             updates = True
 
         return updates
