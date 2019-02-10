@@ -9,6 +9,8 @@ confinement: classic
 apps:
   buttermanager:
     command: bin/buttermanager.sh
+    environment:
+      DISABLE_WAYLAND: 1
 
 parts:
   # Pulls the code from the original source (master branch)
