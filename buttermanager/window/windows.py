@@ -353,11 +353,6 @@ class UpdatesWindow(QMainWindow):
             check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
             commandline_output = util.utils.execute_command(check_for_updates_command)
 
-        # TODO: remove
-        lines = commandline_output.split("\n")
-        self.__logger.info("Heyyyyyyyyy:" + str(lines))
-        self.__logger.info("Number of lines:" + str(len(lines)))
-
         for line in commandline_output.split("\n"):
             self.text_edit_console.moveCursor(QTextCursor.End)
             self.text_edit_console.insertHtml(line + '<br>')
