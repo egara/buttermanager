@@ -134,15 +134,6 @@ class ButtermanagerMainWindow(QMainWindow):
         # QTextEdit component
         sys.stdout = EmittingStream(text_written=self.normal_output_written)
 
-        # Show the updates window only if the user wants to and if there are updates
-        if util.settings.check_at_startup == 1:
-            if manager.upgrader.check_updates():
-                updates_window = window.windows.UpdatesWindow(self)
-                # Connecting the signal emitted by the updates window with this slot
-                updates_window.upgrade_system.connect(self.upgrade_system)
-                # Displaying snapshot window
-                updates_window.show()
-
     def __del__(self):
         """Restores sys.stdout.
 
@@ -310,6 +301,15 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # If everything goes right, the main window is displayed
                 self.show()
+
+                # Show the updates window only if the user wants to and if there are updates
+                if util.settings.check_at_startup == 1:
+                    if manager.upgrader.check_updates():
+                        updates_window = window.windows.UpdatesWindow(self)
+                        # Connecting the signal emitted by the updates window with this slot
+                        updates_window.upgrade_system.connect(self.upgrade_system)
+                        # Displaying snapshot window
+                        updates_window.show()
             else:
                 self.__logger.info("The application couldn't start normally. No BTRFS file system found.")
 
