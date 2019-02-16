@@ -88,7 +88,7 @@ class Upgrader(QThread):
 
         """
         # Check for updates
-        if self.__check_updates():
+        if check_updates():
             # There are system updates
             # Starting the upgrading process. Disabling all the buttons.
             self.on_disable_gui_buttons()
@@ -205,46 +205,55 @@ class Upgrader(QThread):
         """
         self.refresh_gui.emit()
 
-    def __check_updates(self):
-        self.__logger.info("Checking for system updates.")
-        sys.stdout.write("Checking for system updates.")
-        sys.stdout.write("\n")
-        sys.stdout.write("--------")
-        sys.stdout.write("\n")
 
-        updates = False
-        if util.settings.user_os == util.utils.OS_ARCH:
-            refresh_repositories_command = ARCH_PACMAN_REFRESH_REPOSITORIES
-            util.utils.execute_command(refresh_repositories_command)
-            check_for_updates_command = ARCH_PACMAN_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
+# Module's methods
+def check_updates():
+    """Checks for updates.
 
-            for line in commandline_output.split("\n"):
-                if line:
-                    updates = True
+    Returns:
+        boolean: true if there are updates; false otherwise.
+    """
+    # Logger
+    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger.info("Checking for system updates.")
+    sys.stdout.write("Checking for system updates.")
+    sys.stdout.write("\n")
+    sys.stdout.write("--------")
+    sys.stdout.write("\n")
 
-        elif util.settings.user_os == util.utils.OS_DEBIAN:
-            check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-            lines = commandline_output.split("\n")
-            if len(lines) > 2:
+    updates = False
+    if util.settings.user_os == util.utils.OS_ARCH:
+        refresh_repositories_command = ARCH_PACMAN_REFRESH_REPOSITORIES
+        util.utils.execute_command(refresh_repositories_command)
+        check_for_updates_command = ARCH_PACMAN_CHECK_UPDATES
+        commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        for line in commandline_output.split("\n"):
+            if line:
                 updates = True
 
-        elif util.settings.user_os == util.utils.OS_SUSE:
-            check_for_updates_command = SUSE_ZYPPER_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-            lines = commandline_output.split("\n")
-            if len(lines) > 4:
-                updates = True
-
-        elif util.settings.user_os == util.utils.OS_FEDORA:
-            check_for_updates_command = FEDORA_DNF_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-            lines = commandline_output.split("\n")
-            if len(lines) > 2:
-                updates = True
-
-        else:
+    elif util.settings.user_os == util.utils.OS_DEBIAN:
+        check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
+        commandline_output = util.utils.execute_command(check_for_updates_command)
+        lines = commandline_output.split("\n")
+        if len(lines) > 2:
             updates = True
 
-        return updates
+    elif util.settings.user_os == util.utils.OS_SUSE:
+        check_for_updates_command = SUSE_ZYPPER_CHECK_UPDATES
+        commandline_output = util.utils.execute_command(check_for_updates_command)
+        lines = commandline_output.split("\n")
+        if len(lines) > 4:
+            updates = True
+
+    elif util.settings.user_os == util.utils.OS_FEDORA:
+        check_for_updates_command = FEDORA_DNF_CHECK_UPDATES
+        commandline_output = util.utils.execute_command(check_for_updates_command)
+        lines = commandline_output.split("\n")
+        if len(lines) > 2:
+            updates = True
+
+    else:
+        updates = True
+
+    return updates
