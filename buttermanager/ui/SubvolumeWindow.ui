@@ -43,9 +43,9 @@
    <widget class="QLineEdit" name="line_subvolume_origin">
     <property name="geometry">
      <rect>
-      <x>163</x>
+      <x>198</x>
       <y>57</y>
-      <width>416</width>
+      <width>381</width>
       <height>24</height>
      </rect>
     </property>
@@ -53,9 +53,9 @@
    <widget class="QLineEdit" name="line_subvolume_dest">
     <property name="geometry">
      <rect>
-      <x>368</x>
+      <x>298</x>
       <y>97</y>
-      <width>211</width>
+      <width>281</width>
       <height>24</height>
      </rect>
     </property>
@@ -63,9 +63,9 @@
    <widget class="QLineEdit" name="line_snapshot_name">
     <property name="geometry">
      <rect>
-      <x>129</x>
+      <x>149</x>
       <y>137</y>
-      <width>451</width>
+      <width>431</width>
       <height>24</height>
      </rect>
     </property>
@@ -75,7 +75,7 @@
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>141</width>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
@@ -88,12 +88,12 @@
      <rect>
       <x>10</x>
       <y>101</y>
-      <width>351</width>
+      <width>291</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Path where the snapshot of the subvolume will be stored</string>
+     <string>Path where the snapshot will be stored</string>
     </property>
    </widget>
    <widget class="QPushButton" name="button_add_subvolume_orig">
@@ -133,7 +133,7 @@
      <rect>
       <x>10</x>
       <y>140</y>
-      <width>111</width>
+      <width>131</width>
       <height>16</height>
      </rect>
     </property>

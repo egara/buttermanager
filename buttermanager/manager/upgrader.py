@@ -33,6 +33,7 @@ ARCH_PACMAN_CHECK_UPDATES = "sudo -S pacman -Qu"
 ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
 DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
 DEBIAN_APT_UPGRADE_COMMAND = "sudo -S apt upgrade -y"
+DEBIAN_APT_CHECK_UPDATES = "sudo -S apt list --upgradable"
 ARCH_YAOURT_UPGRADE_COMMAND = "yaourt -Syua --noconfirm"
 ARCH_YAOURT_COMMAND = "yaourt"
 ARCH_YAY_UPGRADE_COMMAND = "yay -Syu --noconfirm"
@@ -42,7 +43,9 @@ ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
 SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
 SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
+SUSE_ZYPPER_CHECK_UPDATES = "sudo -S zypper list-updates"
 FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
+FEDORA_DNF_CHECK_UPDATES = "sudo -S dnf check-update"
 
 
 class Upgrader(QThread):
@@ -168,6 +171,8 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             self.__logger.info("System upgrading process finished.")
             sys.stdout.write("System upgrading process finished. You can close the terminal output now.")
+            sys.stdout.write("\n")
+            sys.stdout.write("\n")
 
             # Refreshing GUI
             self.on_refresh_gui()
@@ -176,6 +181,8 @@ class Upgrader(QThread):
             # There are not system updates
             self.__logger.info("Your system is up to date.")
             sys.stdout.write("Your system is up to date. You can close the terminal output now.")
+            sys.stdout.write("\n")
+            sys.stdout.write("\n")
 
         # Finishing the upgrading process. Enabling all the buttons.
         self.on_enable_gui_buttons()
@@ -216,8 +223,28 @@ class Upgrader(QThread):
                 if line:
                     updates = True
 
+        elif util.settings.user_os == util.utils.OS_DEBIAN:
+            check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 2:
+                updates = True
+
+        elif util.settings.user_os == util.utils.OS_SUSE:
+            check_for_updates_command = SUSE_ZYPPER_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 4:
+                updates = True
+
+        elif util.settings.user_os == util.utils.OS_FEDORA:
+            check_for_updates_command = FEDORA_DNF_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+            lines = commandline_output.split("\n")
+            if len(lines) > 2:
+                updates = True
+
         else:
-            # TODO: Take into account Debian based distro, SUSE, etc
             updates = True
 
         return updates

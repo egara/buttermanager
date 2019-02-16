@@ -404,8 +404,8 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>335</y>
-            <width>201</width>
+            <y>309</y>
+            <width>241</width>
             <height>22</height>
            </rect>
           </property>
@@ -417,7 +417,7 @@
           <property name="geometry">
            <rect>
             <x>22</x>
-            <y>310</y>
+            <y>284</y>
             <width>141</width>
             <height>18</height>
            </rect>
@@ -437,7 +437,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>381</y>
+            <y>355</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -450,7 +450,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>358</y>
+            <y>332</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -462,8 +462,8 @@
          <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
           <property name="geometry">
            <rect>
-            <x>370</x>
-            <y>336</y>
+            <x>389</x>
+            <y>310</y>
             <width>41</width>
             <height>21</height>
            </rect>
@@ -472,8 +472,8 @@
          <widget class="QLabel" name="label_snapshots_to_keep">
           <property name="geometry">
            <rect>
-            <x>246</x>
-            <y>336</y>
+            <x>265</x>
+            <y>310</y>
             <width>121</width>
             <height>20</height>
            </rect>
@@ -588,7 +588,7 @@
            <rect>
             <x>450</x>
             <y>170</y>
-            <width>301</width>
+            <width>311</width>
             <height>18</height>
            </rect>
           </property>
@@ -657,6 +657,19 @@
            <string>Existing subvolumes</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="checkbox_startup">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>379</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Check updates at startup</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">
@@ -716,7 +729,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v1.1</string>
+           <string>v1.2</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

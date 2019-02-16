@@ -80,6 +80,7 @@ class ConfigManager:
             # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''
                 aur_repository: 0
+                check_at_startup: 1
                 remove_snapshots: 1
                 snap_packages: 0
                 snapshots_to_keep: 3
@@ -124,11 +125,14 @@ class ConfigManager:
         # Number of snapshots to keep after the upgrading process
         util.settings.snapshots_to_keep = int(util.settings.properties_manager.get_property('snapshots_to_keep'))
 
-        # Do the user want to update snap packages during the upgrading process)
+        # Do the user want to update snap packages during the upgrading process
         util.settings.snap_packages = int(util.settings.properties_manager.get_property('snap_packages'))
 
-        # Do the user want to update AUR packages during the upgrading process)
+        # Do the user want to update AUR packages during the upgrading process
         util.settings.aur_repository = int(util.settings.properties_manager.get_property('aur_repository'))
+
+        # Do the user want to check for updates at startup
+        util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()

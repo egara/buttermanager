@@ -22,11 +22,12 @@
 
 """
 import util.settings
+import manager.upgrader
 import sys
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import pyqtSignal, QSize
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QTextCursor
 
 
 class InfoWindow(QDialog):
@@ -230,10 +231,6 @@ class SubvolumeWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Loading icons
-        # Something is wrong with QT5 and QFileDialog crashes in Plasma 5
-        # so the buttons will be hidden by now
-        # self.button_add_subvolume_orig.hide()
-        # self.button_add_subvolume_dest.hide()
         self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
         self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
         self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
@@ -303,6 +300,83 @@ class SubvolumeWindow(QMainWindow):
 
         """
         self.refresh_gui.emit()
+
+
+class UpdatesWindow(QMainWindow):
+    """Window to check new updates and start the upgrading process.
+
+    """
+    # pyqtSignal that will be emitted when this class requires to upgrade
+    # the system
+    upgrade_system = pyqtSignal()
+
+    # Constructor
+    def __init__(self, parent):
+        QMainWindow.__init__(self, parent)
+        self.parent = parent
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/UpdatesWindow.ui", self)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Checking updates
+        commandline_output = []
+        if util.settings.user_os == util.utils.OS_ARCH:
+            refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
+            util.utils.execute_command(refresh_repositories_command)
+            check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        elif util.settings.user_os == util.utils.OS_DEBIAN:
+            check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        elif util.settings.user_os == util.utils.OS_SUSE:
+            check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        elif util.settings.user_os == util.utils.OS_FEDORA:
+            check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
+            commandline_output = util.utils.execute_command(check_for_updates_command)
+
+        for line in commandline_output.split("\n"):
+            self.text_edit_console.moveCursor(QTextCursor.End)
+            self.text_edit_console.insertHtml(line + '<br>')
+            self.text_edit_console.moveCursor(QTextCursor.End)
+
+        # Button events
+        self.button_upgrade_system.clicked.connect(self.full_system_upgrade)
+        self.button_cancel.clicked.connect(self.cancel)
+
+    def full_system_upgrade(self):
+        """Upgrades the system.
+
+        """
+        # The main window will upgrade the system
+        self.upgrade_system.emit()
+
+        # Closes the window
+        self.cancel()
+
+    def cancel(self):
+        """Closes the window.
+
+        """
+        self.close()
 
 
 class ProblemsFoundWindow(QMainWindow):
