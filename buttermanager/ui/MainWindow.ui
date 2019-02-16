@@ -405,7 +405,7 @@
            <rect>
             <x>19</x>
             <y>309</y>
-            <width>201</width>
+            <width>241</width>
             <height>22</height>
            </rect>
           </property>
@@ -462,7 +462,7 @@
          <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
           <property name="geometry">
            <rect>
-            <x>370</x>
+            <x>389</x>
             <y>310</y>
             <width>41</width>
             <height>21</height>
@@ -472,7 +472,7 @@
          <widget class="QLabel" name="label_snapshots_to_keep">
           <property name="geometry">
            <rect>
-            <x>246</x>
+            <x>265</x>
             <y>310</y>
             <width>121</width>
             <height>20</height>
@@ -588,7 +588,7 @@
            <rect>
             <x>450</x>
             <y>170</y>
-            <width>301</width>
+            <width>311</width>
             <height>18</height>
            </rect>
           </property>
@@ -729,7 +729,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v1.1</string>
+           <string>v1.2</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
