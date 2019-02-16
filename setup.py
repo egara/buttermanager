@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="buttermanager",
-    version="1.1",
+    version="1.2",
     author="Eloy García Almadén",
     author_email="eloy.garcia.pca@gmail.com",
     description="BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly",
@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
        'PyQt5==5.10.1',
-       'PyYAML==3.13',
+       'PyYAML==4.2b1',
        'sip==4.19.8'
     ],
     classifiers=[
