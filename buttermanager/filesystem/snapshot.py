@@ -29,8 +29,8 @@ import time
 import util.utils
 
 # Constants
-BTRFS_CREATE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume snapshot -r"
-BTRFS_DELETE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume delete"
+BTRFS_CREATE_SNAPSHOT_COMMAND = "btrfs subvolume snapshot -r"
+BTRFS_DELETE_SNAPSHOT_COMMAND = "btrfs subvolume delete"
 
 
 # Classes

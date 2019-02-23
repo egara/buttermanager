@@ -298,7 +298,7 @@ def exist_program(program, root=False):
     True
     """
     if root:
-        command = "sudo -S which " + program
+        command = "which " + program
         # Checking if the program executed by the command is installed in the system
         echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split

@@ -28,12 +28,12 @@ import util.utils
 import util.settings
 
 # Constants
-ARCH_PACMAN_REFRESH_REPOSITORIES = "sudo -S pacman -Sy"
-ARCH_PACMAN_CHECK_UPDATES = "sudo -S pacman -Qu"
-ARCH_PACMAN_UPGRADE_COMMAND = "sudo -S pacman -Syu --noconfirm"
-DEBIAN_APT_UPDATE_COMMAND = "sudo -S apt update"
-DEBIAN_APT_UPGRADE_COMMAND = "sudo -S apt upgrade -y"
-DEBIAN_APT_CHECK_UPDATES = "sudo -S apt list --upgradable"
+ARCH_PACMAN_REFRESH_REPOSITORIES = "pacman -Sy"
+ARCH_PACMAN_CHECK_UPDATES = "pacman -Qu"
+ARCH_PACMAN_UPGRADE_COMMAND = "pacman -Syu --noconfirm"
+DEBIAN_APT_UPDATE_COMMAND = "apt update"
+DEBIAN_APT_UPGRADE_COMMAND = "apt upgrade -y"
+DEBIAN_APT_CHECK_UPDATES = "apt list --upgradable"
 ARCH_YAOURT_UPGRADE_COMMAND = "yaourt -Syua --noconfirm"
 ARCH_YAOURT_COMMAND = "yaourt"
 ARCH_YAY_UPGRADE_COMMAND = "yay -Syu --noconfirm"
@@ -41,11 +41,11 @@ ARCH_YAY_COMMAND = "yay"
 ARCH_TRIZEN_UPGRADE_COMMAND = "trizen -Syua --noconfirm"
 ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
-SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
-SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
-SUSE_ZYPPER_CHECK_UPDATES = "sudo -S zypper list-updates"
-FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
-FEDORA_DNF_CHECK_UPDATES = "sudo -S dnf check-update"
+SNAP_UPGRADE_COMMAND = "snap refresh"
+SUSE_ZYPPER_UPGRADE_COMMAND = "zypper -n update"
+SUSE_ZYPPER_CHECK_UPDATES = "zypper list-updates"
+FEDORA_DNF_UPGRADE_COMMAND = "dnf upgrade --refresh --assumeyes"
+FEDORA_DNF_CHECK_UPDATES = "dnf check-update"
 
 
 class Upgrader(QThread):
