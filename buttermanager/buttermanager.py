@@ -127,6 +127,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__balancer = None
         # Upgrader that will upgrade the system if it is needed
         self.__upgrader = None
+        # Updates checker that will check for updates if it is needed
+        self.__updates_checker = None
         # Initializing the application
         self.init_ui()
 
@@ -291,11 +293,14 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # If no subvolumes are defined, warning the user
                 if len(util.settings.subvolumes) == 0:
-                    info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes added.\n"
+                    info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes "
+                                                                         "added.\n"
                                                                          "If you upgrade the filesystem, no snapshots "
                                                                          "will\n"
-                                                                         "be created. If you want to create automatically\n"
-                                                                         "snapshots during the upgrading process, go to\n"
+                                                                         "be created. If you want to create "
+                                                                         "automatically\n"
+                                                                         "snapshots during the upgrading process, "
+                                                                         "go to\n"
                                                                          "Settings and Add a subvolume.")
                     info_dialog.show()
 
@@ -303,13 +308,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.show()
 
                 # Show the updates window only if the user wants to and if there are updates
-                if util.settings.check_at_startup == 1:
-                    if manager.upgrader.check_updates():
-                        updates_window = window.windows.UpdatesWindow(self)
-                        # Connecting the signal emitted by the updates window with this slot
-                        updates_window.upgrade_system.connect(self.upgrade_system)
-                        # Displaying snapshot window
-                        updates_window.show()
+                self.check_updates()
+
             else:
                 self.__logger.info("The application couldn't start normally. No BTRFS file system found.")
 
@@ -326,6 +326,27 @@ class ButtermanagerMainWindow(QMainWindow):
                                                                    "the proper functioning of ButterManager:\n"
                                                                    "btrfs, findmnt.\n")
             info_dialog.show()
+
+    def check_updates(self):
+        """Creates the updates checker that will start in another thread and check system updates.
+
+        """
+        self.__updates_checker = manager.upgrader.UpdatesChecker()
+        self.__updates_checker.show_updates_window.connect(self.show_updates_window)
+        self.__updates_checker.start()
+
+    def show_updates_window(self, command_line_output):
+        """ Shows a new window with all the packages to  be updated.
+
+        Once the updates_checker knows all the packages that need to be updated, a new
+        UpdatesWindow will be opened from the main GUI thread.
+
+        Arguments:
+            command_line_output (list(:obj:`str`)): Packages to be updated. One per line.
+        """
+        updates_window = window.windows.UpdatesWindow(self, command_line_output)
+        updates_window.upgrade_system.connect(self.upgrade_system)
+        updates_window.show()
 
     def balance_filesystem(self):
         """Runs the balance method.

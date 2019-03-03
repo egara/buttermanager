@@ -22,7 +22,6 @@
 
 """
 import util.settings
-import manager.upgrader
 import sys
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
@@ -311,11 +310,19 @@ class UpdatesWindow(QMainWindow):
     upgrade_system = pyqtSignal()
 
     # Constructor
-    def __init__(self, parent):
+    def __init__(self, parent, command_line_text):
+        """ Constructor.
+
+        Arguments:
+            command_line_text (list(:obj:`str`)): Packages obtained from command line to be updated. One per line.
+        """
         QMainWindow.__init__(self, parent)
         self.parent = parent
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        # Command line text
+        self.__command_line_text = command_line_text
 
         # Initializing the window
         self.init_ui()
@@ -333,27 +340,8 @@ class UpdatesWindow(QMainWindow):
         qt_rectangle.moveCenter(center_point)
         self.move(qt_rectangle.topLeft())
 
-        # Checking updates
-        commandline_output = []
-        if util.settings.user_os == util.utils.OS_ARCH:
-            refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
-            util.utils.execute_command(refresh_repositories_command)
-            check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-
-        elif util.settings.user_os == util.utils.OS_DEBIAN:
-            check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-
-        elif util.settings.user_os == util.utils.OS_SUSE:
-            check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-
-        elif util.settings.user_os == util.utils.OS_FEDORA:
-            check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
-            commandline_output = util.utils.execute_command(check_for_updates_command)
-
-        for line in commandline_output.split("\n"):
+        # Displaying packages to be updated
+        for line in self.__command_line_text.split("\n"):
             self.text_edit_console.moveCursor(QTextCursor.End)
             self.text_edit_console.insertHtml(line + '<br>')
             self.text_edit_console.moveCursor(QTextCursor.End)

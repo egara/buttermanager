@@ -21,11 +21,11 @@
 """This module gathers all the managers built for the application.
 
 """
+import manager
 import sys
+import util.settings
 import util.utils
 from PyQt5.QtCore import QThread, pyqtSignal
-import util.utils
-import util.settings
 
 # Constants
 ARCH_PACMAN_REFRESH_REPOSITORIES = "sudo -S pacman -Sy"
@@ -204,6 +204,60 @@ class Upgrader(QThread):
 
         """
         self.refresh_gui.emit()
+
+
+class UpdatesChecker(QThread):
+    """Independent thread that will run the system checking for updates.
+
+    """
+    # Attributes
+
+    # pyqtSignal that will be emitted when this class requires that main
+    # window shows the updates window. The signal will emit an 'object' that,
+    # in hits case, will be a list of strings.
+    show_updates_window = pyqtSignal(object)
+
+    # Constructor
+    def __init__(self):
+        QThread.__init__(self)
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+    # Methods
+    def run(self):
+        # Checks for updates
+        self.__check_updates()
+
+    def __check_updates(self):
+        """Wraps all the operations to check updates.
+        Emits a signal with the packages found. Otherwise, it won't emit this signal and
+        nothing will happen.
+
+        """
+        # Show the updates window only if the user wants to and if there are updates
+        if util.settings.check_at_startup == 1:
+            if manager.upgrader.check_updates():
+                commandline_output = []
+                if util.settings.user_os == util.utils.OS_ARCH:
+                    refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
+                    util.utils.execute_command(refresh_repositories_command)
+                    check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
+                    commandline_output = util.utils.execute_command(check_for_updates_command)
+
+                elif util.settings.user_os == util.utils.OS_DEBIAN:
+                    check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
+                    commandline_output = util.utils.execute_command(check_for_updates_command)
+
+                elif util.settings.user_os == util.utils.OS_SUSE:
+                    check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
+                    commandline_output = util.utils.execute_command(check_for_updates_command)
+
+                elif util.settings.user_os == util.utils.OS_FEDORA:
+                    check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
+                    commandline_output = util.utils.execute_command(check_for_updates_command)
+
+                # If there are updates, emits the signal thta will be captured in buttermanager.py
+                self.show_updates_window.emit(commandline_output)
 
 
 # Module's methods
