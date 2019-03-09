@@ -26,6 +26,20 @@ You will be able to upgrade your system and create new snapshots automatically w
 ## Installation ##
 You can install ButterManager in different ways.
 
+### Snap package ###
+Snaps are universal Linux packages that can be used on all major Linux distributions, including Ubuntu, Linux Mint, Debian, Fedora, Arch Linux and more. Please, read [this article](https://docs.snapcraft.io/installing-snapd/6735) for knowing more and installing snap support.
+
+ButterManager is in process of being available via [Snap Store](https://snapcraft.io/store) as [you can see here](https://forum.snapcraft.io/t/requesting-classic-confinement-for-buttermanager/9574/5). Meanwhile, you can download ButterManager [here](https://drive.google.com/file/d/1qpsqzy98nvdz9dDF49oN_x6gS_FKdFaQ/view?usp=sharing).
+
+After this, installing ButterManager is very easy. Open a terminal, go to the directory where the package is downloaded and type:
+
+  ```
+    sudo snap install buttermanager_1.3_amd64.snap --classic --dangerous
+
+  ```
+
+The first time ButterManager is executed after installing the snap package, maybe it will take a little bit to run. Don't worry, it will be only the first time.
+
 ### From the source code ###
 1. Clone the repository (install **git** if it is needed first)
 
