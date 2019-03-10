@@ -400,7 +400,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.label_filesystem_allocated_value.setText(filesystem.total_allocated)
         self.progressbar_data.setValue(filesystem.data_percentage)
         self.progressbar_metadata.setValue(filesystem.metadata_percentage)
-        self.progressbar_system.setValue(filesystem.system_percentage)
+        # self.progressbar_system.setValue(filesystem.system_percentage)
 
     def upgrade_system(self):
         """Runs the system upgrade operation.

@@ -61,7 +61,7 @@
           <property name="geometry">
            <rect>
             <x>560</x>
-            <y>201</y>
+            <y>220</y>
             <width>121</width>
             <height>34</height>
            </rect>
@@ -113,7 +113,7 @@
           <property name="geometry">
            <rect>
             <x>130</x>
-            <y>170</y>
+            <y>204</y>
             <width>281</width>
             <height>20</height>
            </rect>
@@ -126,9 +126,9 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>160</y>
+            <y>203</y>
             <width>31</width>
-            <height>31</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="text">
@@ -139,52 +139,26 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>200</y>
+            <y>243</y>
             <width>61</width>
-            <height>31</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="text">
            <string>Metadata</string>
           </property>
          </widget>
-         <widget class="QLabel" name="label_filesystem_system">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>240</y>
-            <width>61</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>System</string>
-          </property>
-         </widget>
          <widget class="QProgressBar" name="progressbar_metadata">
           <property name="geometry">
            <rect>
             <x>131</x>
-            <y>208</y>
+            <y>245</y>
             <width>281</width>
             <height>20</height>
            </rect>
           </property>
           <property name="value">
            <number>50</number>
-          </property>
-         </widget>
-         <widget class="QProgressBar" name="progressbar_system">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>247</y>
-            <width>281</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="value">
-           <number>24</number>
           </property>
          </widget>
          <widget class="QLabel" name="label_filesystem">
@@ -292,9 +266,9 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>120</y>
+            <y>163</y>
             <width>201</width>
-            <height>31</height>
+            <height>21</height>
            </rect>
           </property>
           <property name="font">
