@@ -306,8 +306,12 @@ class UpdatesWindow(QMainWindow):
 
     """
     # pyqtSignal that will be emitted when this class requires to upgrade
-    # the system
+    # the system with snapshots
     upgrade_system = pyqtSignal()
+
+    # pyqtSignal that will be emitted when this class requires to upgrade
+    # the system without snapshots
+    upgrade_system_without_snanpshots = pyqtSignal()
 
     # Constructor
     def __init__(self, parent, command_line_text):
@@ -348,14 +352,25 @@ class UpdatesWindow(QMainWindow):
 
         # Button events
         self.button_upgrade_system.clicked.connect(self.full_system_upgrade)
+        self.button_upgrade_system_without_snapshots.clicked.connect(self.full_system_upgrade_without_snapshots)
         self.button_cancel.clicked.connect(self.cancel)
 
     def full_system_upgrade(self):
-        """Upgrades the system.
+        """Upgrades the system doing snapshots.
 
         """
         # The main window will upgrade the system
         self.upgrade_system.emit()
+
+        # Closes the window
+        self.cancel()
+
+    def full_system_upgrade_without_snapshots(self):
+        """Upgrades the system without doing snapshots.
+
+        """
+        # The main window will upgrade the system
+        self.upgrade_system_without_snanpshots.emit()
 
         # Closes the window
         self.cancel()
