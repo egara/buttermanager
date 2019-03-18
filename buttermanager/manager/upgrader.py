@@ -67,7 +67,7 @@ class Upgrader(QThread):
     refresh_gui = pyqtSignal()
 
     # Constructor
-    def __init__(self, dont_remove_snapshots, include_aur, include_snap):
+    def __init__(self, dont_remove_snapshots, include_aur, include_snap, snapshots):
         QThread.__init__(self)
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
@@ -77,6 +77,8 @@ class Upgrader(QThread):
         self.__include_aur = include_aur
         # Include snap packages upgrade
         self.__include_snap = include_snap
+        # Create and delete snapshots
+        self.__snapshots = snapshots
 
     # Methods
     def run(self):
@@ -103,9 +105,10 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
 
             # Creates all the snapshots needed before upgrading the system
-
-            for snapshot in util.settings.subvolumes:
-                util.settings.subvolumes[snapshot].create_snapshot()
+            # only if it is needed
+            if self.__snapshots:
+                for snapshot in util.settings.subvolumes:
+                    util.settings.subvolumes[snapshot].create_snapshot()
 
             # Upgrades the system
             upgrading_command = ""
@@ -157,14 +160,15 @@ class Upgrader(QThread):
                     util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
 
             # Removes all the snapshots not needed any more it it is needed
-            if not self.__dont_remove_snapthosts:
-                sys.stdout.write("\n")
-                sys.stdout.write("--------")
-                sys.stdout.write("\n")
-                sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
-                sys.stdout.write("\n")
-                for snapshot in util.settings.subvolumes:
-                    util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
+            if self.__snapshots:
+                if not self.__dont_remove_snapthosts:
+                    sys.stdout.write("\n")
+                    sys.stdout.write("--------")
+                    sys.stdout.write("\n")
+                    sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
+                    sys.stdout.write("\n")
+                    for snapshot in util.settings.subvolumes:
+                        util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
 
             sys.stdout.write("\n")
             sys.stdout.write("--------")

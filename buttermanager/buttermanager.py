@@ -25,6 +25,7 @@ import sys
 import util.utils
 import util.settings
 import window.windows
+from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices
 from PyQt5 import uic
@@ -346,6 +347,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         updates_window = window.windows.UpdatesWindow(self, command_line_output)
         updates_window.upgrade_system.connect(self.upgrade_system)
+        updates_window.upgrade_system_without_snanpshots.connect(partial(self.upgrade_system, False))
         updates_window.show()
 
     def balance_filesystem(self):
@@ -402,9 +404,11 @@ class ButtermanagerMainWindow(QMainWindow):
         self.progressbar_metadata.setValue(filesystem.metadata_percentage)
         # self.progressbar_system.setValue(filesystem.system_percentage)
 
-    def upgrade_system(self):
+    def upgrade_system(self, snapshots=True):
         """Runs the system upgrade operation.
 
+        Arguments:
+            snapshots (boolean): Create and delete snapshots when the uypgrading process is executed.
         """
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(800)
@@ -428,7 +432,7 @@ class ButtermanagerMainWindow(QMainWindow):
         if util.utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
         # Upgrading the system
-        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur, include_snap)
+        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur, include_snap, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
