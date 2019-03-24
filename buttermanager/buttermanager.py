@@ -408,7 +408,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the system upgrade operation.
 
         Arguments:
-            snapshots (boolean): Create and delete snapshots when the uypgrading process is executed.
+            snapshots (boolean): Create and delete snapshots when the upgrading process is executed.
         """
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(800)
@@ -422,6 +422,10 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Adjusting the window
         self.adjustSize()
+
+        # Checking if there is any subvolume defined by the user
+        if len(util.settings.subvolumes) == 0:
+            snapshots = False
 
         # Gathering user settings
         dont_remove_snapshots = self.checkbox_dont_remove_snapshots.isChecked()

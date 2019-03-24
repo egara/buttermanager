@@ -350,6 +350,10 @@ class UpdatesWindow(QMainWindow):
             self.text_edit_console.insertHtml(line + '<br>')
             self.text_edit_console.moveCursor(QTextCursor.End)
 
+        # Hiding upgrade button with snapshots if there is no subvolume defined
+        if len(util.settings.subvolumes) == 0:
+            self.button_upgrade_system.hide()
+
         # Button events
         self.button_upgrade_system.clicked.connect(self.full_system_upgrade)
         self.button_upgrade_system_without_snapshots.clicked.connect(self.full_system_upgrade_without_snapshots)
