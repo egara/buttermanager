@@ -80,7 +80,7 @@ class ConfigManager:
             # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''
                 aur_repository: 0
-                check_at_startup: 1
+                check_at_startup: 0
                 remove_snapshots: 1
                 snap_packages: 0
                 snapshots_to_keep: 3
