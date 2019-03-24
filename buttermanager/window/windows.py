@@ -56,6 +56,15 @@ class InfoWindow(QDialog):
         # Loading User Interface
         uic.loadUi("ui/InfoWindow.ui", self)
 
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(240)
+        self.setMinimumWidth(320)
+        self.setMaximumHeight(240)
+        self.setMaximumWidth(320)
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -92,6 +101,15 @@ class GeneralInfoWindow(QDialog):
         # Loading User Interface
         uic.loadUi("ui/GeneralInfoWindow.ui", self)
 
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(285)
+        self.setMinimumWidth(420)
+        self.setMaximumHeight(285)
+        self.setMaximumWidth(420)
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -126,6 +144,15 @@ class SnapshotWindow(QMainWindow):
         """
         # Loading User Interface
         uic.loadUi("ui/SnapshotWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(300)
+        self.setMinimumWidth(640)
+        self.setMaximumHeight(300)
+        self.setMaximumWidth(640)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -222,6 +249,15 @@ class SubvolumeWindow(QMainWindow):
         """
         # Loading User Interface
         uic.loadUi("ui/SubvolumeWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(300)
+        self.setMinimumWidth(640)
+        self.setMaximumHeight(300)
+        self.setMaximumWidth(640)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -338,6 +374,15 @@ class UpdatesWindow(QMainWindow):
         # Loading User Interface
         uic.loadUi("ui/UpdatesWindow.ui", self)
 
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(442)
+        self.setMinimumWidth(767)
+        self.setMaximumHeight(442)
+        self.setMaximumWidth(767)
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -412,6 +457,15 @@ class ProblemsFoundWindow(QMainWindow):
         """
         # Loading User Interface
         uic.loadUi("ui/ProblemsFoundWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(285)
+        self.setMinimumWidth(420)
+        self.setMaximumHeight(285)
+        self.setMaximumWidth(420)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
