@@ -73,6 +73,12 @@ class PasswordWindow(QMainWindow):
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
 
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(240)
+        self.setMinimumWidth(320)
+        self.setMaximumHeight(240)
+        self.setMaximumWidth(320)
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
