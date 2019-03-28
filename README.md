@@ -94,6 +94,13 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ## Changelog ##
 
 ### Version 1.4 ###
+- System progress bar has been removed because it doesn't provide any relevant information
+- A new button has been implemented in order to upgrade the system whithout managing snapshots
+- All the ButterManager windows and dialogs have been reconfigured using fixed pixels in order to avoid the resizing
+- The ButterManager icon has been assigned to all windows and dialogs
+- When ButterManager is installed for the first time, the updates checker is not checked by default
+- A new option added to yay command to check for AUR packages only
+- New messages implemented in the main window in order to warn the user about the space of the filesystem
 
 ### Version 1.3 ###
 - The updates checker is executed in other thread, so now the GUI is not freezed during the process.
