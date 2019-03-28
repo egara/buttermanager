@@ -35,7 +35,7 @@ After this, installing ButterManager is very easy. Open a terminal, go to the di
 
 ```
 sudo snap install --beta core16
-sudo snap install buttermanager_1.3_amd64.snap --classic --dangerous
+sudo snap install buttermanager_1.4_amd64.snap --classic --dangerous
 ```
 
 The first time ButterManager is executed after installing the snap package, maybe it will take a little bit to run. Don't worry, it will be only the first time.
