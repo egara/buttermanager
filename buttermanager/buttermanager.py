@@ -205,6 +205,13 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.fill_snapshots()
 
                 # BEGIN -- Displaying settings options
+                # Space labels
+                self.label_space_ok.setStyleSheet('color: green')
+                self.label_space_danger.setStyleSheet('color: orange')
+                self.label_space_ko.setStyleSheet('color: red')
+                self.label_space_data_danger.setStyleSheet('color: orange')
+                self.show_space_labels()
+
                 # Retrieving subvolumes
                 self.fill_subvolumes()
 
@@ -702,6 +709,31 @@ class ButtermanagerMainWindow(QMainWindow):
         self.fill_snapshots()
         self.fill_subvolumes()
         self.refresh_subvolume_buttons()
+        self.show_space_labels()
+
+    def show_space_labels(self):
+        """Shows the appropiate labels related to the space left of the system.
+
+        """
+        filesystem_space_pertentage = util.utils.get_percentage(self.__current_filesystem.total_size,
+                                                                self.__current_filesystem.total_allocated)
+        if filesystem_space_pertentage <= 60:
+            self.label_space_ok.show()
+            self.label_space_danger.hide()
+            self.label_space_ko.hide()
+        elif filesystem_space_pertentage > 60 & filesystem_space_pertentage <= 80:
+            self.label_space_ok.hide()
+            self.label_space_danger.show()
+            self.label_space_ko.hide()
+        else:
+            self.label_space_ok.hide()
+            self.label_space_danger.hide()
+            self.label_space_ko.show()
+
+        if self.__current_filesystem.data_percentage <= 85:
+            self.label_space_data_danger.show()
+        else:
+            self.label_space_data_danger.hide()
 
 
 if __name__ == '__main__':
