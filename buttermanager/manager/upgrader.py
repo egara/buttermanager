@@ -23,9 +23,11 @@
 """
 import manager
 import sys
+import urllib.request
 import util.settings
 import util.utils
 from PyQt5.QtCore import QThread, pyqtSignal
+from urllib.error import URLError
 
 # Constants
 ARCH_PACMAN_REFRESH_REPOSITORIES = "sudo -S pacman -Sy"
@@ -234,35 +236,68 @@ class UpdatesChecker(QThread):
 
     def __check_updates(self):
         """Wraps all the operations to check updates.
+
+        First, it will check Internet connectivity for doing the operation.
         Emits a signal with the packages found. Otherwise, it won't emit this signal and
         nothing will happen.
 
         """
-        # Show the updates window only if the user wants to and if there are updates
-        if util.settings.check_at_startup == 1:
-            if manager.upgrader.check_updates():
-                commandline_output = []
-                if util.settings.user_os == util.utils.OS_ARCH:
-                    refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
-                    util.utils.execute_command(refresh_repositories_command)
-                    check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
-                    commandline_output = util.utils.execute_command(check_for_updates_command)
+        # Checking Internet connection for 5 minutes
+        tries = 0
+        internet_available = self.__internet_available()
 
-                elif util.settings.user_os == util.utils.OS_DEBIAN:
-                    check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
-                    commandline_output = util.utils.execute_command(check_for_updates_command)
+        while (not internet_available) & (tries < 60):
+            self.__logger.info("Trying to reach Internet again. If there is no Internet connection in 5 minutes, this"
+                               "operation will be canceled")
+            self.sleep(5)
+            internet_available = self.__internet_available()
+            tries += 1
 
-                elif util.settings.user_os == util.utils.OS_SUSE:
-                    check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
-                    commandline_output = util.utils.execute_command(check_for_updates_command)
+        # Checking updates only if Internet connection is available
+        if internet_available:
+            # Checking updates only if the user selected the option
+            if util.settings.check_at_startup == 1:
+                # Emmiting the signal only if there are updates
+                if manager.upgrader.check_updates():
+                    commandline_output = []
+                    if util.settings.user_os == util.utils.OS_ARCH:
+                        refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
+                        util.utils.execute_command(refresh_repositories_command)
+                        check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
+                        commandline_output = util.utils.execute_command(check_for_updates_command)
 
-                elif util.settings.user_os == util.utils.OS_FEDORA:
-                    check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
-                    commandline_output = util.utils.execute_command(check_for_updates_command)
+                    elif util.settings.user_os == util.utils.OS_DEBIAN:
+                        check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
+                        commandline_output = util.utils.execute_command(check_for_updates_command)
 
-                # If there are updates, emits the signal thta will be captured in buttermanager.py
-                self.show_updates_window.emit(commandline_output)
+                    elif util.settings.user_os == util.utils.OS_SUSE:
+                        check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
+                        commandline_output = util.utils.execute_command(check_for_updates_command)
 
+                    elif util.settings.user_os == util.utils.OS_FEDORA:
+                        check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
+                        commandline_output = util.utils.execute_command(check_for_updates_command)
+
+                    # If there are updates, emits the signal thta will be captured in buttermanager.py
+                    self.show_updates_window.emit(commandline_output)
+        else:
+            self.__logger.error("Timeout. Checking updates process has been cancelled because there is no Intenert"
+                                " connection")
+
+    def __internet_available(self):
+        """Checks Internet connection.
+
+        Returns:
+            boolean: true if there is Internet connection available; false otherwise.
+        """
+        self.__logger.info("Checking Internet connection. Please wait...")
+        try:
+            urllib.request.urlopen('https://www.google.com', timeout=1)
+            self.__logger.info("Internet connection is available!")
+            return True
+        except urllib.error.URLError as error:
+            self.__logger.error("Internet connection is not available... Error: {error}".format(error=error))
+            return False
 
 # Module's methods
 def check_updates():
