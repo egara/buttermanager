@@ -7,7 +7,7 @@ ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and 
 1.4
 
 ## Caveats ##
-- For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read 
+- For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
 this](https://github.com/egara/arch-btrfs-installation).
 
 - ButterManager works with **Debian**, **Ubuntu / derivatives (Linux Mint, KDE Neon, ElementaryOS, Zorin, Deepin...)**, **OpenSUSE / SUSE**, **RHEL / Fedora** and **Arch Linux** so far.
@@ -29,7 +29,7 @@ You can install ButterManager in different ways.
 ### Snap package ###
 Snaps are universal Linux packages that can be used on all major Linux distributions, including Ubuntu, Linux Mint, Debian, Fedora, Arch Linux and more. Please, read [this article](https://docs.snapcraft.io/installing-snapd/6735) for knowing more and installing snap support.
 
-ButterManager is in process of being available via [Snap Store](https://snapcraft.io/store) as [you can see here](https://forum.snapcraft.io/t/requesting-classic-confinement-for-buttermanager/9574/5). Meanwhile, you can download ButterManager [here](https://drive.google.com/file/d/1qpsqzy98nvdz9dDF49oN_x6gS_FKdFaQ/view?usp=sharing).
+ButterManager is in process of being available via [Snap Store](https://snapcraft.io/store) as [you can see here](https://forum.snapcraft.io/t/requesting-classic-confinement-for-buttermanager/9574/5). Meanwhile, you can download ButterManager [here](https://drive.google.com/file/d/1iFjUiITnj7_pl9EahYuTxwSDpFwWCCnP/view?usp=sharing).
 
 After this, installing ButterManager is very easy. Open a terminal, go to the directory where the package is downloaded and type:
 
