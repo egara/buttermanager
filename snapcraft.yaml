@@ -44,7 +44,7 @@ parts:
   buttermanager:
     plugin: python
     python-version: python3
-    source: ./
+    source: ../
     # python3-pyqt5 is necessary for the application to run because PyQT5 has been used to code ButterManager
     # The rest of the python dependencies are not necessary because they will be included
     # when setup.py is executed by python snapcraft plugin
