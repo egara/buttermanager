@@ -101,6 +101,7 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 - When ButterManager is installed for the first time, the updates checker is not checked by default
 - A new option added to yay command to check for AUR packages only
 - New messages implemented in the main window in order to warn the user about the space of the filesystem
+- Internet connection will be checked during 5 minutes. If there is no Internet connection, then the updates checker process will be cancelled
 
 ### Version 1.3 ###
 - The updates checker is executed in other thread, so now the GUI is not freezed during the process.
