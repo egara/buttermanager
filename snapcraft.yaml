@@ -1,5 +1,5 @@
 name: buttermanager
-version: "1.2"
+version: "1.3"
 summary: Graphical tool to manage BTRFS filesystems
 description: Manage a BTRFS filesystem with this easy to use Graphical User Interface application programmed in Python and QT5. Create BTRFS snapshots, balance filesystems and upgrade the system safetly.
 type: app
@@ -19,7 +19,9 @@ apps:
       - wayland
       - unity7
       - home
-      - block-devices 
+      - block-devices
+      - hardware-observe
+      - mount-observe 
 
 parts:
   # Pulls the code of desktop-qt5 part
