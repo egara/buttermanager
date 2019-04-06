@@ -191,6 +191,9 @@ def execute_command(command, console=False, root=False):
             # The whole output will be returned
             # result is Bytes type, so it is needed to decode Unicode string using UTF-8
             commandline_output = result.stdout.read().decode('utf-8')
+            # Logger
+            logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+            logger.info(commandline_output)
         else:
             # The output will be written in stdout in real time
             # It is good for operations that need to display the output
