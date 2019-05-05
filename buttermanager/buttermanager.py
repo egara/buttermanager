@@ -198,23 +198,23 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.__logger.info("BTRFS filesystems found in the system:")
                 self.__logger.info(str(self.__current_filesystem))
 
-                # Displaying all the info related to the filesystem selected by default
-                self.fill_filesystem_info(self.__current_filesystem)
-
-                # Displaying snapshots
-                self.fill_snapshots()
-
-                # BEGIN -- Displaying settings options
                 # Space labels
                 self.label_space_ok.setStyleSheet('color: green')
                 self.label_space_danger.setStyleSheet('color: orange')
                 self.label_space_ko.setStyleSheet('color: red')
                 self.label_space_data_danger.setStyleSheet('color: orange')
-                self.show_space_labels()
+
+                # Displaying all the info related to the filesystem selected by default
+                # and labels (show_labels will be invoked within fill_filesystem_info method)
+                self.fill_filesystem_info(self.__current_filesystem)
+
+                # Displaying snapshots
+                self.fill_snapshots()
 
                 # Retrieving subvolumes
                 self.fill_subvolumes()
 
+                # BEGIN -- Displaying settings options
                 # Retrieving snapshots to keep
                 self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
 
@@ -416,6 +416,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.progressbar_data.setValue(filesystem.data_percentage)
         self.progressbar_metadata.setValue(filesystem.metadata_percentage)
         # self.progressbar_system.setValue(filesystem.system_percentage)
+
+        # Showing labels
+        self.show_space_labels()
 
     def upgrade_system(self, snapshots=True):
         """Runs the system upgrade operation.
