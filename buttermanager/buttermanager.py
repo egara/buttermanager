@@ -720,11 +720,11 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         filesystem_space_pertentage = util.utils.get_percentage(self.__current_filesystem.total_size,
                                                                 self.__current_filesystem.total_allocated)
-        if filesystem_space_pertentage <= 60:
+        if filesystem_space_pertentage <= 70:
             self.label_space_ok.show()
             self.label_space_danger.hide()
             self.label_space_ko.hide()
-        elif filesystem_space_pertentage > 60 & filesystem_space_pertentage <= 80:
+        elif filesystem_space_pertentage > 70 & filesystem_space_pertentage <= 85:
             self.label_space_ok.hide()
             self.label_space_danger.show()
             self.label_space_ko.hide()
