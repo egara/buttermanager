@@ -898,7 +898,7 @@
        <widget class="QPushButton" name="button_close_terminal">
         <property name="geometry">
          <rect>
-          <x>320</x>
+          <x>410</x>
           <y>450</y>
           <width>110</width>
           <height>24</height>
@@ -919,6 +919,32 @@
         </property>
         <property name="text">
          <string>Close Terminal</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="button_save_log">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>450</y>
+          <width>110</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+          <kerning>true</kerning>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Save Log</string>
         </property>
        </widget>
       </widget>
