@@ -64,6 +64,7 @@ class ConfigManager:
     """
     # Constants
     APP_NAME = "buttermanager"
+    LOGS_DIR = "logs"
 
     # Constructor
     def __init__(self):
@@ -71,11 +72,16 @@ class ConfigManager:
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
         util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
+        util.settings.logs_path = os.path.join(util.settings.application_path, self.LOGS_DIR)
 
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
             # Application directory does not exist. Creating directory...
             os.makedirs(util.settings.application_path)
+
+            # Creating logs directory it it doens' exist
+            if not os.path.exists(util.settings.logs_path):
+                os.makedirs(util.settings.logs_path)
 
             # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''

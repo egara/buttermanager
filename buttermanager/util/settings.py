@@ -34,6 +34,8 @@ CONF_FILE = "buttermanager.yaml"
 application_name = ""
 # Application work directory
 application_path = ""
+# Logs directory
+logs_path = ""
 # User's password
 user_password = ""
 # Linux distribution
