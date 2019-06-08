@@ -450,6 +450,62 @@
           </property>
          </widget>
         </widget>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Logs</string>
+         </attribute>
+         <widget class="QListWidget" name="list_logs">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>691</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_delete_log">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>213</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_view_log">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>173</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Take a BTRFS snapshot</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </widget>
         <widget class="QWidget" name="tab_settings">
          <attribute name="title">
           <string>Settings</string>
