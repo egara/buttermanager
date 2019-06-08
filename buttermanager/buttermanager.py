@@ -21,7 +21,9 @@
 import filesystem.filesystem
 import filesystem.snapshot
 import manager.upgrader
+import os
 import sys
+import time
 import util.utils
 import util.settings
 import window.windows
@@ -176,8 +178,9 @@ class ButtermanagerMainWindow(QMainWindow):
             self.setMaximumHeight(490)
             self.setMaximumWidth(800)
 
-            # Hiding terminal
+            # Hiding terminal and buttons
             self.button_close_terminal.hide()
+            self.button_save_log.hide()
             self.text_edit_console.hide()
 
             # Adjusting the window
@@ -291,6 +294,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_balance.clicked.connect(self.balance_filesystem)
                 self.button_upgrade_system.clicked.connect(self.upgrade_system)
                 self.button_close_terminal.clicked.connect(self.close_terminal)
+                self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
@@ -463,7 +467,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__upgrader.start()
 
     def close_terminal(self):
-        """Runs the system upgrade operation.
+        """Closes terminal.
+
+        It will restore the proper windows size
 
         """
         # Setting maximum and minimum  size for the main window
@@ -479,8 +485,19 @@ class ButtermanagerMainWindow(QMainWindow):
         # Adjusting the window
         self.adjustSize()
 
+    def save_log(self):
+        """Saves the current content of the terminal into a file.
+
+        """
+        log = self.text_edit_console.toPlainText()
+        current_date = time.strftime('%Y%m%d')
+        log_name = "{current_date}.txt".format(current_date=current_date)
+        log_full_path = os.path.join(util.settings.logs_path, log_name)
+        with open(log_full_path, 'a') as file:
+            file.write(log)
+
     def __disable_buttons(self):
-        """Disable all the buttons of the GUI.
+        """Disables all the buttons of the GUI.
 
         """
         self.button_balance.setEnabled(False)

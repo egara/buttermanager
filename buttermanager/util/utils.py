@@ -68,6 +68,9 @@ class ConfigManager:
 
     # Constructor
     def __init__(self):
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
@@ -78,10 +81,6 @@ class ConfigManager:
         if not os.path.exists(util.settings.application_path):
             # Application directory does not exist. Creating directory...
             os.makedirs(util.settings.application_path)
-
-            # Creating logs directory it it doens' exist
-            if not os.path.exists(util.settings.logs_path):
-                os.makedirs(util.settings.logs_path)
 
             # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''
@@ -101,8 +100,9 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
+        # Creating logs directory it it doens' exist
+        if not os.path.exists(util.settings.logs_path):
+            os.makedirs(util.settings.logs_path)
 
     def configure(self):
         """Configures the application.

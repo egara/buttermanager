@@ -62,7 +62,7 @@ class Subvolume:
 
         # Checking how many snapshots are with the same name
         snapshot_full_name = "{snapshot_name}-{current_date}".format(snapshot_name=self.snapshot_name,
-                                                                        current_date=self.__current_date)
+                                                                     current_date=self.__current_date)
         snapshots_with_same_name = [file for file in os.listdir(self.subvolume_dest) if snapshot_full_name in file]
 
         # Adding number to the full name

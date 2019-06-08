@@ -491,7 +491,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>355</y>
+            <y>370</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -504,7 +504,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>332</y>
+            <y>350</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -715,7 +715,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>379</y>
+            <y>330</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -914,6 +914,9 @@
           <kerning>true</kerning>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Close the terminal below</string>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -939,6 +942,9 @@
           <strikeout>false</strikeout>
           <kerning>true</kerning>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Save the log in a txt file</string>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
