@@ -436,8 +436,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.setMaximumHeight(800)
         self.setMaximumWidth(800)
 
-        # Showing terminal
+        # Showing terminal and buttons
         self.button_close_terminal.show()
+        self.button_save_log.show()
         self.text_edit_console.show()
 
         # Adjusting the window
@@ -478,8 +479,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.setMaximumHeight(490)
         self.setMaximumWidth(800)
 
-        # Hiding terminal
+        # Hiding terminal and buttons
         self.button_close_terminal.hide()
+        self.button_save_log.hide()
         self.text_edit_console.hide()
 
         # Adjusting the window
