@@ -214,6 +214,9 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Displaying snapshots
                 self.fill_snapshots()
 
+                # Displaying logs
+                self.fill_logs()
+
                 # Retrieving subvolumes
                 self.fill_subvolumes()
 
@@ -278,6 +281,12 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
 
+                # Logs buttons
+                self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
+                self.button_view_log.setIconSize(QSize(24, 24))
+                self.button_delete_log.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_log.setIconSize(QSize(16, 16))
+
                 # Subvolume buttons
                 self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
                 self.button_save_subvolume.setIconSize(QSize(16, 16))
@@ -297,6 +306,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+                self.button_delete_log.clicked.connect(self.delete_logs)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
@@ -549,6 +559,17 @@ class ButtermanagerMainWindow(QMainWindow):
         # Refreshing GUI
         self.refresh_gui()
 
+    def delete_logs(self):
+        """Deletes one or several logs.
+
+        """
+        logs_to_delete = self.list_logs.selectedItems()
+        for log in logs_to_delete:
+            os.remove(os.path.join(util.settings.logs_path, log.text()))
+
+        # Refreshing GUI
+        self.refresh_gui()
+
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
 
@@ -681,6 +702,18 @@ class ButtermanagerMainWindow(QMainWindow):
             snapshots.extend(util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
 
+    def fill_logs(self):
+        """Fills logs in the GUI.
+
+        """
+        # Resetting logs in the GUI
+        # Clearing the list
+        self.list_logs.clear()
+
+        # Adding the logs to the list
+        logs = os.listdir(util.settings.logs_path)
+        self.list_logs.addItems(logs)
+
     def fill_subvolumes(self):
         """Fills subvolumes in the GUI.
 
@@ -729,6 +762,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         self.refresh_filesystem_statistics()
         self.fill_snapshots()
+        self.fill_logs()
         self.fill_subvolumes()
         self.refresh_subvolume_buttons()
         self.show_space_labels()
