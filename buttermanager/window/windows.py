@@ -485,3 +485,56 @@ class ProblemsFoundWindow(QMainWindow):
         """
         self.close()
         sys.exit()
+
+
+class LogViewWindow(QMainWindow):
+    """Window display a log.
+
+    """
+    # Constructor
+    def __init__(self, parent, log_path):
+        """ Constructor.
+
+        Arguments:
+            log_path (string): Path of the log that the user wants to see.
+        """
+        QMainWindow.__init__(self, parent)
+        self.parent = parent
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        # Command line text
+        self.__log_path = log_path
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/LogViewWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(442)
+        self.setMinimumWidth(767)
+        self.setMaximumHeight(442)
+        self.setMaximumWidth(767)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Displaying the log
+        log_file = open(self.__log_path, 'r')
+
+        for line in log_file:
+            self.text_log.moveCursor(QTextCursor.End)
+            self.text_log.insertHtml(line + '<br>')
+            self.text_log.moveCursor(QTextCursor.End)

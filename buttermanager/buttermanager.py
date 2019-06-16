@@ -307,6 +307,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
                 self.button_delete_log.clicked.connect(self.delete_logs)
+                self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
@@ -569,6 +570,15 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Refreshing GUI
         self.refresh_gui()
+
+    def view_log(self):
+        """Opens the log in a new window to display it.
+
+        """
+        logs_to_view = self.list_logs.selectedItems()
+        for log in logs_to_view:
+            log_window = window.windows.LogViewWindow(self, os.path.join(util.settings.logs_path, log.text()))
+            log_window.show()
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
