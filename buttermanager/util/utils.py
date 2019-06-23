@@ -89,6 +89,7 @@ class ConfigManager:
                 remove_snapshots: 1
                 snap_packages: 0
                 snapshots_to_keep: 3
+                save_log: 1
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
@@ -139,6 +140,9 @@ class ConfigManager:
 
         # Do the user want to check for updates at startup
         util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
+
+        # Do the user want to save logs automatically
+        util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()

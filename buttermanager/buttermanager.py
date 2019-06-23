@@ -272,6 +272,13 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.checkbox_startup.show()
                 else:
                     self.checkbox_startup.hide()
+
+                # Retrieving save log decision
+                if util.settings.save_log == 0:
+                    self.checkbox_log.setChecked(False)
+                else:
+                    self.checkbox_log.setChecked(True)
+
                 # END -- Displaying settings options
 
                 # Setting buttons and icons
@@ -312,6 +319,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
                 self.checkbox_aur.clicked.connect(self.include_aur)
+                self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
@@ -449,7 +457,12 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Showing terminal and buttons
         self.button_close_terminal.show()
-        self.button_save_log.show()
+        # Save log button will only be displayed when the logs are
+        # not saved automatically
+        if util.settings.save_log == 0:
+            self.button_save_log.show()
+        else:
+            self.button_save_log.hide()
         self.text_edit_console.show()
 
         # Adjusting the window
@@ -467,14 +480,23 @@ class ButtermanagerMainWindow(QMainWindow):
         include_snap = False
         if util.utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
+
         # Upgrading the system
-        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur, include_snap, snapshots)
+        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur,
+                                                    include_snap, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.enable_buttons.connect(self.__enable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
-        self.__upgrader.refresh_gui.connect(self.refresh_gui)
+        # Depending on the decision to save or not the logs, the signal
+        # will be connected to a different slot
+        save_log = self.checkbox_log.isChecked()
+        if save_log:
+            # Saving log if it is needed
+            self.__upgrader.refresh_gui.connect(self.save_log_refresh_gui)
+        else:
+            self.__upgrader.refresh_gui.connect(self.refresh_gui)
 
         self.__upgrader.start()
 
@@ -502,11 +524,18 @@ class ButtermanagerMainWindow(QMainWindow):
         """Saves the current content of the terminal into a file.
 
         """
-        log = self.text_edit_console.toPlainText()
         current_date = time.strftime('%Y%m%d')
-        log_name = "{current_date}.txt".format(current_date=current_date)
-        log_full_path = os.path.join(util.settings.logs_path, log_name)
-        with open(log_full_path, 'a') as file:
+        index = 0
+        log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+        log_path = os.path.join(util.settings.logs_path, log_name)
+        while os.path.exists(log_path):
+            index += 1
+            log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+            log_path = os.path.join(util.settings.logs_path, log_name)
+
+        # Gets the content and saves it
+        log = self.text_edit_console.toPlainText()
+        with open(log_path, 'a') as file:
             file.write(log)
 
     def __disable_buttons(self):
@@ -630,6 +659,16 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('aur_repository', 1)
         else:
             util.settings.properties_manager.set_property('aur_repository', 0)
+
+    def include_log(self):
+        """Actions when user checks include log.
+
+        """
+        # Storing value in settings
+        if self.checkbox_log.isChecked():
+            util.settings.properties_manager.set_property('save_log', 1)
+        else:
+            util.settings.properties_manager.set_property('save_log', 0)
 
     def include_startup(self):
         """Actions when user checks check updates at startup.
@@ -776,6 +815,13 @@ class ButtermanagerMainWindow(QMainWindow):
         self.fill_subvolumes()
         self.refresh_subvolume_buttons()
         self.show_space_labels()
+
+    def save_log_refresh_gui(self):
+        """Save log and refresh all the GUI elements.
+
+        """
+        self.save_log()
+        self.refresh_gui()
 
     def show_space_labels(self):
         """Shows the appropiate labels related to the space left of the system.

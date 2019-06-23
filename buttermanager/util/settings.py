@@ -50,6 +50,8 @@ snap_packages = 1
 aur_repository = 1
 # Do user want to check for updates at startup? 0=False 1=True
 check_at_startup = 1
+# Do user want to save log automatically after upgrading system? 0=False 1=True
+save_log = 1
 # Subvolumes managed by the application
 # It will be a dictionary:
 # Key=origin path for the subvolume; Value=Subvolume object
