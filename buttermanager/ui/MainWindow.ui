@@ -450,6 +450,62 @@
           </property>
          </widget>
         </widget>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Logs</string>
+         </attribute>
+         <widget class="QListWidget" name="list_logs">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>691</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_delete_log">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>213</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_view_log">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>173</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Take a BTRFS snapshot</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </widget>
         <widget class="QWidget" name="tab_settings">
          <attribute name="title">
           <string>Settings</string>
@@ -458,7 +514,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>309</y>
+            <y>289</y>
             <width>241</width>
             <height>22</height>
            </rect>
@@ -471,7 +527,7 @@
           <property name="geometry">
            <rect>
             <x>22</x>
-            <y>284</y>
+            <y>264</y>
             <width>141</width>
             <height>18</height>
            </rect>
@@ -517,7 +573,7 @@
           <property name="geometry">
            <rect>
             <x>389</x>
-            <y>310</y>
+            <y>290</y>
             <width>41</width>
             <height>21</height>
            </rect>
@@ -527,7 +583,7 @@
           <property name="geometry">
            <rect>
             <x>265</x>
-            <y>310</y>
+            <y>290</y>
             <width>121</width>
             <height>20</height>
            </rect>
@@ -715,13 +771,26 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>330</y>
+            <y>310</y>
             <width>201</width>
             <height>22</height>
            </rect>
           </property>
           <property name="text">
            <string>Check updates at startup</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkbox_log">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>330</y>
+            <width>201</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Save logs automatically</string>
           </property>
          </widget>
         </widget>
