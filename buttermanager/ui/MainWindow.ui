@@ -967,7 +967,7 @@
        <widget class="QPushButton" name="button_close_terminal">
         <property name="geometry">
          <rect>
-          <x>410</x>
+          <x>640</x>
           <y>450</y>
           <width>110</width>
           <height>24</height>
@@ -996,7 +996,7 @@
        <widget class="QPushButton" name="button_save_log">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>30</x>
           <y>450</y>
           <width>110</width>
           <height>24</height>
