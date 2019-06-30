@@ -84,6 +84,10 @@ class PasswordWindow(QMainWindow):
         self.setMaximumHeight(240)
         self.setMaximumWidth(320)
 
+        # Setting lock icon
+        self.button_lock.setIcon(QIcon('images/lock_24px_icon.png'))
+        self.button_lock.setIconSize(QSize(24, 24))
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
