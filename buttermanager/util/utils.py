@@ -31,6 +31,9 @@ import shutil
 import subprocess
 import sys
 import util.settings
+import urllib.request
+import urllib.error
+import window.windows
 import yaml
 
 # Constants
@@ -48,6 +51,7 @@ OS_ARCH = "ARCH"
 OS_DEBIAN = "DEBIAN"
 OS_SUSE = "SUSE"
 OS_FEDORA = "FEDORA"
+VERSION_URL = "https://raw.githubusercontent.com/egara/buttermanager/master/version.txt"
 
 
 # Classes
@@ -64,13 +68,18 @@ class ConfigManager:
     """
     # Constants
     APP_NAME = "buttermanager"
+    LOGS_DIR = "logs"
 
     # Constructor
     def __init__(self):
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
         util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
+        util.settings.logs_path = os.path.join(util.settings.application_path, self.LOGS_DIR)
 
         # Creating application's directory if it is needed
         if not os.path.exists(util.settings.application_path):
@@ -84,6 +93,7 @@ class ConfigManager:
                 remove_snapshots: 1
                 snap_packages: 0
                 snapshots_to_keep: 3
+                save_log: 1
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
@@ -95,13 +105,17 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
+        # Creating logs directory it it doens' exist
+        if not os.path.exists(util.settings.logs_path):
+            os.makedirs(util.settings.logs_path)
 
     def configure(self):
         """Configures the application.
 
         """
+        # Version
+        util.settings.application_version = util.settings.VERSION
+
         # Checking OS
         if exist_program(SUSE_PM):
             util.settings.user_os = OS_SUSE
@@ -134,6 +148,9 @@ class ConfigManager:
         # Do the user want to check for updates at startup
         util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
 
+        # Do the user want to save logs automatically
+        util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))
+
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()
         subvolumes = {}
@@ -161,6 +178,49 @@ class Logger(object):
 
     def get(self):
         return self.__logger
+
+
+class VersionChecker:
+    """Checks if there is a newest version of ButterManager available.
+
+    """
+    def __init__(self, parent_window):
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+        self.__logger.info("Checking for a new version of ButterManager. Please wait...")
+        self.__version_url = VERSION_URL
+        self.__parent_window = parent_window
+
+    def check_version(self):
+        """Checks if there is a newest version of ButterManager available.
+
+        """
+        try:
+            # Retrieving the last version from GitHub
+            response = urllib.request.urlopen(self.__version_url)
+            last_version = response.read().decode(response.headers.get_content_charset()).strip()
+
+        except urllib.error.HTTPError as exception:
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+        except urllib.error.URLError as exception:
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+        else:
+            self.__logger.info("Last version is " + last_version + " and current version is " +
+                               util.settings.application_version)
+
+            if last_version != util.settings.application_version:
+                if util.settings.user_os == OS_ARCH:
+                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+                                                                   last_version + " is available. Update ButterManager "
+                                                                                  "via AUR")
+                else:
+                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+                                                                   last_version + " is available. Check the repository "
+                                                                   "\nof the project "
+                                                                   "(https://github.com/egara/buttermanager)\n "
+                                                                   "to get the latest code or snap package")
+
+                info_window.show()
 
 
 # Module's methods

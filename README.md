@@ -4,7 +4,7 @@
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-1.5
+1.6
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -23,19 +23,22 @@ As new snapshots are created in the system, the free space of the filesystem dec
 ### Upgrading the system ###
 You will be able to upgrade your system and create new snapshots automatically when this operation is performed. Doing so, if something goes wrong, you will have a snapshot before the upgrade you can use to go back. You will be able to set the maximum number of snapshots in your system and ButterManager will maintain this number with every upgrade.
 
+### Saving the logs ###
+Everytime your system is upgraded using ButterManager, you could save the log indepently. This way, you would be able to see the packages that have been updated in every snapshot if you wish.
+
 ## Installation ##
 You can install ButterManager in different ways.
 
 ### Snap package ###
 Snaps are universal Linux packages that can be used on all major Linux distributions, including Ubuntu, Linux Mint, Debian, Fedora, Arch Linux and more. Please, read [this article](https://docs.snapcraft.io/installing-snapd/6735) for knowing more and installing snap support.
 
-Installing ButterManager using the snap package is very simple. First, download the ButterManager snap [here](https://drive.google.com/file/d/1hug4c0AW1o7cHCavhsuM6MK3ZRT2WK-5/view?usp=sharing).
+Installing ButterManager using the snap package is very simple. First, download the ButterManager snap [here](https://drive.google.com/file/d/1ZhYoJSrE8dvsLY9WMc4klenlwLjcJmYU/view?usp=sharing).
 
-After this, ppen a terminal, go to the directory where the package is downloaded and type:
+After this, open a terminal, go to the directory where the package is downloaded and type:
 
 ```
 sudo snap install --beta core16
-sudo snap install buttermanager_1.5_amd64.snap --classic --dangerous
+sudo snap install buttermanager_1.6_amd64.snap --classic --dangerous
 ```
 
 The first time ButterManager is executed after installing the snap package, maybe it will take a little bit to run. Don't worry, it will be only the first time.
@@ -92,6 +95,11 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog ##
+
+### Version 1.6 ###
+- Logs generated during the upgrade process can be stored
+- Logs management implemented
+- Version checker implemented. When a new version of ButterManagger is released, a new info window will be display to warn the user
 
 ### Version 1.5 ###
 - Labels refreshing after balancing the filesystem has been fixed

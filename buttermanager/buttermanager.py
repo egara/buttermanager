@@ -21,7 +21,9 @@
 import filesystem.filesystem
 import filesystem.snapshot
 import manager.upgrader
+import os
 import sys
+import time
 import util.utils
 import util.settings
 import window.windows
@@ -60,6 +62,9 @@ class PasswordWindow(QMainWindow):
         self.__buttermanager_configurator.configure()
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        # Version checker
+        self.__version_checker = util.utils.VersionChecker(self)
+
         # Initializing the application
         self.init_ui()
 
@@ -79,6 +84,10 @@ class PasswordWindow(QMainWindow):
         self.setMaximumHeight(240)
         self.setMaximumWidth(320)
 
+        # Setting lock icon
+        self.button_lock.setIcon(QIcon('images/lock_24px_icon.png'))
+        self.button_lock.setIconSize(QSize(24, 24))
+
         # Centering the window
         qt_rectangle = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -94,6 +103,9 @@ class PasswordWindow(QMainWindow):
 
         # Press enter within QLineEdit
         self.input_password.returnPressed.connect(self.load_main_window)
+
+        # Checks for new versions of ButterManager
+        self.__version_checker.check_version()
 
         # Showing password window
         self.show()
@@ -176,8 +188,9 @@ class ButtermanagerMainWindow(QMainWindow):
             self.setMaximumHeight(490)
             self.setMaximumWidth(800)
 
-            # Hiding terminal
+            # Hiding terminal and buttons
             self.button_close_terminal.hide()
+            self.button_save_log.hide()
             self.text_edit_console.hide()
 
             # Adjusting the window
@@ -210,6 +223,9 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # Displaying snapshots
                 self.fill_snapshots()
+
+                # Displaying logs
+                self.fill_logs()
 
                 # Retrieving subvolumes
                 self.fill_subvolumes()
@@ -266,6 +282,13 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.checkbox_startup.show()
                 else:
                     self.checkbox_startup.hide()
+
+                # Retrieving save log decision
+                if util.settings.save_log == 0:
+                    self.checkbox_log.setChecked(False)
+                else:
+                    self.checkbox_log.setChecked(True)
+
                 # END -- Displaying settings options
 
                 # Setting buttons and icons
@@ -274,6 +297,12 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_take_snapshot.setIconSize(QSize(16, 16))
                 self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
+
+                # Logs buttons
+                self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
+                self.button_view_log.setIconSize(QSize(24, 24))
+                self.button_delete_log.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_log.setIconSize(QSize(16, 16))
 
                 # Subvolume buttons
                 self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
@@ -291,12 +320,16 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_balance.clicked.connect(self.balance_filesystem)
                 self.button_upgrade_system.clicked.connect(self.upgrade_system)
                 self.button_close_terminal.clicked.connect(self.close_terminal)
+                self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+                self.button_delete_log.clicked.connect(self.delete_logs)
+                self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
                 self.checkbox_aur.clicked.connect(self.include_aur)
+                self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
@@ -432,8 +465,14 @@ class ButtermanagerMainWindow(QMainWindow):
         self.setMaximumHeight(800)
         self.setMaximumWidth(800)
 
-        # Showing terminal
+        # Showing terminal and buttons
         self.button_close_terminal.show()
+        # Save log button will only be displayed when the logs are
+        # not saved automatically
+        if util.settings.save_log == 0:
+            self.button_save_log.show()
+        else:
+            self.button_save_log.hide()
         self.text_edit_console.show()
 
         # Adjusting the window
@@ -451,19 +490,30 @@ class ButtermanagerMainWindow(QMainWindow):
         include_snap = False
         if util.utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
+
         # Upgrading the system
-        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur, include_snap, snapshots)
+        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur,
+                                                    include_snap, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.enable_buttons.connect(self.__enable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
-        self.__upgrader.refresh_gui.connect(self.refresh_gui)
+        # Depending on the decision to save or not the logs, the signal
+        # will be connected to a different slot
+        save_log = self.checkbox_log.isChecked()
+        if save_log:
+            # Saving log if it is needed
+            self.__upgrader.refresh_gui.connect(self.save_log_refresh_gui)
+        else:
+            self.__upgrader.refresh_gui.connect(self.refresh_gui)
 
         self.__upgrader.start()
 
     def close_terminal(self):
-        """Runs the system upgrade operation.
+        """Closes terminal.
+
+        It will restore the proper windows size
 
         """
         # Setting maximum and minimum  size for the main window
@@ -472,15 +522,34 @@ class ButtermanagerMainWindow(QMainWindow):
         self.setMaximumHeight(490)
         self.setMaximumWidth(800)
 
-        # Hiding terminal
+        # Hiding terminal and buttons
         self.button_close_terminal.hide()
+        self.button_save_log.hide()
         self.text_edit_console.hide()
 
         # Adjusting the window
         self.adjustSize()
 
+    def save_log(self):
+        """Saves the current content of the terminal into a file.
+
+        """
+        current_date = time.strftime('%Y%m%d')
+        index = 0
+        log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+        log_path = os.path.join(util.settings.logs_path, log_name)
+        while os.path.exists(log_path):
+            index += 1
+            log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+            log_path = os.path.join(util.settings.logs_path, log_name)
+
+        # Gets the content and saves it
+        log = self.text_edit_console.toPlainText()
+        with open(log_path, 'a') as file:
+            file.write(log)
+
     def __disable_buttons(self):
-        """Disable all the buttons of the GUI.
+        """Disables all the buttons of the GUI.
 
         """
         self.button_balance.setEnabled(False)
@@ -529,6 +598,26 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Refreshing GUI
         self.refresh_gui()
+
+    def delete_logs(self):
+        """Deletes one or several logs.
+
+        """
+        logs_to_delete = self.list_logs.selectedItems()
+        for log in logs_to_delete:
+            os.remove(os.path.join(util.settings.logs_path, log.text()))
+
+        # Refreshing GUI
+        self.refresh_gui()
+
+    def view_log(self):
+        """Opens the log in a new window to display it.
+
+        """
+        logs_to_view = self.list_logs.selectedItems()
+        for log in logs_to_view:
+            log_window = window.windows.LogViewWindow(self, os.path.join(util.settings.logs_path, log.text()))
+            log_window.show()
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
@@ -580,6 +669,16 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('aur_repository', 1)
         else:
             util.settings.properties_manager.set_property('aur_repository', 0)
+
+    def include_log(self):
+        """Actions when user checks include log.
+
+        """
+        # Storing value in settings
+        if self.checkbox_log.isChecked():
+            util.settings.properties_manager.set_property('save_log', 1)
+        else:
+            util.settings.properties_manager.set_property('save_log', 0)
 
     def include_startup(self):
         """Actions when user checks check updates at startup.
@@ -662,6 +761,18 @@ class ButtermanagerMainWindow(QMainWindow):
             snapshots.extend(util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
 
+    def fill_logs(self):
+        """Fills logs in the GUI.
+
+        """
+        # Resetting logs in the GUI
+        # Clearing the list
+        self.list_logs.clear()
+
+        # Adding the logs to the list
+        logs = os.listdir(util.settings.logs_path)
+        self.list_logs.addItems(logs)
+
     def fill_subvolumes(self):
         """Fills subvolumes in the GUI.
 
@@ -710,9 +821,17 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         self.refresh_filesystem_statistics()
         self.fill_snapshots()
+        self.fill_logs()
         self.fill_subvolumes()
         self.refresh_subvolume_buttons()
         self.show_space_labels()
+
+    def save_log_refresh_gui(self):
+        """Save log and refresh all the GUI elements.
+
+        """
+        self.save_log()
+        self.refresh_gui()
 
     def show_space_labels(self):
         """Shows the appropiate labels related to the space left of the system.

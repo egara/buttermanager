@@ -62,7 +62,7 @@ class Subvolume:
 
         # Checking how many snapshots are with the same name
         snapshot_full_name = "{snapshot_name}-{current_date}".format(snapshot_name=self.snapshot_name,
-                                                                        current_date=self.__current_date)
+                                                                     current_date=self.__current_date)
         snapshots_with_same_name = [file for file in os.listdir(self.subvolume_dest) if snapshot_full_name in file]
 
         # Adding number to the full name
@@ -78,6 +78,7 @@ class Subvolume:
 
     def delete_snapshots(self, snapshots_to_keep):
         """Deletes all the snapshots needed to keep the desired number set by the user.
+        It will delete the related logs if they exist
 
         Arguments:
             snapshots_to_keep (int): number of snapshots to keep in the filesystem.
@@ -96,10 +97,24 @@ class Subvolume:
         snapshots_to_delete = len(snapshots) - snapshots_to_keep
         index = 0
         while snapshots_to_delete > 0:
+            # Deletes the snapshot
             command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
             util.utils.execute_command(command, console=True, root=True)
             info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
             self.__logger.info(info_message)
+            # Deletes the log if it exists
+            snapshot_name = snapshots[index].split("/")[-1]
+            log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
+                                                       index=snapshot_name.split("-")[-1])
+            log_path = os.path.join(util.settings.logs_path, log)
+            try:
+                os.remove(log_path)
+                info_message = "Log {log} deleted.\n".format(log=log)
+                self.__logger.info(info_message)
+            except OSError as exception:
+                info_message = "Error deleting log {log}. Error {exception}\n".format(log=log, exception=str(exception))
+                self.__logger.info(info_message)
+
             snapshots_to_delete -= 1
             index += 1
 
