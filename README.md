@@ -99,6 +99,7 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 1.6 ###
 - Logs generated during the upgrade process can be stored
 - Logs management implemented
+- Version checker implemented. When a new version of ButterManagger is released, a new info window will be display to warn the user
 
 ### Version 1.5 ###
 - Labels refreshing after balancing the filesystem has been fixed
