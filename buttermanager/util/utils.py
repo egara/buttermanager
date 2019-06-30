@@ -72,9 +72,6 @@ class ConfigManager:
 
     # Constructor
     def __init__(self):
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
-
         # Setting global values related to the application
         util.settings.application_name = self.APP_NAME
         application_directory = ".{name}".format(name=util.settings.application_name)
@@ -108,6 +105,9 @@ class ConfigManager:
         # Creating logs directory it it doens' exist
         if not os.path.exists(util.settings.logs_path):
             os.makedirs(util.settings.logs_path)
+
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
 
     def configure(self):
         """Configures the application.
