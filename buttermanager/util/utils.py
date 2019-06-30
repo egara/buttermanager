@@ -186,7 +186,7 @@ class VersionChecker:
     """
     def __init__(self, parent_window):
         # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
         self.__logger.info("Checking for a new version of ButterManager. Please wait...")
         self.__version_url = VERSION_URL
         self.__parent_window = parent_window
