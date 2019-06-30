@@ -31,6 +31,9 @@ import shutil
 import subprocess
 import sys
 import util.settings
+import urllib.request
+import urllib.error
+import window.windows
 import yaml
 
 # Constants
@@ -48,6 +51,7 @@ OS_ARCH = "ARCH"
 OS_DEBIAN = "DEBIAN"
 OS_SUSE = "SUSE"
 OS_FEDORA = "FEDORA"
+VERSION_URL = "https://raw.githubusercontent.com/egara/buttermanager/master/version.txt"
 
 
 # Classes
@@ -109,6 +113,9 @@ class ConfigManager:
         """Configures the application.
 
         """
+        # Version
+        util.settings.application_version = util.settings.VERSION
+
         # Checking OS
         if exist_program(SUSE_PM):
             util.settings.user_os = OS_SUSE
@@ -171,6 +178,49 @@ class Logger(object):
 
     def get(self):
         return self.__logger
+
+
+class VersionChecker:
+    """Checks if there is a newest version of ButterManager available.
+
+    """
+    def __init__(self, parent_window):
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+        self.__logger.info("Checking for a new version of ButterManager. Please wait...")
+        self.__version_url = VERSION_URL
+        self.__parent_window = parent_window
+
+    def check_version(self):
+        """Checks if there is a newest version of ButterManager available.
+
+        """
+        try:
+            # Retrieving the last version from GitHub
+            response = urllib.request.urlopen(self.__version_url)
+            last_version = response.read().decode(response.headers.get_content_charset()).strip()
+
+        except urllib.error.HTTPError as exception:
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+        except urllib.error.URLError as exception:
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+        else:
+            self.__logger.info("Last version is " + last_version + " and current version is " +
+                               util.settings.application_version)
+
+            if last_version != util.settings.application_version:
+                if util.settings.user_os == OS_ARCH:
+                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+                                                                   last_version + " is available. Update ButterManager "
+                                                                                  "via AUR")
+                else:
+                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+                                                                   last_version + " is available. Check the repository "
+                                                                   "\nof the project "
+                                                                   "(https://github.com/egara/buttermanager)\n "
+                                                                   "to get the latest code or snap package")
+
+                info_window.show()
 
 
 # Module's methods

@@ -62,6 +62,9 @@ class PasswordWindow(QMainWindow):
         self.__buttermanager_configurator.configure()
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        # Version checker
+        self.__version_checker = util.utils.VersionChecker(self)
+
         # Initializing the application
         self.init_ui()
 
@@ -96,6 +99,9 @@ class PasswordWindow(QMainWindow):
 
         # Press enter within QLineEdit
         self.input_password.returnPressed.connect(self.load_main_window)
+
+        # Checks for new versions of ButterManager
+        self.__version_checker.check_version()
 
         # Showing password window
         self.show()
