@@ -32,7 +32,7 @@ You can install ButterManager in different ways.
 ### Snap package ###
 Snaps are universal Linux packages that can be used on all major Linux distributions, including Ubuntu, Linux Mint, Debian, Fedora, Arch Linux and more. Please, read [this article](https://docs.snapcraft.io/installing-snapd/6735) for knowing more and installing snap support.
 
-Installing ButterManager using the snap package is very simple. First, download the ButterManager snap [here](https://drive.google.com/file/d/1ZhYoJSrE8dvsLY9WMc4klenlwLjcJmYU/view?usp=sharing).
+Installing ButterManager using the snap package is very simple. First, download the ButterManager snap [here](https://drive.google.com/file/d/1t46TsK-hS5dJ0Td9PXhnHNw7T-evGm39/view?usp=sharing).
 
 After this, open a terminal, go to the directory where the package is downloaded and type:
 
