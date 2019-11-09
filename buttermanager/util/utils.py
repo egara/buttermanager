@@ -201,9 +201,9 @@ class VersionChecker:
             last_version = response.read().decode(response.headers.get_content_charset()).strip()
 
         except urllib.error.HTTPError as exception:
-            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + str(exception.reason))
         except urllib.error.URLError as exception:
-            self.__logger.error("Error checking new versions of ButterManager. Reason: " + exception.reason)
+            self.__logger.error("Error checking new versions of ButterManager. Reason: " + str(exception.reason))
         else:
             self.__logger.info("Last version is " + last_version + " and current version is " +
                                util.settings.application_version)
