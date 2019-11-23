@@ -83,7 +83,7 @@ class PropertiesManager:
         # Reading configuration file (buttermanager.yaml file within ~/.buttermanager directory)
         if os.path.exists(self.__conf_file_path):
             conf_file = open(self.__conf_file_path)
-            self.__user_settings = yaml.load(conf_file)
+            self.__user_settings = yaml.load(conf_file, Loader=yaml.FullLoader)
             conf_file.close()
         else:
             self.__logger.info("Warning: There is no configuration file...")
