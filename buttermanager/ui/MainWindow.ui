@@ -852,7 +852,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v1.6</string>
+           <string>v1.7</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
