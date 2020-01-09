@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=1.6
+Version=1.7
 Name=ButterManager
 GenericName=ButterManager
 Comment=ButterManager, a BTRFS tool for snapshoting, balancing and managing safe system upgrades.
