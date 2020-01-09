@@ -249,13 +249,21 @@ class Filesystem:
             elif DATA in line:
                 data_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['data_size'] = data_size
-                filesystem_info['data_used'] = line.split(USED)[1].strip()
+                data_used = line.split(USED)[1].strip()
+                if '(' in data_used:
+                    # New versions of btrfs-progs already include the percentage
+                    data_used = data_used.split()[0].strip()
+                filesystem_info['data_used'] = data_used
                 filesystem_info['data_percentage'] = util.utils.get_percentage(filesystem_info['data_size'],
                                                                                filesystem_info['data_used'])
             elif METADATA in line:
                 metadata_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['metadata_size'] = metadata_size
-                filesystem_info['metadata_used'] = line.split(USED)[1].strip()
+                metadata_used = line.split(USED)[1].strip()
+                if '(' in metadata_used:
+                    # New versions of btrfs-progs already include the percentage
+                    metadata_used = metadata_used.split()[0].strip()
+                filesystem_info['metadata_used'] = metadata_used
                 filesystem_info['metadata_percentage'] = util.utils.get_percentage(filesystem_info['metadata_size'],
                                                                                    filesystem_info['metadata_used'])
             elif SYSTEM in line:
