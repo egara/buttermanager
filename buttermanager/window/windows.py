@@ -25,8 +25,8 @@ import util.settings
 import sys
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
-from PyQt5.QtCore import pyqtSignal, QSize
-from PyQt5.QtGui import QIcon, QTextCursor
+from PyQt5.QtCore import pyqtSignal, QSize, Qt
+from PyQt5.QtGui import QIcon, QTextCursor, QFontMetrics
 
 
 class InfoWindow(QDialog):
@@ -500,6 +500,8 @@ class LogViewWindow(QMainWindow):
         """
         QMainWindow.__init__(self, parent)
         self.parent = parent
+        # UI elements
+        self.__ui_elements = []
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
@@ -518,6 +520,13 @@ class LogViewWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_log, self.text_log]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(442)

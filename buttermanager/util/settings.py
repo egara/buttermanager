@@ -61,6 +61,8 @@ save_log = 1
 subvolumes = {}
 # Properties Manager
 properties_manager = None
+# Base fot size for all the UI elements
+base_font_size = 10
 
 
 class PropertiesManager:
