@@ -132,6 +132,10 @@ class SnapshotWindow(QMainWindow):
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
         self.parent = parent
+
+        # UI elements
+        self.__ui_elements = []
+
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
@@ -147,6 +151,14 @@ class SnapshotWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.radiobutton_all_subvolumes, self.radiobutton_one_subvolume,
+                              self.combobox_subvolumes, self.button_ok, self.button_cancel]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(300)
