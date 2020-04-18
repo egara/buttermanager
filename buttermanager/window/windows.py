@@ -358,6 +358,10 @@ class UpdatesWindow(QMainWindow):
         """
         QMainWindow.__init__(self, parent)
         self.parent = parent
+
+        # UI elements
+        self.__ui_elements = []
+
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
@@ -376,6 +380,14 @@ class UpdatesWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.button_upgrade_system, self.button_cancel,
+                              self.button_upgrade_system_without_snapshots, self.label_updates, self.text_edit_console]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(442)
