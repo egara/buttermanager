@@ -460,6 +460,9 @@ class ProblemsFoundWindow(QMainWindow):
         )
         self.parent = parent
 
+        # UI elements
+        self.__ui_elements = []
+
         # Initializing the window
         self.init_ui(information)
 
@@ -472,6 +475,13 @@ class ProblemsFoundWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_info, self.button_ok]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
