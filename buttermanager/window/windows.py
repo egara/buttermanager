@@ -237,6 +237,10 @@ class SubvolumeWindow(QMainWindow):
     def __init__(self, parent):
         QMainWindow.__init__(self, parent)
         self.parent = parent
+
+        # UI elements
+        self.__ui_elements = []
+
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
 
@@ -252,6 +256,16 @@ class SubvolumeWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.button_ok, self.button_cancel, self.button_add_subvolume_orig,
+                              self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
+                              self.label_subvolume_origin_2, self.line_subvolume_origin, self.line_subvolume_dest,
+                              self.line_snapshot_name]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(300)
