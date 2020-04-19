@@ -46,6 +46,9 @@ class InfoWindow(QDialog):
         )
         self.parent = parent
 
+        # UI elements
+        self.__ui_elements = []
+
         # Initializing the window
         self.init_ui(information)
 
@@ -58,6 +61,13 @@ class InfoWindow(QDialog):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_info]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(240)
