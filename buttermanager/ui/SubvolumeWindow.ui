@@ -106,7 +106,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>Remove the selected subvolume</string>
+     <string comment=" ">Select the subvolume you want to create the snapshot, f.i. / if you have a subvolume created for root</string>
     </property>
     <property name="text">
      <string/>
@@ -122,7 +122,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>Remove the selected subvolume</string>
+     <string>Selet the path where the snapshot will be stored. it is advisable to store the snapshot in a different subvolume</string>
     </property>
     <property name="text">
      <string/>
