@@ -29,7 +29,7 @@ import util.settings
 import window.windows
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices
+from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices, QFontMetrics
 from PyQt5 import uic
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
 
@@ -60,6 +60,8 @@ class PasswordWindow(QMainWindow):
         # Configuring the application
         self.__buttermanager_configurator = util.utils.ConfigManager()
         self.__buttermanager_configurator.configure()
+        # UI elements
+        self.__ui_elements = []
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         # Version checker
@@ -77,6 +79,17 @@ class PasswordWindow(QMainWindow):
 
         # Setting the window icon
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Calculating the base font size for all UI elements in the application
+        util.settings.base_font_size = self.get_base_font_size()
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_password, self.button_ok, self.button_cancel, self.button_lock,
+                              self.input_password]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(240)
@@ -109,6 +122,38 @@ class PasswordWindow(QMainWindow):
 
         # Showing password window
         self.show()
+
+    def get_base_font_size(self):
+        """Gets the base font size for all the UI elements.
+
+        Returns:
+            int: Base font size.
+
+        """
+        self.__logger.info("Calculating appropriated base font size for UI elements...")
+        font_fits = False
+
+        # Base font size will be calculated using self.label_password attribute
+        font = self.label_password.font()
+        font_size = font.pointSize()
+
+        while not font_fits:
+            fm = QFontMetrics(font)
+            pixels_wide = fm.width(self.label_password.text())
+            pixels_high = fm.height()
+
+            bound = fm.boundingRect(0, 0, pixels_wide, pixels_high, Qt.TextWordWrap | Qt.AlignLeft,
+                                    self.label_password.text())
+
+            if bound.width() <= self.label_password.width() and \
+                    bound.height() <= self.label_password.height():
+                font_fits = True
+            else:
+                font.setPointSize(font.pointSize() - 1)
+                font_size = font_size - 1
+
+        self.__logger.info("Base font size = " + str(font_size))
+        return font_size
 
     def load_main_window(self):
         # Storing user's password
@@ -148,6 +193,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__upgrader = None
         # Updates checker that will check for updates if it is needed
         self.__updates_checker = None
+        # UI elements
+        self.__ui_elements = []
         # Initializing the application
         self.init_ui()
 
@@ -181,6 +228,35 @@ class ButtermanagerMainWindow(QMainWindow):
 
             # Setting the window icon
             self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+            # Adjusting font scale
+            # UI elements
+            self.__ui_elements = [self.tab_buttermanager, self.label_filesystem_info, self.label_filesystem_data,
+                                  self.label_filesystem_metadata, self.label_filesystem, self.label_other_operations,
+                                  self.label_filesystem_size, self.label_filesystem_size_value,
+                                  self.label_filesystem_allocated, self.label_filesystem_allocated_value,
+                                  self.label_filesystem_lost_info, self.label_filesystem_info_more, self.label_space_ok,
+                                  self.label_space_danger, self.label_space_ko, self.label_space_data_danger,
+                                  self.label_settings_upgrade, self.label_snapshots_to_keep,
+                                  self.label_settings_subvolumes, self.label_existing_subvolumes, self.label_logo,
+                                  self.label_app_name, self.label_app_version, self.label_app_developer,
+                                  self.label_app_email, self.label_app_developer_2, self.button_balance,
+                                  self.button_upgrade_system, self.button_snapshot, self.button_take_snapshot,
+                                  self.button_delete_snapshot, self.button_delete_log, self.button_view_log,
+                                  self.button_edit_subvolume, self.button_delete_subvolume, self.button_add_subvolume,
+                                  self.button_save_subvolume, self.button_github, self.button_close_terminal,
+                                  self.button_save_log, self.text_edit_console, self.progressbar_metadata,
+                                  self.progressbar_data, self.combobox_filesystem, self.list_snapshots, self.list_logs,
+                                  self.combobox_subvolumes, self.line_edit_snapshot_where,
+                                  self.line_edit_snapshot_prefix, self.spinbox_snapshots_to_keep,
+                                  self.checkbox_dont_remove_snapshots, self.checkbox_startup, self.checkbox_log,
+                                  self.checkbox_snap, self.checkbox_aur, self.button_save_log,
+                                  self.button_close_terminal]
+            util.utils.scale_fonts(self.__ui_elements)
+            self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
+            util.utils.scale_fonts(self.__ui_elements, 2)
+            # Tooltips
+            self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
 
             # Setting maximum and minimum  size for the main window
             self.setMinimumHeight(490)
