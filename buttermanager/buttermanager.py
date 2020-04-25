@@ -251,7 +251,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.line_edit_snapshot_prefix, self.spinbox_snapshots_to_keep,
                                   self.checkbox_dont_remove_snapshots, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
-                                  self.button_close_terminal]
+                                  self.button_close_terminal, self.button_wiki, self.label_documentation]
             util.utils.scale_fonts(self.__ui_elements)
             self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
             util.utils.scale_fonts(self.__ui_elements, 2)
@@ -413,6 +413,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_delete_subvolume.clicked.connect(self.delete_subvolume)
                 self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
                 self.button_github.clicked.connect(self.go_to_github)
+                self.button_wiki.clicked.connect(self.go_to_wiki)
 
                 # If no subvolumes are defined, warning the user
                 if len(util.settings.subvolumes) == 0:
@@ -819,6 +820,13 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         url = QUrl('https://github.com/egara/buttermanager')
+        QDesktopServices.openUrl(url)
+
+    def go_to_wiki(self):
+        """Actions when user clicks on github button.
+
+        """
+        url = QUrl('https://github.com/egara/buttermanager/wiki')
         QDesktopServices.openUrl(url)
 
     def fill_snapshots(self):

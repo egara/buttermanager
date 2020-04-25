@@ -51,7 +51,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_main">
          <attribute name="title">
@@ -794,6 +794,61 @@
           </property>
          </widget>
         </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Documentation</string>
+         </attribute>
+         <widget class="QLabel" name="label_documentation">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>751</width>
+            <height>211</height>
+           </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>For additional documentation about setting up and using Buttermanager, please go to the Wiki of the project</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_wiki">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>190</y>
+            <width>751</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <italic>true</italic>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: none;</string>
+          </property>
+          <property name="text">
+           <string>https://github.com/egara/buttermanager/wiki</string>
+          </property>
+         </widget>
+        </widget>
         <widget class="QWidget" name="tab_about">
          <attribute name="title">
           <string>About</string>
@@ -852,7 +907,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v1.7</string>
+           <string>v1.8</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
