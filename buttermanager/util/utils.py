@@ -393,3 +393,18 @@ def get_subvolumes():
             subvolumes.append(subvolume)
 
     return subvolumes
+
+
+def scale_fonts(ui_elements, reduced_point_size=0):
+    """Scales all the UI elements fonts in order to fit on the window.
+
+    Arguments:
+        ui_elements (list): UI elements to change the font
+        reduced_point_size (int): Integer to reduce the base font pint size
+    """
+    font_size = util.settings.base_font_size - reduced_point_size
+    # Changing the font for every UI element
+    for label in ui_elements:
+        font = label.font()
+        font.setPointSize(font_size)
+        label.setFont(font)

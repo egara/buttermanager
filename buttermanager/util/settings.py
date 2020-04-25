@@ -28,7 +28,7 @@ import filesystem
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "1.7"
+VERSION = "1.8"
 
 # Global module attributes
 # Application version
@@ -61,6 +61,8 @@ save_log = 1
 subvolumes = {}
 # Properties Manager
 properties_manager = None
+# Base fot size for all the UI elements
+base_font_size = 10
 
 
 class PropertiesManager:

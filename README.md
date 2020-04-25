@@ -4,7 +4,7 @@
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-1.7
+1.8
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -95,6 +95,11 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog ##
+
+### Version 1.8 ###
+- Font autoscaling implemented in order to let the GUI adapts to the current screen resolution.
+- It has been created a new tab for **Documentation** and a **Wiki** at Github repository.
+- The text of some tooltips have been fixed.
 
 ### Version 1.7 ###
 - Bug fixed for Arch Linux and derivatives installing the package from AUR. Now, the application will be installed and run from a virtual environmen with all the modules needed. This causes that the size of the package buttermanager has increased
