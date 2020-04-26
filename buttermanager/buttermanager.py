@@ -251,7 +251,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.line_edit_snapshot_prefix, self.spinbox_snapshots_to_keep,
                                   self.checkbox_dont_remove_snapshots, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
-                                  self.button_close_terminal, self.button_wiki, self.label_documentation]
+                                  self.button_close_terminal, self.button_wiki, self.label_documentation,
+                                  self.checkbox_grub_btrfs]
             util.utils.scale_fonts(self.__ui_elements)
             self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
             util.utils.scale_fonts(self.__ui_elements, 2)
@@ -351,6 +352,12 @@ class ButtermanagerMainWindow(QMainWindow):
                 else:
                     self.checkbox_startup.setChecked(True)
 
+                # Retrieving boot the system from GRUB using snapshots decision
+                if util.settings.grub_btrfs == 0:
+                    self.checkbox_grub_btrfs.setChecked(False)
+                else:
+                    self.checkbox_grub_btrfs.setChecked(True)
+
                 if util.settings.user_os == util.utils.OS_ARCH or \
                         util.settings.user_os == util.utils.OS_DEBIAN or \
                         util.settings.user_os == util.utils.OS_SUSE or \
@@ -407,6 +414,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.checkbox_aur.clicked.connect(self.include_aur)
                 self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
+                self.checkbox_grub_btrfs.clicked.connect(self.include_grub_btrfs)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
                 self.button_save_subvolume.clicked.connect(self.save_subvolume)
@@ -766,6 +774,16 @@ class ButtermanagerMainWindow(QMainWindow):
             util.settings.properties_manager.set_property('check_at_startup', 1)
         else:
             util.settings.properties_manager.set_property('check_at_startup', 0)
+
+    def include_grub_btrfs(self):
+        """Actions when user checks boot the system from GRUB using snapshots.
+
+        """
+        # Storing value in settings
+        if self.checkbox_grub_btrfs.isChecked():
+            util.settings.properties_manager.set_property('grub_btrfs', 1)
+        else:
+            util.settings.properties_manager.set_property('grub_btrfs', 0)
 
     def on_combobox_subvolumes_changed(self):
         current_subvolume = self.combobox_subvolumes.currentText()

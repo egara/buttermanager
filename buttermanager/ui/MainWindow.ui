@@ -793,6 +793,19 @@
            <string>Save logs automatically</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="checkbox_grub_btrfs">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>390</y>
+            <width>331</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Boot the system from GRUB using snapshots</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">

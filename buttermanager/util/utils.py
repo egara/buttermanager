@@ -91,6 +91,7 @@ class ConfigManager:
                 snap_packages: 0
                 snapshots_to_keep: 3
                 save_log: 1
+                grub_btrfs: 0
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
@@ -102,7 +103,7 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Creating logs directory it it doens' exist
+        # Creating logs directory it it doesn't exist
         if not os.path.exists(util.settings.logs_path):
             os.makedirs(util.settings.logs_path)
 
@@ -147,6 +148,9 @@ class ConfigManager:
 
         # Do the user want to check for updates at startup
         util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
+
+        # Do user want to boot the system from GRUB using snapshots
+        util.settings.grub_btrfs = int(util.settings.properties_manager.get_property('grub_btrfs'))
 
         # Do the user want to save logs automatically
         util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))
