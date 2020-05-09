@@ -24,13 +24,18 @@ It provides also Snapshot class.
 """
 import glob
 import os
+import re
 import sys
+import subprocess
 import time
+import util.settings
 import util.utils
 
 # Constants
-BTRFS_CREATE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume snapshot -r"
+BTRFS_CREATE_SNAPSHOT_R_COMMAND = "sudo -S btrfs subvolume snapshot -r"
+BTRFS_CREATE_SNAPSHOT_RW_COMMAND = "sudo -S btrfs subvolume snapshot"
 BTRFS_DELETE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume delete"
+GRUB_BTRFS_COMMAND = "sudo -S grub-mkconfig -o /boot/grub/grub.cfg"
 
 
 # Classes
@@ -68,13 +73,115 @@ class Subvolume:
         # Adding number to the full name
         snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
                                                                     number=len(snapshots_with_same_name))
-        command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
-            command=BTRFS_CREATE_SNAPSHOT_COMMAND,
-            subvolume_origin=self.subvolume_origin,
-            subvolume_dest=self.subvolume_dest,
-            snapshot_full_name=snapshot_full_name
-        )
-        util.utils.execute_command(command, console=True, root=True)
+
+        # Checks if grub-btrfs integration is enabled
+        if util.settings.grub_btrfs:
+            # Checks if /etc/fstab is in subvolume_origin
+            fstab_path = self.subvolume_origin + 'etc/fstab'
+            if os.path.isfile(fstab_path):
+                # /etc/fstab is in the subvolume, so it is necessary to
+                # modify it and add the snapshot's name
+                # grep -rnw '/etc/fstab' -e "/_active/rootvol"
+                # First, it is necessary to be sure that subvolume_origin is
+                # within /etc/fstab
+                # First, a list of strings from subvolume_origin is created, including separator /
+                subvolume_origin_list = re.split('(/)', self.subvolume_origin)
+                # Then, empty strings are removed
+                subvolume_origin_list = list(filter(None, subvolume_origin_list))
+                # Adding final / it it is necessary
+                if subvolume_origin_list[-1] != "/":
+                    subvolume_origin_list.append("/")
+                subvolume_origin_real = "".join(subvolume_origin_list)
+                # while subvolume_origin_real is not null or empty
+                while subvolume_origin_real:
+                    # First try: subvolume_origin_real with / at the end is searched
+                    command_string = """grep -rnw '{fstab_path}' -e '{subvolume_origin_real}'""".format(
+                        fstab_path=fstab_path, subvolume_origin_real=subvolume_origin_real)
+                    command = [command_string]
+                    commandline_output = None
+                    try:
+                        commandline_output = subprocess.check_output(command, shell=True)
+                    except subprocess.CalledProcessError as exception:
+                        pass
+                    if commandline_output:
+                        break
+                    else:
+                        # Second try: subvolume_origin_real without / at the end is searched
+                        subvolume_origin_real = subvolume_origin_real[:-1]
+                        command_string = """grep -rnw '{fstab_path}' -e '{subvolume_origin_real}'""".format(
+                            fstab_path=fstab_path, subvolume_origin_real=subvolume_origin_real)
+                        command = [command_string]
+                        commandline_output = None
+                        try:
+                            commandline_output = subprocess.check_output(command, shell=True)
+                        except subprocess.CalledProcessError as exception:
+                            pass
+                        if commandline_output:
+                            break
+                        else:
+                            del subvolume_origin_list[0]
+                            # Adding final / it it is necessary
+                            if subvolume_origin_list[-1] != "/":
+                                subvolume_origin_list.append("/")
+
+                            subvolume_origin_real = "".join(subvolume_origin_list)
+
+                if subvolume_origin_real != "/":
+                    # subvolume_origin_real is in /etc/fstab
+                    # Create the snapshot in rw mode
+                    everything_ok = True
+                    command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
+                        command=BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
+                        subvolume_origin=self.subvolume_origin,
+                        subvolume_dest=self.subvolume_dest,
+                        snapshot_full_name=snapshot_full_name
+                    )
+                    util.utils.execute_command(command, console=True, root=True)
+
+                    # Substitute the entry in fstab for root for the new snapshot created
+                    command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}{snapshot_full_name}|g' {subvolume_dest}{snapshot_full_name}/etc/fstab""".format(
+                        subvolume_origin_real=subvolume_origin_real,
+                        subvolume_dest=self.subvolume_dest,
+                        snapshot_full_name=snapshot_full_name
+                    )
+                    command = [command_string]
+                    try:
+                        subprocess.check_output(command, shell=True)
+                    except subprocess.CalledProcessError as exception:
+                        self.__logger.error("Error trying to substitute the root's path in fstab with the "
+                                            "path of the new snapshot created. Reason: " + + str(exception.reason))
+                        everything_ok = False
+                    if everything_ok:
+                        # Run grub-btrfs in order to regenerate GRUB entries
+                        self.__logger.info("Regenerating GRUB entries. Please wait...")
+                        util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+                else:
+                    # subvolume_origin_real in not in /etc/fstab
+                    # Create the snapshot in only r mode
+                    command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
+                        command=BTRFS_CREATE_SNAPSHOT_R_COMMAND,
+                        subvolume_origin=self.subvolume_origin,
+                        subvolume_dest=self.subvolume_dest,
+                        snapshot_full_name=snapshot_full_name
+                    )
+                    util.utils.execute_command(command, console=True, root=True)
+
+            else:
+                command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
+                    command=BTRFS_CREATE_SNAPSHOT_R_COMMAND,
+                    subvolume_origin=self.subvolume_origin,
+                    subvolume_dest=self.subvolume_dest,
+                    snapshot_full_name=snapshot_full_name
+                )
+                util.utils.execute_command(command, console=True, root=True)
+        else:
+            command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
+                command=BTRFS_CREATE_SNAPSHOT_R_COMMAND,
+                subvolume_origin=self.subvolume_origin,
+                subvolume_dest=self.subvolume_dest,
+                snapshot_full_name=snapshot_full_name
+            )
+            util.utils.execute_command(command, console=True, root=True)
 
     def delete_snapshots(self, snapshots_to_keep):
         """Deletes all the snapshots needed to keep the desired number set by the user.
@@ -117,6 +224,11 @@ class Subvolume:
 
             snapshots_to_delete -= 1
             index += 1
+
+        # Checks if grub-btrfs integration is enabled
+        if util.settings.grub_btrfs:
+            # Run grub-btrfs in order to regenerate GRUB entries
+            util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
     def get_all_snapshots_with_the_same_name(self):
         """Retrieves all the snapshots with name self.snapshot_name stored within self.subvolume_dest.

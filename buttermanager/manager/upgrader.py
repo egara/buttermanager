@@ -105,6 +105,9 @@ class Upgrader(QThread):
             sys.stdout.write("\n")
             sys.stdout.write("--------")
             sys.stdout.write("\n")
+            sys.stdout.write("Creating snapshots and updating GRUB entries if it is necessary...")
+            sys.stdout.write("\n")
+            sys.stdout.write("--------")
 
             # Creates all the snapshots needed before upgrading the system
             # only if it is needed
@@ -167,7 +170,7 @@ class Upgrader(QThread):
                     sys.stdout.write("\n")
                     sys.stdout.write("--------")
                     sys.stdout.write("\n")
-                    sys.stdout.write("Removing old snapshots if it is needed. Please wait...")
+                    sys.stdout.write("Removing old snapshots if it is needed and updating GRUB entries. Please wait...")
                     sys.stdout.write("\n")
                     for snapshot in util.settings.subvolumes:
                         util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
