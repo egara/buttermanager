@@ -140,6 +140,67 @@ class GeneralInfoWindow(QDialog):
         self.label_info.setText(information)
 
 
+class ConsolidateSnapshotWindow(QDialog):
+    """Window to consolidate or not root snapshot.
+
+    This window will be displayed when user boots his/her system using a snapshot from GRUB different that
+    the default snapshot for root. The user will be asked if he/she wants to consolidate the current
+    snapshot as default snapshot for root.
+
+    """
+    # Constructor
+    def __init__(self, parent):
+        QDialog.__init__(self, parent)
+        # Setting window flags, f.i. this window won't have a close button
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
+        self.parent = parent
+
+        # UI elements
+        self.__ui_elements = []
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/ConsolidateSnapshotWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_info, self.button_box]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(285)
+        self.setMinimumWidth(420)
+        self.setMaximumHeight(285)
+        self.setMaximumWidth(420)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        information = "You have booted into an alternative snapshot. \n " \
+                      "Do you want to consolidate it as your default?"
+        self.label_info.setText(information)
+
+
 class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
 

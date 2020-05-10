@@ -30,6 +30,7 @@ import subprocess
 import time
 import util.settings
 import util.utils
+import window.windows
 
 # Constants
 BTRFS_CREATE_SNAPSHOT_R_COMMAND = "sudo -S btrfs subvolume snapshot -r"
@@ -247,6 +248,44 @@ class Subvolume:
         snapshots_whit_same_name = [file for file in snapshots if self.snapshot_name in file]
 
         return snapshots_whit_same_name
+
+
+class RootSnapshotChecker:
+    """Checks if the current snapshot used for root is the default or the user has booted the system from
+    an alternate snapshot.
+
+    """
+    def __init__(self, parent_window):
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger.info("Checking if the current snapshot used for root is the default. Please wait...")
+        self.__parent_window = parent_window
+
+    def check_root_snapshot(self):
+        """Checks if the current snapshot used for root is the default or the user has booted the system from
+        an alternate snapshot.
+
+        """
+        # Obtaining the mounted subvolume for root partition
+        # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
+        command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
+        command = [command_string]
+        mounted_subvolume = None
+        try:
+            mounted_subvolume = subprocess.check_output(command, shell=True)
+        except subprocess.CalledProcessError as exception:
+            pass
+        if mounted_subvolume:
+            # Removing the last two characters (a /n and a ")")
+            mounted_subvolume = mounted_subvolume[:-2]
+        if mounted_subvolume.decode("utf-8") != util.settings.properties_manager.\
+                get_property("path_to_consolidate_root_snapshot"):
+            # If mounted subvolume is different from the supposed default root subvolume
+            # it means that user has boot the system using an alternate snapshot from GRUB.
+            # ButterManager will ask to consolidate the current snapshot as the default root
+            # subvolume
+            info_window = window.windows.ConsolidateSnapshotWindow(self.__parent_window)
+            info_window.show()
 
 
 # Module's methods

@@ -193,6 +193,8 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__upgrader = None
         # Updates checker that will check for updates if it is needed
         self.__updates_checker = None
+        # Root snapshot checker
+        self.__root_snapshot_checker = filesystem.snapshot.RootSnapshotChecker(self)
         # UI elements
         self.__ui_elements = []
         # Initializing the application
@@ -438,6 +440,9 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # If everything goes right, the main window is displayed
                 self.show()
+
+                # Checks for root snapshot mounted
+                self.__root_snapshot_checker.check_root_snapshot()
 
                 # Show the updates window only if the user wants to and if there are updates
                 self.check_updates()
