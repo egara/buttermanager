@@ -147,6 +147,12 @@ class SnapshotWindow(QMainWindow):
     # pyqtSignal that will be emitted when this class requires that main
     # window refreshes GUI
     refresh_gui = pyqtSignal()
+    # pyqtSignal that will be emitted when this class requires that main
+    # window disables all the buttons
+    disable_buttons = pyqtSignal()
+    # pyqtSignal that will be emitted when this class requires that main
+    # window enables all the buttons
+    enable_buttons = pyqtSignal()
 
     # Constructor
     def __init__(self, parent):
@@ -231,6 +237,14 @@ class SnapshotWindow(QMainWindow):
         """Takes a snapshot of the selected subvolume.
 
         """
+        # Disabling window buttons
+        self.__disable_buttons()
+
+        # Disabling main window buttons
+        self.on_disable_buttons()
+
+        self.on_refresh_gui()
+
         if self.radiobutton_all_subvolumes.isChecked():
             for subvolume in util.settings.subvolumes:
                 util.settings.subvolumes[subvolume].create_snapshot()
@@ -240,6 +254,12 @@ class SnapshotWindow(QMainWindow):
 
         # Refreshing GUI
         self.on_refresh_gui()
+
+        # Enabling window buttons
+        self.__enable_buttons()
+
+        # Enabling main window buttons
+        self.on_enable_buttons()
 
         # Closes the window
         self.cancel()
@@ -255,6 +275,38 @@ class SnapshotWindow(QMainWindow):
 
         """
         self.refresh_gui.emit()
+
+    def on_enable_buttons(self):
+        """Emits a QT Signal for main window enabling all the buttons.
+
+        """
+        self.enable_buttons.emit()
+
+    def on_disable_buttons(self):
+        """Emits a QT Signal for main window disabling all the buttons.
+
+        """
+        self.disable_buttons.emit()
+
+    def __disable_buttons(self):
+        """Disables all the buttons of the GUI.
+
+        """
+        self.combobox_subvolumes.setEnabled(False)
+        self.radiobutton_all_subvolumes.setEnabled(False)
+        self.radiobutton_one_subvolume.setEnabled(False)
+        self.button_ok.setEnabled(False)
+        self.button_cancel.setEnabled(False)
+
+    def __enable_buttons(self):
+        """Enable all the buttons of the GUI.
+
+        """
+        self.combobox_subvolumes.setEnabled(True)
+        self.radiobutton_all_subvolumes.setEnabled(True)
+        self.radiobutton_one_subvolume.setEnabled(True)
+        self.button_ok.setEnabled(True)
+        self.button_cancel.setEnabled(True)
 
 
 class SubvolumeWindow(QMainWindow):

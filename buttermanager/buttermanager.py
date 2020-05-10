@@ -668,8 +668,10 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         snapshot_window = window.windows.SnapshotWindow(self)
-        # Connecting the signal emitted by the snapshot window with this slot
+        # Connecting the signals emitted by the snapshot window with this slot
         snapshot_window.refresh_gui.connect(self.refresh_gui)
+        snapshot_window.enable_buttons.connect(self.__enable_buttons)
+        snapshot_window.disable_buttons.connect(self.__disable_buttons)
         # Displaying snapshot window
         snapshot_window.show()
 
@@ -677,12 +679,18 @@ class ButtermanagerMainWindow(QMainWindow):
         """Deletes one or several BTRFS subvolume snapshots.
 
         """
+        # Disabling buttons
+        self.__disable_buttons()
+
         snapshots_to_delete = self.list_snapshots.selectedItems()
         for snap in snapshots_to_delete:
             filesystem.snapshot.delete_specific_snapshot(snap.text())
 
         # Refreshing GUI
         self.refresh_gui()
+
+        # Enabling buttons
+        self.__enable_buttons()
 
     def delete_logs(self):
         """Deletes one or several logs.

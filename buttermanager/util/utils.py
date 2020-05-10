@@ -92,6 +92,7 @@ class ConfigManager:
                 snapshots_to_keep: 3
                 save_log: 1
                 grub_btrfs: 0
+                path_to_consolidate_root_snapshot: 0
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
@@ -151,6 +152,11 @@ class ConfigManager:
 
         # Do user want to boot the system from GRUB using snapshots
         util.settings.grub_btrfs = int(util.settings.properties_manager.get_property('grub_btrfs'))
+
+        # The path of the root snapshot that must be within /etc/fstab as / mount point
+        # It will be 0 if this property is not defined yet or it is empty
+        util.settings.path_to_consolidate_root_snapshot = util.settings.properties_manager.\
+            get_property('path_to_consolidate_root_snapshot')
 
         # Do the user want to save logs automatically
         util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))

@@ -75,7 +75,7 @@ class Subvolume:
                                                                     number=len(snapshots_with_same_name))
 
         # Checks if grub-btrfs integration is enabled
-        if util.settings.grub_btrfs:
+        if util.settings.properties_manager.get_property("grub_btrfs"):
             # Checks if /etc/fstab is in subvolume_origin
             fstab_path = self.subvolume_origin + 'etc/fstab'
             if os.path.isfile(fstab_path):
@@ -152,6 +152,11 @@ class Subvolume:
                                             "path of the new snapshot created. Reason: " + + str(exception.reason))
                         everything_ok = False
                     if everything_ok:
+                        # subvolume_origin_real will be stored in configuration file in order to let the
+                        # user to consolidate the system's rollback to any snapshot different from the main one
+                        util.settings.properties_manager.set_property('path_to_consolidate_root_snapshot',
+                                                                      subvolume_origin_real)
+
                         # Run grub-btrfs in order to regenerate GRUB entries
                         self.__logger.info("Regenerating GRUB entries. Please wait...")
                         util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
@@ -226,7 +231,7 @@ class Subvolume:
             index += 1
 
         # Checks if grub-btrfs integration is enabled
-        if util.settings.grub_btrfs:
+        if util.settings.properties_manager.get_property("grub_btrfs"):
             # Run grub-btrfs in order to regenerate GRUB entries
             util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
@@ -261,3 +266,10 @@ def delete_specific_snapshot(snapshot_full_path):
     util.utils.execute_command(command, root=True)
     info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshot_full_path)
     logger.info(info_message)
+
+    # Checks if grub-btrfs integration is enabled
+    if util.settings.properties_manager.get_property("grub_btrfs"):
+        # Run grub-btrfs in order to regenerate GRUB entries
+        util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+        info_message = "Regenerating GRUB entries. Please wait..."
+        logger.info(info_message)
