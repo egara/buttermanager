@@ -22,6 +22,7 @@
 
 It provides also Snapshot class.
 """
+import filesystem.snapshot
 import glob
 import os
 import re
@@ -46,6 +47,14 @@ class Subvolume:
     """
     # Constructor
     def __init__(self, subvolume_origin, subvolume_dest, snapshot_name):
+        """ Constructor.
+
+        Arguments:
+            subvolume_origin (str): Full path to the subvolume.
+            subvolume_dest (str): Full path to the subvolume where all of the subvolumes created from origin are going
+            to be stored.
+            snapshot_name (str): Prefix for all the subvolumes created from origin
+        """
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         self.subvolume_origin = subvolume_origin if subvolume_origin[-1] == '/' else subvolume_origin + '/'
@@ -236,6 +245,20 @@ class Subvolume:
             # Run grub-btrfs in order to regenerate GRUB entries
             util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
+    def delete_origin(self):
+        """Deletes the original subvolume, i.e. the subvolume in subvolume_origin
+
+        """
+        info_message = "Deleting subvolume from origin {subvolume_origin}. " \
+                       "Please wait...".format(subvolume_origin=self.subvolume_origin)
+        self.__logger.info(info_message)
+
+        # Deletes the subvolume
+        command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=self.subvolume_origin)
+        util.utils.execute_command(command, console=True, root=True)
+        info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=self.subvolume_origin)
+        self.__logger.info(info_message)
+
     def get_all_snapshots_with_the_same_name(self):
         """Retrieves all the snapshots with name self.snapshot_name stored within self.subvolume_dest.
 
@@ -256,6 +279,9 @@ class RootSnapshotChecker:
 
     """
     def __init__(self, parent_window):
+        # Attributes
+        self.__snapshot_to_clone_in_root_full_path = None
+        self.__root_subvolume = None
         # Logger
         self.__logger = util.utils.Logger(self.__class__.__name__).get()
         self.__logger.info("Checking if the current snapshot used for root is the default. Please wait...")
@@ -265,27 +291,57 @@ class RootSnapshotChecker:
         """Checks if the current snapshot used for root is the default or the user has booted the system from
         an alternate snapshot.
 
+        Returns:
+            boolean: true if current snapshot used for root is the default; false otherwise.
         """
         # Obtaining the mounted subvolume for root partition
         # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
         command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
         command = [command_string]
-        mounted_subvolume = None
+        mounted_snapshot_raw = None
         try:
-            mounted_subvolume = subprocess.check_output(command, shell=True)
+            mounted_snapshot_raw = subprocess.check_output(command, shell=True)
         except subprocess.CalledProcessError as exception:
             pass
-        if mounted_subvolume:
+        if mounted_snapshot_raw:
             # Removing the last two characters (a /n and a ")")
-            mounted_subvolume = mounted_subvolume[:-2]
-        if mounted_subvolume.decode("utf-8") != util.settings.properties_manager.\
+            mounted_snapshot_raw = mounted_snapshot_raw[:-2]
+            # Converting bytes into string
+            mounted_snapshot_raw = mounted_snapshot_raw.decode("utf-8")
+        if mounted_snapshot_raw != util.settings.properties_manager.\
                 get_property("path_to_consolidate_root_snapshot"):
-            # If mounted subvolume is different from the supposed default root subvolume
-            # it means that user has boot the system using an alternate snapshot from GRUB.
+            # If mounted snapshot is different from the supposed default root subvolume
+            # it means that user has booted the system using an alternate snapshot from GRUB.
             # ButterManager will ask to consolidate the current snapshot as the default root
             # subvolume
-            info_window = window.windows.ConsolidateSnapshotWindow(self.__parent_window)
-            info_window.show()
+
+            # Obtaining the snapshot mounted
+            mounted_snapshot_full_path = None
+            while mounted_snapshot_full_path is None:
+                for subvolume in util.settings.subvolumes:
+                    snapshots = util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name()
+                    for snapshot in snapshots:
+                        if mounted_snapshot_raw in snapshot:
+                            mounted_snapshot_full_path = snapshot
+                            break
+
+            self.__snapshot_to_clone_in_root_full_path = mounted_snapshot_full_path
+            self.__root_subvolume = util.settings.subvolumes[subvolume]
+            return False
+        else:
+            return True
+
+    def open_consolidate_snapshot_window(self):
+        """Checks if the current snapshot used for root is the default or the user has booted the system from
+        an alternate snapshot.
+
+        Returns:
+            QDialog: The dialog window to consolidate the root snapshot.
+        """
+        info_window = window.windows.ConsolidateSnapshotWindow(self.__parent_window,
+                                                               self.__snapshot_to_clone_in_root_full_path,
+                                                               self.__root_subvolume)
+        return info_window
 
 
 # Module's methods

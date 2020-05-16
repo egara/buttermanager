@@ -159,7 +159,7 @@ class ConfigManager:
             get_property('path_to_consolidate_root_snapshot')
 
         # Do the user want to save logs automatically
-        util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))
+        util.settings.save_log = int(util.settings.properties_manager.get_property('save_log'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()
@@ -238,12 +238,12 @@ def execute_command(command, console=False, root=False):
     """Executes a shell command.
 
     Arguments:
-        command (string): Command to be executed.
+        command (str): Command to be executed.
         console (boolean): The command output needs to be redirected to the console.
         root (boolean): The command is only accesible by root user
 
     Returns:
-        string: Command line output encoded in UTF-8.
+        str: Command line output encoded in UTF-8.
     """
 
     # Checking if the program executed by the command is installed in the system
@@ -281,8 +281,8 @@ def get_percentage(total, parcial):
     """Calculates the percentage between total amount and parcial amount.
 
     Arguments:
-        total (string): Total amount. It should be specified the unit, f.i.: 30.00GiB
-        parcial (string): Parcial amount. It should be specified the unit, f.i.: 3.00GiB
+        total (str): Total amount. It should be specified the unit, f.i.: 30.00GiB
+        parcial (str): Parcial amount. It should be specified the unit, f.i.: 3.00GiB
     Returns:
         int: Percentage between total and parcial, f.i.: 10 (3.00GiB is 10% of 30.00GiB).
 
@@ -302,10 +302,10 @@ def get_number_unit(number_unit_string):
     """Gets the number and the unit present in a specific string.
 
     Arguments:
-        number_unit_string (string): String consisting of amount and unit, f.i.: 30.00GiB
+        number_unit_string (str): String consisting of amount and unit, f.i.: 30.00GiB
 
     Returns:
-        dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
+        dictionary (key=:obj:'str', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
             - total_size: Device size
             - total_allocated: Device allocated
 

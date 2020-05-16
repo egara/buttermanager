@@ -21,8 +21,10 @@
 """This module gathers all the additional windows for displaying information in the application.
 
 """
-import util.settings
+import filesystem.snapshot
+import subprocess
 import sys
+import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
@@ -149,7 +151,14 @@ class ConsolidateSnapshotWindow(QDialog):
 
     """
     # Constructor
-    def __init__(self, parent):
+    def __init__(self, parent, snapshot_to_clone_in_root_full_path, root_subvolume):
+        """ Constructor.
+
+        Arguments:
+            snapshot_to_clone_in_root_full_path (str): Full path of the snapshot booted and the one to use for
+            consolidating as default root subvolume.
+            root_subvolume (filesyste.snapshot.Subvolume): Subvolume representing system's root
+        """
         QDialog.__init__(self, parent)
         # Setting window flags, f.i. this window won't have a close button
         self.setWindowFlags(
@@ -162,6 +171,10 @@ class ConsolidateSnapshotWindow(QDialog):
 
         # UI elements
         self.__ui_elements = []
+
+        # Initializing private attributes
+        self.__snapshot_to_clone_in_root_full_path = snapshot_to_clone_in_root_full_path
+        self.__root_subvolume = root_subvolume
 
         # Initializing the window
         self.init_ui()
@@ -199,6 +212,38 @@ class ConsolidateSnapshotWindow(QDialog):
         information = "You have booted into an alternative snapshot. \n " \
                       "Do you want to consolidate it as your default?"
         self.label_info.setText(information)
+
+        # Buttons
+        self.button_box.accepted.connect(self.consolidate)
+        # self.button_box.rejected.connect(self.reject)
+
+    def consolidate(self):
+        """Accepts root snapshot consolidation.
+
+        """
+        # Removes root snapshot
+        self.__root_subvolume.delete_origin()
+        # Creates a new snapshot for root
+        command = "{command} {subvolume_origin} {subvolume_dest}".format(
+            command=filesystem.snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
+            subvolume_origin=self.__snapshot_to_clone_in_root_full_path,
+            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+        )
+        util.utils.execute_command(command, console=True, root=True)
+        # Replace /etc/fstab with the default snapshot
+        # Substitute the entry in fstab for root
+        command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}|g' {subvolume_dest}/etc/fstab""".format(
+            subvolume_origin_real=self.__snapshot_to_clone_in_root_full_path,
+            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+        )
+        command = [command_string]
+        try:
+            subprocess.check_output(command, shell=True)
+        except subprocess.CalledProcessError as exception:
+            self.__logger.error("Error trying to substitute the root's path in fstab with the "
+                                "path of the new snapshot created. Reason: " + + str(exception.reason))
+        # Closes the window
+        self.accept()
 
 
 class SnapshotWindow(QMainWindow):

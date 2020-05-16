@@ -442,11 +442,20 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.show()
 
                 # Checks for root snapshot mounted
-                self.__root_snapshot_checker.check_root_snapshot()
-
-                # Show the updates window only if the user wants to and if there are updates
-                self.check_updates()
-
+                root_snapshot_default = self.__root_snapshot_checker.check_root_snapshot()
+                if root_snapshot_default:
+                    # Show the updates window only if the user wants to and if there are updates
+                    self.check_updates()
+                else:
+                    consolidate_window = self.__root_snapshot_checker.open_consolidate_snapshot_window()
+                    consolidate_window.show()
+                    if consolidate_window.exec_():
+                        # User chose Ok button to consolidate root snapshot and the process finished succesfully
+                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                                                                         "The snapshot you choose to boot the system \n"
+                                                                         "has been consolidated as the default root \n"
+                                                                         "snapshot. Please, reboot the system now.")
+                        info_dialog.show()
             else:
                 self.__logger.info("The application couldn't start normally. No BTRFS file system found.")
 
