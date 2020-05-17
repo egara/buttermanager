@@ -21,8 +21,10 @@
 """This module gathers all the additional windows for displaying information in the application.
 
 """
-import util.settings
+import filesystem.snapshot
+import subprocess
 import sys
+import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
@@ -140,6 +142,109 @@ class GeneralInfoWindow(QDialog):
         self.label_info.setText(information)
 
 
+class ConsolidateSnapshotWindow(QDialog):
+    """Window to consolidate or not root snapshot.
+
+    This window will be displayed when user boots his/her system using a snapshot from GRUB different that
+    the default snapshot for root. The user will be asked if he/she wants to consolidate the current
+    snapshot as default snapshot for root.
+
+    """
+    # Constructor
+    def __init__(self, parent, snapshot_to_clone_in_root_full_path, root_subvolume):
+        """ Constructor.
+
+        Arguments:
+            snapshot_to_clone_in_root_full_path (str): Full path of the snapshot booted and the one to use for
+            consolidating as default root subvolume.
+            root_subvolume (filesyste.snapshot.Subvolume): Subvolume representing system's root
+        """
+        QDialog.__init__(self, parent)
+        # Setting window flags, f.i. this window won't have a close button
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
+        self.parent = parent
+
+        # UI elements
+        self.__ui_elements = []
+
+        # Initializing private attributes
+        self.__snapshot_to_clone_in_root_full_path = snapshot_to_clone_in_root_full_path
+        self.__root_subvolume = root_subvolume
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Loading User Interface
+        uic.loadUi("ui/ConsolidateSnapshotWindow.ui", self)
+
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.label_info, self.button_box]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(285)
+        self.setMinimumWidth(420)
+        self.setMaximumHeight(285)
+        self.setMaximumWidth(420)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        information = "You have booted into an alternative snapshot. \n " \
+                      "Do you want to consolidate it as your default?"
+        self.label_info.setText(information)
+
+        # Buttons
+        self.button_box.accepted.connect(self.consolidate)
+
+    def consolidate(self):
+        """Accepts root snapshot consolidation.
+
+        """
+        # Removes root snapshot
+        self.__root_subvolume.delete_origin()
+        # Creates a new snapshot for root
+        command = "{command} {subvolume_origin} {subvolume_dest}".format(
+            command=filesystem.snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
+            subvolume_origin=self.__snapshot_to_clone_in_root_full_path,
+            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+        )
+        util.utils.execute_command(command, console=True, root=True)
+        # Replace /etc/fstab with the default snapshot
+        # Substitute the entry in fstab for root
+        command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}|g' {subvolume_dest}/etc/fstab""".format(
+            subvolume_origin_real=self.__snapshot_to_clone_in_root_full_path,
+            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+        )
+        command = [command_string]
+        try:
+            subprocess.check_output(command, shell=True)
+        except subprocess.CalledProcessError as exception:
+            self.__logger.error("Error trying to substitute the root's path in fstab with the "
+                                "path of the new snapshot created. Reason: " + + str(exception.reason))
+        # Closes the window
+        self.accept()
+
+
 class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
 
@@ -147,6 +252,12 @@ class SnapshotWindow(QMainWindow):
     # pyqtSignal that will be emitted when this class requires that main
     # window refreshes GUI
     refresh_gui = pyqtSignal()
+    # pyqtSignal that will be emitted when this class requires that main
+    # window disables all the buttons
+    disable_buttons = pyqtSignal()
+    # pyqtSignal that will be emitted when this class requires that main
+    # window enables all the buttons
+    enable_buttons = pyqtSignal()
 
     # Constructor
     def __init__(self, parent):
@@ -231,6 +342,14 @@ class SnapshotWindow(QMainWindow):
         """Takes a snapshot of the selected subvolume.
 
         """
+        # Disabling window buttons
+        self.__disable_buttons()
+
+        # Disabling main window buttons
+        self.on_disable_buttons()
+
+        self.on_refresh_gui()
+
         if self.radiobutton_all_subvolumes.isChecked():
             for subvolume in util.settings.subvolumes:
                 util.settings.subvolumes[subvolume].create_snapshot()
@@ -240,6 +359,12 @@ class SnapshotWindow(QMainWindow):
 
         # Refreshing GUI
         self.on_refresh_gui()
+
+        # Enabling window buttons
+        self.__enable_buttons()
+
+        # Enabling main window buttons
+        self.on_enable_buttons()
 
         # Closes the window
         self.cancel()
@@ -255,6 +380,38 @@ class SnapshotWindow(QMainWindow):
 
         """
         self.refresh_gui.emit()
+
+    def on_enable_buttons(self):
+        """Emits a QT Signal for main window enabling all the buttons.
+
+        """
+        self.enable_buttons.emit()
+
+    def on_disable_buttons(self):
+        """Emits a QT Signal for main window disabling all the buttons.
+
+        """
+        self.disable_buttons.emit()
+
+    def __disable_buttons(self):
+        """Disables all the buttons of the GUI.
+
+        """
+        self.combobox_subvolumes.setEnabled(False)
+        self.radiobutton_all_subvolumes.setEnabled(False)
+        self.radiobutton_one_subvolume.setEnabled(False)
+        self.button_ok.setEnabled(False)
+        self.button_cancel.setEnabled(False)
+
+    def __enable_buttons(self):
+        """Enable all the buttons of the GUI.
+
+        """
+        self.combobox_subvolumes.setEnabled(True)
+        self.radiobutton_all_subvolumes.setEnabled(True)
+        self.radiobutton_one_subvolume.setEnabled(True)
+        self.button_ok.setEnabled(True)
+        self.button_cancel.setEnabled(True)
 
 
 class SubvolumeWindow(QMainWindow):
