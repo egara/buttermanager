@@ -215,7 +215,6 @@ class ConsolidateSnapshotWindow(QDialog):
 
         # Buttons
         self.button_box.accepted.connect(self.consolidate)
-        # self.button_box.rejected.connect(self.reject)
 
     def consolidate(self):
         """Accepts root snapshot consolidation.
