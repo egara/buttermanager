@@ -136,6 +136,21 @@ class Subvolume:
 
                             subvolume_origin_real = "".join(subvolume_origin_list)
 
+                # Getting the line where the subvolume was found using grep. it is necessary to discard all the
+                # lines with comments in fstab starting with '#'
+                commandline_output = commandline_output.decode('utf-8')
+                # line will be the line where grep has matched subvolume_origin_real. All lines commented with '#'
+                # will be discarded
+                line = "0"
+                for line_output in commandline_output.split("\n"):
+                    line_splitted = line_output.split(':')
+                    # First element of the list will be the line where subvolume_origin_real has been matched by grep
+                    # command. If the second element is '#', this line is commented in fstab and it won't be taken
+                    # into account
+                    if not line_splitted[1].startswith('#'):
+                        line = line_splitted[0]
+                        break
+
                 if subvolume_origin_real != "/":
                     # subvolume_origin_real is in /etc/fstab
                     # Create the snapshot in rw mode
@@ -149,7 +164,8 @@ class Subvolume:
                     util.utils.execute_command(command, console=True, root=True)
 
                     # Substitute the entry in fstab for root for the new snapshot created
-                    command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}{snapshot_full_name}|g' {subvolume_dest}{snapshot_full_name}/etc/fstab""".format(
+                    command_string = """sudo -S sed -i '{line}s|{subvolume_origin_real}|{subvolume_dest}{snapshot_full_name}|g' {subvolume_dest}{snapshot_full_name}/etc/fstab""".format(
+                        line=line,
                         subvolume_origin_real=subvolume_origin_real,
                         subvolume_dest=self.subvolume_dest,
                         snapshot_full_name=snapshot_full_name
