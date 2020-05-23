@@ -294,41 +294,46 @@ class RootSnapshotChecker:
         Returns:
             boolean: true if current snapshot used for root is the default; false otherwise.
         """
-        # Obtaining the mounted subvolume for root partition
-        # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
-        command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
-        command = [command_string]
-        mounted_snapshot_raw = None
-        try:
-            mounted_snapshot_raw = subprocess.check_output(command, shell=True)
-        except subprocess.CalledProcessError as exception:
-            pass
-        if mounted_snapshot_raw:
-            # Removing the last two characters (a /n and a ")")
-            mounted_snapshot_raw = mounted_snapshot_raw[:-2]
-            # Converting bytes into string
-            mounted_snapshot_raw = mounted_snapshot_raw.decode("utf-8")
-        if mounted_snapshot_raw != util.settings.properties_manager.\
-                get_property("path_to_consolidate_root_snapshot"):
-            # If mounted snapshot is different from the supposed default root subvolume
-            # it means that user has booted the system using an alternate snapshot from GRUB.
-            # ButterManager will ask to consolidate the current snapshot as the default root
-            # subvolume
+        # First, it is necessary to check if path_to_consolidate_root_snapshot is defined
+        if util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot") != '0':
+            # Obtaining the mounted subvolume for root partition
+            # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
+            command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
+            command = [command_string]
+            mounted_snapshot_raw = None
+            try:
+                mounted_snapshot_raw = subprocess.check_output(command, shell=True)
+            except subprocess.CalledProcessError as exception:
+                pass
+            if mounted_snapshot_raw:
+                # Removing the last two characters (a /n and a ")")
+                mounted_snapshot_raw = mounted_snapshot_raw[:-2]
+                # Converting bytes into string
+                mounted_snapshot_raw = mounted_snapshot_raw.decode("utf-8")
+            if mounted_snapshot_raw != util.settings.properties_manager. \
+                    get_property("path_to_consolidate_root_snapshot"):
+                # If mounted snapshot is different from the supposed default root subvolume
+                # it means that user has booted the system using an alternate snapshot from GRUB.
+                # ButterManager will ask to consolidate the current snapshot as the default root
+                # subvolume
 
-            # Obtaining the snapshot mounted
-            mounted_snapshot_full_path = None
-            while mounted_snapshot_full_path is None:
-                for subvolume in util.settings.subvolumes:
-                    snapshots = util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name()
-                    for snapshot in snapshots:
-                        if mounted_snapshot_raw in snapshot:
-                            mounted_snapshot_full_path = snapshot
-                            break
+                # Obtaining the snapshot mounted
+                mounted_snapshot_full_path = None
+                while mounted_snapshot_full_path is None:
+                    for subvolume in util.settings.subvolumes:
+                        snapshots = util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name()
+                        for snapshot in snapshots:
+                            if mounted_snapshot_raw in snapshot:
+                                mounted_snapshot_full_path = snapshot
+                                break
 
-            self.__snapshot_to_clone_in_root_full_path = mounted_snapshot_full_path
-            self.__root_subvolume = util.settings.subvolumes[subvolume]
-            return False
+                self.__snapshot_to_clone_in_root_full_path = mounted_snapshot_full_path
+                self.__root_subvolume = util.settings.subvolumes[subvolume]
+                return False
+            else:
+                return True
         else:
+            # Path to consolidate root snapshot hasn't been defined yet so this part is skipped
             return True
 
     def open_consolidate_snapshot_window(self):
