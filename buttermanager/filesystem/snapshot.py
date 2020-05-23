@@ -292,10 +292,11 @@ class RootSnapshotChecker:
         an alternate snapshot.
 
         Returns:
-            boolean: true if current snapshot used for root is the default; false otherwise.
+            boolean: true if current snapshot used for root is the default or this paramenter has not been stored yet;
+                     false otherwise.
         """
         # First, it is necessary to check if path_to_consolidate_root_snapshot is defined
-        if util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot") != '0':
+        if util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot") != 0:
             # Obtaining the mounted subvolume for root partition
             # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
             command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
@@ -333,7 +334,7 @@ class RootSnapshotChecker:
             else:
                 return True
         else:
-            # Path to consolidate root snapshot hasn't been defined yet so this part is skipped
+            # Path to consolidate root snapshot hasn't been defined yet so this check is skipped
             return True
 
     def open_consolidate_snapshot_window(self):
