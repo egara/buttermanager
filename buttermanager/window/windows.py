@@ -220,6 +220,9 @@ class ConsolidateSnapshotWindow(QDialog):
         """Accepts root snapshot consolidation.
 
         """
+        self.__logger.error("Consolidating default root snapshot. The system has booted in " +
+                            self.__snapshot_to_clone_in_root_full_path + " and it will be consolidated into " +
+                            self.__root_subvolume.subvolume_origin[:-1])
         # Removes root snapshot
         self.__root_subvolume.delete_origin()
         # Creates a new snapshot for root
@@ -240,7 +243,7 @@ class ConsolidateSnapshotWindow(QDialog):
             subprocess.check_output(command, shell=True)
         except subprocess.CalledProcessError as exception:
             self.__logger.error("Error trying to substitute the root's path in fstab with the "
-                                "path of the new snapshot created. Reason: " + + str(exception.reason))
+                                "path of the new snapshot created. Reason: " + str(exception.reason))
         # Closes the window
         self.accept()
 
