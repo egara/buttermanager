@@ -172,6 +172,9 @@ class ConsolidateSnapshotWindow(QDialog):
         # UI elements
         self.__ui_elements = []
 
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
         # Initializing private attributes
         self.__snapshot_to_clone_in_root_full_path = snapshot_to_clone_in_root_full_path
         self.__root_subvolume = root_subvolume
@@ -220,7 +223,7 @@ class ConsolidateSnapshotWindow(QDialog):
         """Accepts root snapshot consolidation.
 
         """
-        self.__logger.error("Consolidating default root snapshot. The system has booted in " +
+        self.__logger.info("Consolidating default root snapshot. The system has booted in " +
                             self.__snapshot_to_clone_in_root_full_path + " and it will be consolidated into " +
                             self.__root_subvolume.subvolume_origin[:-1])
         # Removes root snapshot
