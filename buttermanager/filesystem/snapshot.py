@@ -327,6 +327,10 @@ class RootSnapshotChecker:
                 mounted_snapshot_raw = mounted_snapshot_raw[:-2]
                 # Converting bytes into string
                 mounted_snapshot_raw = mounted_snapshot_raw.decode("utf-8")
+                # Removing first / if path_to_consolidate_root_snapshot doesn't start with /
+                if not util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot")\
+                        .startswith("/"):
+                    mounted_snapshot_raw = mounted_snapshot_raw[1:]
             if mounted_snapshot_raw != util.settings.properties_manager. \
                     get_property("path_to_consolidate_root_snapshot"):
                 # If mounted snapshot is different from the supposed default root subvolume
