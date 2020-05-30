@@ -20,8 +20,8 @@
 
 """This module gathers all the utils and tools for buttermanager application.
 
-It provides also NoCommandFound exception class.
 """
+import exception.exception
 import filesystem.snapshot
 import logging
 import logging.handlers
@@ -52,14 +52,6 @@ OS_DEBIAN = "DEBIAN"
 OS_SUSE = "SUSE"
 OS_FEDORA = "FEDORA"
 VERSION_URL = "https://raw.githubusercontent.com/egara/buttermanager/master/version.txt"
-
-
-# Classes
-class NoCommandFound(Exception):
-    """Exception raised when a needed program is not installed in the system.
-
-    """
-    pass
 
 
 class ConfigManager:
@@ -274,7 +266,7 @@ def execute_command(command, console=False, root=False):
         # Logger
         logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
         logger.info(single_command + " program does not exist in the system")
-        raise NoCommandFound()
+        raise exception.exception.NoCommandFound()
 
 
 def get_percentage(total, parcial):

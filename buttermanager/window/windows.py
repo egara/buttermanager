@@ -21,6 +21,7 @@
 """This module gathers all the additional windows for displaying information in the application.
 
 """
+import exception.exception
 import filesystem.snapshot
 import subprocess
 import sys
@@ -224,31 +225,40 @@ class ConsolidateSnapshotWindow(QDialog):
 
         """
         self.__logger.info("Consolidating default root snapshot. The system has booted in " +
-                            self.__snapshot_to_clone_in_root_full_path + " and it will be consolidated into " +
-                            self.__root_subvolume.subvolume_origin[:-1])
+                           self.__snapshot_to_clone_in_root_full_path + " and it will be consolidated into " +
+                           self.__root_subvolume.subvolume_origin[:-1])
         # Removes root snapshot
-        self.__root_subvolume.delete_origin()
-        # Creates a new snapshot for root
-        command = "{command} {subvolume_origin} {subvolume_dest}".format(
-            command=filesystem.snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
-            subvolume_origin=self.__snapshot_to_clone_in_root_full_path,
-            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
-        )
-        util.utils.execute_command(command, console=True, root=True)
-        # Replace /etc/fstab with the default snapshot
-        # Substitute the entry in fstab for root
-        command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}|g' {subvolume_dest}/etc/fstab""".format(
-            subvolume_origin_real=self.__snapshot_to_clone_in_root_full_path,
-            subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
-        )
-        command = [command_string]
         try:
-            subprocess.check_output(command, shell=True)
-        except subprocess.CalledProcessError as exception:
-            self.__logger.error("Error trying to substitute the root's path in fstab with the "
-                                "path of the new snapshot created. Reason: " + str(exception.reason))
-        # Closes the window
-        self.accept()
+            self.__root_subvolume.delete_origin()
+            # Creates a new snapshot for root
+            command = "{command} {subvolume_origin} {subvolume_dest}".format(
+                command=filesystem.snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
+                subvolume_origin=self.__snapshot_to_clone_in_root_full_path,
+                subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+            )
+            util.utils.execute_command(command, console=True, root=True)
+            # Replace /etc/fstab with the default snapshot
+            # Substitute the entry in fstab for root
+            command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}|g' {subvolume_dest}/etc/fstab""".format(
+                subvolume_origin_real=self.__snapshot_to_clone_in_root_full_path,
+                subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+            )
+            command = [command_string]
+            try:
+                subprocess.check_output(command, shell=True)
+                # The consolidation process was OK so this QDialong window is closed and returns integer 1
+                self.done(1)
+            except subprocess.CalledProcessError as subprocess_exception:
+                self.__logger.error("Error trying to substitute the root's path in fstab with the "
+                                    "path of the new snapshot created. Reason: " + str(subprocess_exception.reason))
+                # The consolidation process was KO so this QDialong window is closed and returns integer 2
+                self.done(2)
+        except exception.exception.BtrfsSnapshotDeletion as btrfs_snapshot_exception:
+            self.__logger.error("Error removing root snapshot {root_snapshot} because it is not empty and there are "
+                                "subvolumes within it "
+                                .format(root_snapshot=self.__root_subvolume.subvolume_origin[:-1]))
+            # The consolidation process was KO so this QDialong window is closed and returns integer 3
+            self.done(3)
 
 
 class SnapshotWindow(QMainWindow):

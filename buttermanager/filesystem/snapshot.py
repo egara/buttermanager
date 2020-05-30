@@ -22,7 +22,7 @@
 
 It provides also Snapshot class.
 """
-import filesystem.snapshot
+import exception.exception
 import glob
 import os
 import re
@@ -268,12 +268,22 @@ class Subvolume:
         info_message = "Deleting subvolume from origin {subvolume_origin}. " \
                        "Please wait...".format(subvolume_origin=self.subvolume_origin)
         self.__logger.info(info_message)
+        errors = False
 
         # Deletes the subvolume
         command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=self.subvolume_origin)
-        util.utils.execute_command(command, console=True, root=True)
-        info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=self.subvolume_origin)
-        self.__logger.info(info_message)
+        commandline_output = util.utils.execute_command(command, console=True, root=True)
+        for line in commandline_output.split("\n"):
+            if 'Directory not empty' in line:
+                errors = True
+                break
+        if errors:
+            # Subvolume is not empty so it can't be deleted. Exception is thrown
+            raise exception.exception.BtrfsSnapshotDeletion("Error: {snapshot} is not empty.\n".
+                                                            format(snapshot=self.subvolume_origin))
+        else:
+            info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=self.subvolume_origin)
+            self.__logger.info(info_message)
 
     def get_all_snapshots_with_the_same_name(self):
         """Retrieves all the snapshots with name self.snapshot_name stored within self.subvolume_dest.

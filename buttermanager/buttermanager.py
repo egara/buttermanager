@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import exception.exception
 import filesystem.filesystem
 import filesystem.snapshot
 import manager.upgrader
@@ -451,12 +452,30 @@ class ButtermanagerMainWindow(QMainWindow):
                     # Hidding the main window and showing the consolodate window in order to proceed
                     self.hide()
                     consolidate_window.show()
-                    if consolidate_window.exec_():
+                    consolidation = consolidate_window.exec_()
+                    if consolidation == 1:
                         # User chose Ok button to consolidate root snapshot and the process finished succesfully
                         info_dialog = window.windows.ProblemsFoundWindow(self,
                                                                          "The snapshot you choose to boot the system \n"
                                                                          "has been consolidated as the default root \n"
                                                                          "snapshot. Please, reboot the system now.")
+                        info_dialog.show()
+                    elif consolidation == 2:
+                        # User chose Ok button to consolidate root snapshot and the process doesn't finished
+                        # successfully
+                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                                                                         "Error trying to substitute the root's path \n"
+                                                                         "in fstab with the path of the new snapshot \n"
+                                                                         "created")
+                        info_dialog.show()
+                    elif consolidation == 3:
+                        # User chose Ok button to consolidate root snapshot and the process doesn't finished
+                        # successfully
+                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                                                                         "Error removing root snapshot because it is \n"
+                                                                         "not empty and there are subvolumes \n"
+                                                                         "within it. The consolidation process \n"
+                                                                         "couldn't be done.")
                         info_dialog.show()
                     else:
                         # User chose Cancel button so the application must be closed
@@ -474,7 +493,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                                                        "The application will be closed.")
                 info_dialog.show()
 
-        except util.utils.NoCommandFound:
+        except exception.exception.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
