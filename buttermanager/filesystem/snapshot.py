@@ -249,8 +249,9 @@ class Subvolume:
                 os.remove(log_path)
                 info_message = "Log {log} deleted.\n".format(log=log)
                 self.__logger.info(info_message)
-            except OSError as exception:
-                info_message = "Error deleting log {log}. Error {exception}\n".format(log=log, exception=str(exception))
+            except OSError as os_error_exception:
+                info_message = "Error deleting log {log}. Error {os_error_exception}\n".format(log=log,
+                                                                                               exception=str(os_error_exception))
                 self.__logger.info(info_message)
 
             snapshots_to_delete -= 1
