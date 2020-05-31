@@ -806,7 +806,7 @@
            <string>Before checking this option, make sure you have GRUB installed. After marking it, the created snapshots of the subvolume mounted as root will be modified to include the appropriate path in the /etc/fstab file</string>
           </property>
           <property name="text">
-           <string>Boot the system from GRUB using snapshots (Experimental)</string>
+           <string>Boot the system from GRUB using snapshots</string>
           </property>
          </widget>
         </widget>
