@@ -27,7 +27,7 @@ import subprocess
 import sys
 import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
-from PyQt5 import uic, QtCore
+from PyQt5 import uic, QtCore, QtTest
 from PyQt5.QtCore import pyqtSignal, QSize, Qt
 from PyQt5.QtGui import QIcon, QTextCursor, QFontMetrics
 
@@ -269,9 +269,6 @@ class SnapshotWindow(QMainWindow):
     # window refreshes GUI
     refresh_gui = pyqtSignal()
     # pyqtSignal that will be emitted when this class requires that main
-    # window disables all the buttons
-    disable_buttons = pyqtSignal()
-    # pyqtSignal that will be emitted when this class requires that main
     # window enables all the buttons
     enable_buttons = pyqtSignal()
 
@@ -361,10 +358,8 @@ class SnapshotWindow(QMainWindow):
         # Disabling window buttons
         self.__disable_buttons()
 
-        # Disabling main window buttons
-        self.on_disable_buttons()
-
-        self.on_refresh_gui()
+        # Waiting 10 msec in order to let self.__disable_buttons to take effect
+        QtTest.QTest.qWait(10)
 
         if self.radiobutton_all_subvolumes.isChecked():
             for subvolume in util.settings.subvolumes:
@@ -376,9 +371,6 @@ class SnapshotWindow(QMainWindow):
         # Refreshing GUI
         self.on_refresh_gui()
 
-        # Enabling window buttons
-        self.__enable_buttons()
-
         # Enabling main window buttons
         self.on_enable_buttons()
 
@@ -389,6 +381,12 @@ class SnapshotWindow(QMainWindow):
         """Closes the window.
 
         """
+        # Enabling main window buttons
+        self.on_enable_buttons()
+
+        # Refreshing GUI
+        self.on_refresh_gui()
+
         self.close()
 
     def on_refresh_gui(self):

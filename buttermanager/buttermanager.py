@@ -31,7 +31,7 @@ import window.windows
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices, QFontMetrics
-from PyQt5 import uic
+from PyQt5 import uic, QtTest
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
 
 # Constants
@@ -685,12 +685,20 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system.setEnabled(False)
         self.button_close_terminal.setEnabled(False)
         self.checkbox_dont_remove_snapshots.setEnabled(False)
+        self.checkbox_startup.setEnabled(False)
+        self.checkbox_log.setEnabled(False)
+        self.checkbox_snap.setEnabled(False)
+        self.checkbox_aur.setEnabled(False)
+        self.checkbox_grub_btrfs.setEnabled(False)
+        self.spinbox_snapshots_to_keep.setEnabled(False)
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
         self.button_add_subvolume.setEnabled(False)
         self.button_delete_subvolume.setEnabled(False)
         self.button_edit_subvolume.setEnabled(False)
         self.button_save_subvolume.setEnabled(False)
+        self.button_view_log.setEnabled(False)
+        self.button_delete_log.setEnabled(False)
 
     def __enable_buttons(self):
         """Enable all the buttons of the GUI.
@@ -700,12 +708,20 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system.setEnabled(True)
         self.button_close_terminal.setEnabled(True)
         self.checkbox_dont_remove_snapshots.setEnabled(True)
+        self.checkbox_startup.setEnabled(True)
+        self.checkbox_log.setEnabled(True)
+        self.checkbox_snap.setEnabled(True)
+        self.checkbox_aur.setEnabled(True)
+        self.checkbox_grub_btrfs.setEnabled(True)
+        self.spinbox_snapshots_to_keep.setEnabled(True)
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
         self.button_add_subvolume.setEnabled(True)
         self.button_delete_subvolume.setEnabled(True)
         self.button_edit_subvolume.setEnabled(True)
         self.button_save_subvolume.setEnabled(True)
+        self.button_view_log.setEnabled(True)
+        self.button_delete_log.setEnabled(True)
 
     def take_snapshot(self):
         """Takes a BTRFS subvolume snapshot.
@@ -715,9 +731,12 @@ class ButtermanagerMainWindow(QMainWindow):
         # Connecting the signals emitted by the snapshot window with this slot
         snapshot_window.refresh_gui.connect(self.refresh_gui)
         snapshot_window.enable_buttons.connect(self.__enable_buttons)
-        snapshot_window.disable_buttons.connect(self.__disable_buttons)
+        # Disabling buttons
+        self.__disable_buttons()
         # Displaying snapshot window
         snapshot_window.show()
+        # Enabling buttons
+        self.__disable_buttons()
 
     def delete_snapshots(self):
         """Deletes one or several BTRFS subvolume snapshots.
@@ -725,6 +744,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Disabling buttons
         self.__disable_buttons()
+
+        # Waiting 10 msec in order to let self.__disable_buttons to take effect
+        QtTest.QTest.qWait(10)
 
         snapshots_to_delete = self.list_snapshots.selectedItems()
         for snap in snapshots_to_delete:
