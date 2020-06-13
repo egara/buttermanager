@@ -380,6 +380,22 @@
            <string>It is a perfect time to balance the filesystem. Click on Balance button to free some unused space</string>
           </property>
          </widget>
+         <widget class="QPushButton" name="button_regenerate_grub">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>370</y>
+            <width>121</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Regenerates GRUB menu including entries for the current snapshots</string>
+          </property>
+          <property name="text">
+           <string>Regenerate GRUB</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_snapshots">
          <attribute name="title">

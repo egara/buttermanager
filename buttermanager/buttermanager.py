@@ -255,7 +255,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.checkbox_dont_remove_snapshots, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
-                                  self.checkbox_grub_btrfs]
+                                  self.checkbox_grub_btrfs, self.button_regenerate_grub]
             util.utils.scale_fonts(self.__ui_elements)
             self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
             util.utils.scale_fonts(self.__ui_elements, 2)
@@ -358,8 +358,10 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Retrieving boot the system from GRUB using snapshots decision
                 if util.settings.grub_btrfs == 0:
                     self.checkbox_grub_btrfs.setChecked(False)
+                    self.button_regenerate_grub.hide()
                 else:
                     self.checkbox_grub_btrfs.setChecked(True)
+                    self.button_regenerate_grub.show()
 
                 if util.settings.user_os == util.utils.OS_ARCH or \
                         util.settings.user_os == util.utils.OS_DEBIAN or \
@@ -699,6 +701,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_save_subvolume.setEnabled(False)
         self.button_view_log.setEnabled(False)
         self.button_delete_log.setEnabled(False)
+        self.button_regenerate_grub.setEnabled(False)
 
     def __enable_buttons(self):
         """Enable all the buttons of the GUI.
@@ -722,6 +725,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_save_subvolume.setEnabled(True)
         self.button_view_log.setEnabled(True)
         self.button_delete_log.setEnabled(True)
+        self.button_regenerate_grub.setEnabled(True)
 
     def take_snapshot(self):
         """Takes a BTRFS subvolume snapshot.
@@ -856,8 +860,10 @@ class ButtermanagerMainWindow(QMainWindow):
         # Storing value in settings
         if self.checkbox_grub_btrfs.isChecked():
             util.settings.properties_manager.set_property('grub_btrfs', 1)
+            self.button_regenerate_grub.show()
         else:
             util.settings.properties_manager.set_property('grub_btrfs', 0)
+            self.button_regenerate_grub.hide()
 
     def on_combobox_subvolumes_changed(self):
         current_subvolume = self.combobox_subvolumes.currentText()
