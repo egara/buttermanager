@@ -372,6 +372,8 @@ class RootSnapshotChecker:
                             if mounted_snapshot_raw in snapshot:
                                 mounted_snapshot_full_path = snapshot
                                 break
+                        if mounted_snapshot_full_path is not None:
+                            break
 
                 self.__snapshot_to_clone_in_root_full_path = mounted_snapshot_full_path
                 self.__root_subvolume = util.settings.subvolumes[subvolume]
