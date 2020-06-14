@@ -22,8 +22,9 @@
 
 It provides also Filesystem class.
 """
-import util.utils
+import exception.exception
 import sys
+import util.utils
 import window.windows
 from PyQt5.QtCore import QThread, pyqtSignal
 
@@ -173,8 +174,8 @@ class Filesystem:
 
             return devices
 
-        except util.utils.NoCommandFound as exception:
-            raise exception
+        except exception.exception.NoCommandFound as no_command_found_exception:
+            raise no_command_found_exception
 
     def __get_mounted_device(self):
         """Retrieves the device tha contains the BTRFS filesystem and it is mounted.
@@ -192,8 +193,8 @@ class Filesystem:
 
             return mounted_device
 
-        except util.utils.NoCommandFound as exception:
-            raise exception
+        except exception.exception.NoCommandFound as no_command_found_exception:
+            raise no_command_found_exception
 
     def __get_mounted_points(self):
         """Retrieves all the mounted points of the BTRFS filesystem.
@@ -213,8 +214,8 @@ class Filesystem:
 
             return mounted_points
 
-        except util.utils.NoCommandFound as exception:
-            raise exception
+        except exception.exception.NoCommandFound as no_command_found_exception:
+            raise no_command_found_exception
 
     def __get_filesystem_info(self, mounted_point):
         """Retrieves all the information of the BTRFS filesystem.

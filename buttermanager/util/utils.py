@@ -20,8 +20,8 @@
 
 """This module gathers all the utils and tools for buttermanager application.
 
-It provides also NoCommandFound exception class.
 """
+import exception.exception
 import filesystem.snapshot
 import logging
 import logging.handlers
@@ -54,14 +54,6 @@ OS_FEDORA = "FEDORA"
 VERSION_URL = "https://raw.githubusercontent.com/egara/buttermanager/master/version.txt"
 
 
-# Classes
-class NoCommandFound(Exception):
-    """Exception raised when a needed program is not installed in the system.
-
-    """
-    pass
-
-
 class ConfigManager:
     """Manages the configuration.
 
@@ -91,6 +83,8 @@ class ConfigManager:
                 snap_packages: 0
                 snapshots_to_keep: 3
                 save_log: 1
+                grub_btrfs: 0
+                path_to_consolidate_root_snapshot: 0
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
@@ -102,7 +96,7 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Creating logs directory it it doens' exist
+        # Creating logs directory it it doesn't exist
         if not os.path.exists(util.settings.logs_path):
             os.makedirs(util.settings.logs_path)
 
@@ -148,8 +142,16 @@ class ConfigManager:
         # Do the user want to check for updates at startup
         util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
 
+        # Do user want to boot the system from GRUB using snapshots
+        util.settings.grub_btrfs = int(util.settings.properties_manager.get_property('grub_btrfs'))
+
+        # The path of the root snapshot that must be within /etc/fstab as / mount point
+        # It will be 0 if this property is not defined yet or it is empty
+        util.settings.path_to_consolidate_root_snapshot = util.settings.properties_manager.\
+            get_property('path_to_consolidate_root_snapshot')
+
         # Do the user want to save logs automatically
-        util.settings.save_log= int(util.settings.properties_manager.get_property('save_log'))
+        util.settings.save_log = int(util.settings.properties_manager.get_property('save_log'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()
@@ -228,12 +230,12 @@ def execute_command(command, console=False, root=False):
     """Executes a shell command.
 
     Arguments:
-        command (string): Command to be executed.
+        command (str): Command to be executed.
         console (boolean): The command output needs to be redirected to the console.
         root (boolean): The command is only accesible by root user
 
     Returns:
-        string: Command line output encoded in UTF-8.
+        str: Command line output encoded in UTF-8.
     """
 
     # Checking if the program executed by the command is installed in the system
@@ -264,15 +266,15 @@ def execute_command(command, console=False, root=False):
         # Logger
         logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
         logger.info(single_command + " program does not exist in the system")
-        raise NoCommandFound()
+        raise exception.exception.NoCommandFound()
 
 
 def get_percentage(total, parcial):
     """Calculates the percentage between total amount and parcial amount.
 
     Arguments:
-        total (string): Total amount. It should be specified the unit, f.i.: 30.00GiB
-        parcial (string): Parcial amount. It should be specified the unit, f.i.: 3.00GiB
+        total (str): Total amount. It should be specified the unit, f.i.: 30.00GiB
+        parcial (str): Parcial amount. It should be specified the unit, f.i.: 3.00GiB
     Returns:
         int: Percentage between total and parcial, f.i.: 10 (3.00GiB is 10% of 30.00GiB).
 
@@ -292,10 +294,10 @@ def get_number_unit(number_unit_string):
     """Gets the number and the unit present in a specific string.
 
     Arguments:
-        number_unit_string (string): String consisting of amount and unit, f.i.: 30.00GiB
+        number_unit_string (str): String consisting of amount and unit, f.i.: 30.00GiB
 
     Returns:
-        dictionary (key=:obj:'string', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
+        dictionary (key=:obj:'str', value=:obj:'str' or obj:'int'): all the info. The keys of the dictionary will be:
             - total_size: Device size
             - total_allocated: Device allocated
 

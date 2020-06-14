@@ -28,7 +28,7 @@ import filesystem
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "1.8"
+VERSION = "1.9"
 
 # Global module attributes
 # Application version
@@ -53,6 +53,10 @@ snap_packages = 1
 aur_repository = 1
 # Do user want to check for updates at startup? 0=False 1=True
 check_at_startup = 1
+# The path of the root snapshot that must be within /etc/fstab as / mount point
+path_to_consolidate_root_snapshot = "0"
+# Do user want to boot the system from GRUB using snapshots? 0=False 1=True
+grub_btrfs = 0
 # Do user want to save log automatically after upgrading system? 0=False 1=True
 save_log = 1
 # Subvolumes managed by the application

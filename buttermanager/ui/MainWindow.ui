@@ -380,6 +380,22 @@
            <string>It is a perfect time to balance the filesystem. Click on Balance button to free some unused space</string>
           </property>
          </widget>
+         <widget class="QPushButton" name="button_regenerate_grub">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>370</y>
+            <width>121</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Regenerates GRUB menu including entries for the current snapshots</string>
+          </property>
+          <property name="text">
+           <string>Regenerate GRUB</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_snapshots">
          <attribute name="title">
@@ -793,6 +809,22 @@
            <string>Save logs automatically</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="checkbox_grub_btrfs">
+          <property name="geometry">
+           <rect>
+            <x>19</x>
+            <y>390</y>
+            <width>411</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Before checking this option, make sure you have GRUB installed. After marking it, the created snapshots of the subvolume mounted as root will be modified to include the appropriate path in the /etc/fstab file</string>
+          </property>
+          <property name="text">
+           <string>Boot the system from GRUB using snapshots</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
@@ -907,7 +939,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v1.8</string>
+           <string>v1.9</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
