@@ -427,6 +427,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.combobox_subvolumes.currentTextChanged.connect(self.on_combobox_subvolumes_changed)
                 self.button_github.clicked.connect(self.go_to_github)
                 self.button_wiki.clicked.connect(self.go_to_wiki)
+                self.button_regenerate_grub.clicked.connect(self.regenerate_grub)
 
                 # If no subvolumes are defined, warning the user
                 if len(util.settings.subvolumes) == 0:
@@ -1038,6 +1039,29 @@ class ButtermanagerMainWindow(QMainWindow):
             self.label_space_data_danger.show()
         else:
             self.label_space_data_danger.hide()
+
+    def regenerate_grub(self):
+        """Regenerates GRUB menu to include the snapshots taken as bootable entries.
+
+        """
+        # Disabling buttons
+        self.__disable_buttons()
+
+        # Waiting 100 msec in order to let self.__disable_buttons to take effect
+        QtTest.QTest.qWait(100)
+
+        # Run grub-btrfs in order to regenerate GRUB entries
+        util.utils.execute_command(filesystem.snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
+
+        # Refreshing GUI
+        self.refresh_gui()
+
+        # Enabling buttons
+        self.__enable_buttons()
+
+        # Displaying info
+        info_dialog = window.windows.GeneralInfoWindow(self, "GRUB menu has been regenerated.")
+        info_dialog.show()
 
 
 if __name__ == '__main__':
