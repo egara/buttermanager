@@ -23,12 +23,18 @@ sudo rm -rf /opt/buttermanager/
 echo "Creating installation directory in /opt/buttermanager"
 sudo mkdir /opt/buttermanager/
 sudo mkdir /opt/buttermanager/buttermanager
+sudo mkdir /opt/buttermanager/gui
 sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R /opt/buttermanager
 
 # Copying all the files needed
 echo "Copying all the files needed into /opt/buttermanager"
 cp -ar ../buttermanager/* /opt/buttermanager/buttermanager
 cp -ar ../requirements.txt /opt/buttermanager/
+cp -ar ../aur/buttermanager.svg /opt/buttermanager/gui/
+
+# Creating desktop launcher
+echo -e "Creating desktop launcher..."
+cp ../aur/buttermanager.desktop ~/.local/share/applications/
 
 # Creating virtual environment
 echo "Creating virtual environment..."
