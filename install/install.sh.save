@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Script for installin ButterManager
+# ----------------------------------
+#
+# @author: Eloy García Almadén
+# @email: eloy.garcia.pca@gmail.com
+# -------------------------------------
+
+# Variables
+python="python"
+
+	# Enabling virtual environment
+        echo -e "\n Enabling virtual environment..."
+	source env/bin/activate
+
+        # Installing requirements
+        echo -e "\n Installing all the required modules into the virtual environment. Please wait..."
+	pip install --upgrade pip
+	pip install -r requirements.txt 
+
+# Removing old installations
+echo "Removing old installation..."
+sudo rm -rf /opt/buttermanager/
+
+# Creating installation directory
+echo "\n Creating installation directory in /opt/buttermanager"
+sudo mkdir /opt/buttermanager/
+
+# Copying all the files needed
+echo "\n Copying all the files needed into /opt/buttermanager"
+sudo cp -ar ../buttermanager/* /opt/buttermanager/
+sudo cp -ar ../requirements.txt /opt/buttermanager/
+
+# Creating virtual environment
+echo "\n Creating virtual environment..."
+sudo cd "/opt/buttermanager/"
+python -m venv env
+
+# Enabling virtual environment
+echo -e "\n Enabling virtual environment..."
+source env/bin/activate
+
+# Installing requirements
+echo -e "\n Installing all the required modules into the virtual environment. Please wait..."
+pip install --upgrade pip
+pip install -r requirements.txt
