@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script for installin ButterManager
-# ----------------------------------
+# Script for installing ButterManager
+# -----------------------------------
 #
 # @author: Eloy García Almadén
 # @email: eloy.garcia.pca@gmail.com
