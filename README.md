@@ -17,6 +17,9 @@ this](https://github.com/egara/arch-btrfs-installation).
 ### Managing snapshots ###
 You will be able to define all the subvolumes you want to create snapshots and the path for their storage. Then, using ButterManager you will create and delete snapshots of those subvolumes at your will.
 
+### Integration with GRUB ###
+ButterManager is integrated with [grub-btrfs](https://github.com/Antynea/grub-btrfs) and you will be able to boot your system from any snapshot directly from the GRUB menu.
+
 ### Balancing BTRFS filesystems ###
 As new snapshots are created in the system, the free space of the filesystem decreases and it is necessary to perform a system balancing regularly. With ButterManager you can perform these balances at any time and visualize the real space that is occupied.
 
@@ -29,21 +32,16 @@ Everytime your system is upgraded using ButterManager, you could save the log in
 ## Installation ##
 You can install ButterManager in different ways.
 
-### Snap package ###
-Snaps are universal Linux packages that can be used on all major Linux distributions, including Ubuntu, Linux Mint, Debian, Fedora, Arch Linux and more. Please, read [this article](https://docs.snapcraft.io/installing-snapd/6735) for knowing more and installing snap support.
-
-Installing ButterManager using the snap package is very simple. First, download the ButterManager snap [here](https://drive.google.com/file/d/1t46TsK-hS5dJ0Td9PXhnHNw7T-evGm39/view?usp=sharing).
-
-After this, open a terminal, go to the directory where the package is downloaded and type:
-
-```
-sudo snap install --beta core16
-sudo snap install buttermanager_1.6_amd64.snap --classic --dangerous
-```
-
-The first time ButterManager is executed after installing the snap package, maybe it will take a little bit to run. Don't worry, it will be only the first time.
-
 ### From the source code ###
+In order to install ButterManager manually, you have to install these packages (all the packages described below are for **Arch Linux**. Please, take into account that maybe the name is different in your distribution and you have to install them for python3 version):
+
+- Python 3
+- **python-setuptool** (f.i. the name of the package in Ubuntu is **python3-setuptools**).
+- **python-virtualenv** (f.i. the name of the package in Ubuntu is **python3-venv**).
+- **grub-btrfs**. Please, go to its GitHub repository [https://github.com/Antynea/grub-btrfs](https://github.com/Antynea/grub-btrfs) and follow the instructions to install it if the package is not in the official repository of your distribution.
+
+Once you meet all the requirements, follow these steps:
+
 1. Clone the repository (install **git** if it is needed first)
 
   ```
@@ -51,30 +49,28 @@ The first time ButterManager is executed after installing the snap package, mayb
 
   ```
 
-2. Install all the dependencies needed (all the packages described below are for **Arch Linux**. Please, check for those packages and their names in you correspondant distribution):
-    - Python 3 (python)
-    - Setup Tools for Python 3 (python-setuptools)
-
-3. Install the rest of the dependencies:
+1. Install ButterManager using the installation script
 
   ```
     cd buttermanager
-    python setup.py install --user
+    cd install
+    ./install.sh
 
   ```
-  Please note that if you have several versions of python installed on your system, maybe you have to run explicity **python3 setup.py install --user** instead.
+  
+1. The installation process will create a desktop launcher to run ButterManager directly.
 
-4. For running ButterManager just:
-
-  ```
-    cd buttermanager/buttermanager
-    python buttermanager.py
+1. If you want to uninstall ButterManager:
 
   ```
-  Please note that if you have several versions of python installed on your system, maybe you have to run explicity **python3 buttermanager.py** instead.
+    cd buttermanager
+    cd install
+    ./uninstall.sh
+
+  ```
 
 ### From AUR ###
-If you are an Arch Linux user, ButterManager is in AUR. Depending on your package manager for AUR, type:
+If you are an Arch Linux user or your distribution is a derivative (Manjaro, EndevourOS...), ButterManager is in AUR. Depending on your package manager for AUR, type:
 
   ```
     yaourt -S buttermanager
