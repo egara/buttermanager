@@ -85,78 +85,36 @@ class Subvolume:
         # Adding number to the full name
         snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
                                                                     number=len(snapshots_with_same_name))
-
         # Checks if grub-btrfs integration is enabled
         if util.settings.properties_manager.get_property("grub_btrfs"):
             # Checks if /etc/fstab is in subvolume_origin
             fstab_path = self.subvolume_origin + 'etc/fstab'
             if os.path.isfile(fstab_path):
+                everything_ok = True
                 # /etc/fstab is in the subvolume, so it is necessary to
                 # modify it and add the snapshot's name
                 # grep -rnw '/etc/fstab' -e "/_active/rootvol"
-                # First, it is necessary to be sure that subvolume_origin is
-                # within /etc/fstab
-                # First, a list of strings from subvolume_origin is created, including separator /
-                subvolume_origin_list = re.split('(/)', self.subvolume_origin)
-                # Then, empty strings are removed
-                subvolume_origin_list = list(filter(None, subvolume_origin_list))
-                # Adding final / it it is necessary
-                if subvolume_origin_list[-1] != "/":
-                    subvolume_origin_list.append("/")
-                subvolume_origin_real = "".join(subvolume_origin_list)
-                # while subvolume_origin_real is not null or empty
-                while subvolume_origin_real:
-                    # First try: subvolume_origin_real with / at the end is searched
-                    command_string = """grep -rnw '{fstab_path}' -e '{subvolume_origin_real}'""".format(
-                        fstab_path=fstab_path, subvolume_origin_real=subvolume_origin_real)
-                    command = [command_string]
-                    commandline_output = None
-                    try:
-                        commandline_output = subprocess.check_output(command, shell=True)
-                    except subprocess.CalledProcessError:
-                        pass
-                    if commandline_output:
-                        break
-                    else:
-                        # Second try: subvolume_origin_real without / at the end is searched
-                        subvolume_origin_real = subvolume_origin_real[:-1]
-                        command_string = """grep -rnw '{fstab_path}' -e '{subvolume_origin_real}'""".format(
-                            fstab_path=fstab_path, subvolume_origin_real=subvolume_origin_real)
-                        command = [command_string]
-                        commandline_output = None
-                        try:
-                            commandline_output = subprocess.check_output(command, shell=True)
-                        except subprocess.CalledProcessError:
-                            pass
-                        if commandline_output:
-                            break
-                        else:
-                            del subvolume_origin_list[0]
-                            # Adding final / it it is necessary
-                            if subvolume_origin_list[-1] != "/":
-                                subvolume_origin_list.append("/")
-
-                            subvolume_origin_real = "".join(subvolume_origin_list)
-
-                # Getting the line where the subvolume was found using grep. it is necessary to discard all the
-                # lines with comments in fstab starting with '#'
-                commandline_output = commandline_output.decode('utf-8')
-                # line will be the line where grep has matched subvolume_origin_real. All lines commented with '#'
-                # will be discarded
-                line = "0"
-                for line_output in commandline_output.split("\n"):
-                    line_splitted = line_output.split(':')
-                    # First element of the list will be the line where subvolume_origin_real has been matched by grep
-                    # command. If the second element is '#', this line is commented in fstab and it won't be taken
-                    # into account
-                    if not line_splitted[1].startswith('#'):
-                        line = line_splitted[0]
+                # First, it is necessary to obtain the original subvolume
+                # for / which is mounted in the system (subvolume_origin_real)
+                subvolume_origin_real = None
+                command_string = """sudo btrfs subvolume show /"""
+                command = [command_string]
+                commandline_output = None
+                try:
+                    commandline_output = subprocess.check_output(command, shell=True)
+                except subprocess.CalledProcessError as called_process_error_exception:
+                    self.__logger.error("Error retrieving the real and mounted subvolume for / . Reason: " +
+                                        str(called_process_error_exception.reason))
+                    everything_ok = False
+                if everything_ok:
+                    commandline_output = commandline_output.decode('utf-8')
+                    for line_output in commandline_output.split("\n"):
+                        # The original subvolume mounted for / will be always the first line
+                        # of the output
+                        subvolume_origin_real = line_output
                         break
 
-                if subvolume_origin_real != "/":
-                    # subvolume_origin_real is in /etc/fstab
-                    # Create the snapshot in rw mode
-                    everything_ok = True
+                    # Creating the snapshot in rw mode
                     command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
                         command=BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
                         subvolume_origin=self.subvolume_origin,
@@ -165,10 +123,54 @@ class Subvolume:
                     )
                     util.utils.execute_command(command, console=True, root=True)
 
-                    # Substitute the entry in fstab for root for the new snapshot created
-                    command_string = """sudo -S sed -i '{line}s|{subvolume_origin_real}|{subvolume_dest}{snapshot_full_name}|g' {subvolume_dest}{snapshot_full_name}/etc/fstab""".format(
+                    # Obtaining the real subvolume for the new snapshot created
+                    subvolume_snapshot_created_real = None
+                    command_string = """sudo btrfs subvolume show {subvolume_dest}{snapshot_full_name}""".format(
+                        subvolume_dest=self.subvolume_dest,
+                        snapshot_full_name=snapshot_full_name
+                    )
+                    command = [command_string]
+                    commandline_output = None
+                    try:
+                        commandline_output = subprocess.check_output(command, shell=True)
+                    except subprocess.CalledProcessError as called_process_error_exception:
+                        self.__logger.error("Error retrieving the real subvolume for snapshot created. Reason: " +
+                                            str(called_process_error_exception.reason))
+
+                    commandline_output = commandline_output.decode('utf-8')
+                    for line_output in commandline_output.split("\n"):
+                        # The original subvolume mounted for / will be always the first line
+                        # of the output
+                        subvolume_snapshot_created_real = line_output
+                        break
+
+                    # Getting the line in fstab where it is necessary to substitute the subvolume which is going to be
+                    # mounted as root. It is necessary to discard all the lines with comments in fstab starting with '#'
+                    command_string = """grep -rnw '{fstab_path}' -e '{subvolume_origin_real}'""".format(
+                        fstab_path=fstab_path, subvolume_origin_real=subvolume_origin_real)
+                    command = [command_string]
+                    commandline_output = None
+                    try:
+                        commandline_output = subprocess.check_output(command, shell=True)
+                    except subprocess.CalledProcessError:
+                        pass
+                    commandline_output = commandline_output.decode('utf-8')
+                    # line will be the line where grep has matched subvolume_origin_real. All lines commented with '#'
+                    # will be discarded
+                    line = "0"
+                    for line_output in commandline_output.split("\n"):
+                        line_splitted = line_output.split(':')
+                        # First element of the list will be the line where subvolume_origin_real has been matched by
+                        # grep command. If the second element is '#', this line is commented in fstab and it won't be
+                        # taken into account
+                        if not line_splitted[1].startswith('#'):
+                            line = line_splitted[0]
+                            break
+
+                    command_string = """sudo -S sed -i '{line}s|{subvolume_origin_real}|{subvolume_snapshot_created_real}|g' {subvolume_dest}{snapshot_full_name}/etc/fstab""".format(
                         line=line,
                         subvolume_origin_real=subvolume_origin_real,
+                        subvolume_snapshot_created_real=subvolume_snapshot_created_real,
                         subvolume_dest=self.subvolume_dest,
                         snapshot_full_name=snapshot_full_name
                     )
@@ -177,7 +179,8 @@ class Subvolume:
                         subprocess.check_output(command, shell=True)
                     except subprocess.CalledProcessError as called_process_error_exception:
                         self.__logger.error("Error trying to substitute the root's path in fstab with the "
-                                            "path of the new snapshot created. Reason: " + + str(called_process_error_exception.reason))
+                                            "path of the new snapshot created. Reason: " +
+                                            str(called_process_error_exception.reason))
                         everything_ok = False
                     if everything_ok:
                         # subvolume_origin_real will be stored in configuration file in order to let the
@@ -188,16 +191,13 @@ class Subvolume:
                         # Run grub-btrfs in order to regenerate GRUB entries
                         self.__logger.info("Regenerating GRUB entries. Please wait...")
                         util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+
                 else:
-                    # subvolume_origin_real in not in /etc/fstab
-                    # Create the snapshot in only r mode
-                    command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
-                        command=BTRFS_CREATE_SNAPSHOT_R_COMMAND,
-                        subvolume_origin=self.subvolume_origin,
-                        subvolume_dest=self.subvolume_dest,
-                        snapshot_full_name=snapshot_full_name
-                    )
-                    util.utils.execute_command(command, console=True, root=True)
+                    # The original subvolume mounted for / couldn't be found
+                    # Snapshot won't be created
+                    self.__logger.error("The original subvolume mounted for / couldn't be found. "
+                                        "Snapshot won't be created: ")
+                    pass
 
             else:
                 command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
