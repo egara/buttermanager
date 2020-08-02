@@ -90,9 +90,14 @@ Or
   ```
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
-## Changelog ##
+## Changelog
 
-### Version 1.9 ###
+### Version 2.0
+- Now, the installer creates ~/.local/share/applications directory if it didn't exist in order to allocate the ButterManager desktop launcher.
+- The method of calculating the default original subvolume to consolidate the system has been reimplemented and improved to avoid some bugs detected.
+- Now, the allocation of the original snapshot is stored in fstab instead the mounted point for every snapshot of root created.
+
+### Version 1.9
 - Buttermanager has been integrated with **grub-btrfs** package. It means that, for all these users who use GRUB will be able to boot its system from any snapshot created with this version of the application and above. This integration will be optional and configurable from **Settings** tab.
 
 ### Version 1.8 ###
