@@ -246,6 +246,10 @@ class ConsolidateSnapshotWindow(QDialog):
             command = [command_string]
             try:
                 subprocess.check_output(command, shell=True)
+                # Checks if grub-btrfs integration is enabled
+                if util.settings.properties_manager.get_property("grub_btrfs"):
+                    # Run grub-btrfs in order to regenerate GRUB entries
+                    util.utils.execute_command(filesystem.snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
                 # The consolidation process was OK so this QDialong window is closed and returns integer 1
                 self.done(1)
             except subprocess.CalledProcessError as subprocess_exception:
