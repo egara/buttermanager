@@ -28,8 +28,8 @@ import sys
 import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
 from PyQt5 import uic, QtCore, QtTest
-from PyQt5.QtCore import pyqtSignal, QSize, Qt
-from PyQt5.QtGui import QIcon, QTextCursor, QFontMetrics
+from PyQt5.QtCore import pyqtSignal, QSize
+from PyQt5.QtGui import QIcon, QTextCursor
 
 
 class InfoWindow(QDialog):
@@ -239,13 +239,58 @@ class ConsolidateSnapshotWindow(QDialog):
             util.utils.execute_command(command, console=True, root=True)
             # Replace /etc/fstab with the default snapshot
             # Substitute the entry in fstab for root
-            command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest}|g' {subvolume_dest}/etc/fstab""".format(
-                subvolume_origin_real=self.__snapshot_to_clone_in_root_full_path,
-                subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
+
+            # Obtaining the real subvolumes for changing paths in fstab
+            subvolume_origin = self.__snapshot_to_clone_in_root_full_path
+            command_string = """sudo btrfs subvolume show {subvolume_origin}""".format(
+                subvolume_origin=subvolume_origin
+            )
+            command = [command_string]
+            commandline_output = None
+            try:
+                commandline_output = subprocess.check_output(command, shell=True)
+            except subprocess.CalledProcessError as called_process_error_exception:
+                self.__logger.error("Error retrieving the real subvolume. Reason: " +
+                                    str(called_process_error_exception.reason))
+
+            commandline_output = commandline_output.decode('utf-8')
+            for line_output in commandline_output.split("\n"):
+                # The original subvolume mounted for / will be always the first line
+                # of the output
+                subvolume_origin_real = line_output
+                break
+
+            subvolume_dest_real = self.__root_subvolume.subvolume_origin[:-1]
+            command_string = """sudo btrfs subvolume show {subvolume_dest_real}""".format(
+                subvolume_dest_real=subvolume_dest_real
+            )
+            command = [command_string]
+            commandline_output = None
+            try:
+                commandline_output = subprocess.check_output(command, shell=True)
+            except subprocess.CalledProcessError as called_process_error_exception:
+                self.__logger.error("Error retrieving the real subvolume. Reason: " +
+                                    str(called_process_error_exception.reason))
+
+            commandline_output = commandline_output.decode('utf-8')
+            for line_output in commandline_output.split("\n"):
+                # The original subvolume mounted for / will be always the first line
+                # of the output
+                subvolume_dest_real = line_output
+                break
+
+            command_string = """sudo -S sed -i 's|{subvolume_origin_real}|{subvolume_dest_real}|g' {subvolume_dest}/etc/fstab""".format(
+                subvolume_origin_real=subvolume_origin_real,
+                subvolume_dest=self.__root_subvolume.subvolume_origin[:-1],
+                subvolume_dest_real=subvolume_dest_real
             )
             command = [command_string]
             try:
                 subprocess.check_output(command, shell=True)
+                # Checks if grub-btrfs integration is enabled
+                if util.settings.properties_manager.get_property("grub_btrfs"):
+                    # Run grub-btrfs in order to regenerate GRUB entries
+                    util.utils.execute_command(filesystem.snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
                 # The consolidation process was OK so this QDialong window is closed and returns integer 1
                 self.done(1)
             except subprocess.CalledProcessError as subprocess_exception:

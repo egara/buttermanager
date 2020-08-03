@@ -34,6 +34,11 @@ cp -ar ../aur/buttermanager.svg /opt/buttermanager/gui/
 
 # Creating desktop launcher
 echo -e "Creating desktop launcher..."
+if [ ! -d "~/.local/share/applications/" ] 
+then
+    echo "Directory ~/.local/share/applications/ doesn't exist. Creating it to store ButterManager desktop launcher."
+    mkdir ~/.local/share/applications/ 
+fi
 cp ../aur/buttermanager.desktop ~/.local/share/applications/
 
 # Creating virtual environment
