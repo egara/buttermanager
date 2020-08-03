@@ -28,7 +28,7 @@ import filesystem
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "1.9"
+VERSION = "2.0"
 
 # Global module attributes
 # Application version
