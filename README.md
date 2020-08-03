@@ -95,8 +95,9 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 2.0
 - Now, the installer creates ~/.local/share/applications directory if it didn't exist in order to allocate the ButterManager desktop launcher.
 - The method of calculating the default original subvolume to consolidate the system has been reimplemented and improved to avoid some bugs detected.
-- Now, the allocation of the original snapshot is stored in fstab instead the mounted point for every snapshot of root created.
+- Now, the allocation of the original snapshot is stored in fstab instead of  the mounted point for every snapshot of root created.
 - grub-mkconfig will run after consolidating deafult root subvolume
+- Consolidation process will check the original path of the default subvolume for root and will use it in fstab.
 
 ### Version 1.9
 - Buttermanager has been integrated with **grub-btrfs** package. It means that, for all these users who use GRUB will be able to boot its system from any snapshot created with this version of the application and above. This integration will be optional and configurable from **Settings** tab.
