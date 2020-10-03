@@ -385,6 +385,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_take_snapshot.setIconSize(QSize(16, 16))
                 self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
+                self.button_diff.setIcon(QIcon('images/exchange_arrows_16px_icon.png'))
+                self.button_diff.setIconSize(QSize(16, 16))
 
                 # Logs buttons
                 self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
@@ -696,6 +698,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.spinbox_snapshots_to_keep.setEnabled(False)
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
+        self.button_diff.setEnabled(False)
         self.button_add_subvolume.setEnabled(False)
         self.button_delete_subvolume.setEnabled(False)
         self.button_edit_subvolume.setEnabled(False)
@@ -720,6 +723,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.spinbox_snapshots_to_keep.setEnabled(True)
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
+        self.button_diff.setEnabled(True)
         self.button_add_subvolume.setEnabled(True)
         self.button_delete_subvolume.setEnabled(True)
         self.button_edit_subvolume.setEnabled(True)
