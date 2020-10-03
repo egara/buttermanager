@@ -39,7 +39,7 @@ In order to install ButterManager manually, you have to install these packages (
 - **python-setuptool** (f.i. the name of the package in Ubuntu is **python3-setuptools**).
 - **python-virtualenv** (f.i. the name of the package in Ubuntu is **python3-venv**).
 - **grub-btrfs**. Please, go to its GitHub repository [https://github.com/Antynea/grub-btrfs](https://github.com/Antynea/grub-btrfs) and follow the instructions to install it if the package is not in the official repository of your distribution.
-- **libxcb xinerama0**: This depency has been reported by some users (thanks Adam!) who install ButterManager on Ubuntu 20.04 (proper) (the name of the package in Ubuntu is **libxcb-xinerama0**)
+- **libxinerama**: This depency has been reported by some users (thanks Adam!) who install ButterManager on Ubuntu 20.04 (proper) (the name of the package in Ubuntu is **libxcb-xinerama0**)
 
 Once you meet all the requirements, follow these steps:
 
