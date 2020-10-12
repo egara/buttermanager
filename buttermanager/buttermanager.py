@@ -190,6 +190,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__current_filesystem_uuid = None
         # Balancer that will balance the current filesystem if it is needed
         self.__balancer = None
+        # Differentiator that will calculate the differences between a snapshot and the current
+        # subvolume
+        self.__differentiator = None
         # Upgrader that will upgrade the system if it is needed
         self.__upgrader = None
         # Updates checker that will check for updates if it is needed
@@ -413,6 +416,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+                self.button_diff.clicked.connect(self.find_diffs)
                 self.button_delete_log.clicked.connect(self.delete_logs)
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
@@ -760,6 +764,39 @@ class ButtermanagerMainWindow(QMainWindow):
         snapshots_to_delete = self.list_snapshots.selectedItems()
         for snap in snapshots_to_delete:
             filesystem.snapshot.delete_specific_snapshot(snap.text())
+
+        # Refreshing GUI
+        self.refresh_gui()
+
+        # Enabling buttons
+        self.__enable_buttons()
+
+    def find_diffs(self):
+        """Find differences between the snapshot selected and the current state of the subvolume related to it.
+
+        """
+        # TODO: Here!!
+        # Disabling buttons
+        self.__disable_buttons()
+
+        # Waiting 10 msec in order to let self.__disable_buttons to take effect
+        QtTest.QTest.qWait(10)
+
+        snapshot_to_diff = self.list_snapshots.selectedItems()
+        if len(snapshot_to_diff) != 1:
+            # Only one snapshot can be selected
+            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot in order "
+                                                                 "to find the differences between it and the current "
+                                                                 "subvolume.")
+            info_dialog.show()
+        else:
+            self.__differentiator = filesystem.snapshot.Differentiator(snapshot_to_diff[0].text())
+            self.__differentiator.show_one_window.connect(self.manage_window)
+            self.__differentiator.start()
+            pass
+
+        #for snap in snapshots_to_delete:
+        #    filesystem.snapshot.delete_specific_snapshot(snap.text())
 
         # Refreshing GUI
         self.refresh_gui()

@@ -22,18 +22,17 @@
 
 It provides also Snapshot class.
 """
-from sys import stderr
-
 import exception.exception
 import glob
 import os
-import re
 import sys
 import subprocess
 import time
 import util.settings
 import util.utils
 import window.windows
+from PyQt5.QtCore import QThread, pyqtSignal
+
 
 # Constants
 BTRFS_CREATE_SNAPSHOT_R_COMMAND = "sudo -S btrfs subvolume snapshot -r"
@@ -397,6 +396,105 @@ class RootSnapshotChecker:
         return info_window
 
 
+class Differentiator(QThread):
+    """Independent thread that will calculate the differences between a snapshot and its current state.
+
+    """
+    # Constants
+    DIFFS_DIR = "diffs"
+    DIFF_COMMAND = "sudo -S diff -qr"
+    MODIFIED_FILE = "modified.txt"
+
+    # Attributes
+    # pyqtSignal that will be emitted when this class requires to display
+    # a single information window on the screen
+    show_one_window = pyqtSignal('bool')
+
+    # Constructor
+    def __init__(self, snapshot_full_path):
+        QThread.__init__(self)
+        self.__snapshot_full_path = snapshot_full_path
+        self.__snapshot_name = snapshot_full_path.split("/")[-1]
+
+    # Methods
+    def run(self):
+        # Main window will be hidden
+        self.on_show_one_window(True)
+        info_dialog = window.windows.InfoWindow(None, "Calculating differences in '{snapshot_name}'. \n"
+                                                      "Please, be patient. This process can take several \n"
+                                                      "minutes. This window will be closed when the operation. \n"
+                                                      "is done. \n \n"
+                                                      "Please wait...".format(snapshot_name=self.__snapshot_full_path))
+        # Displaying info window
+        info_dialog.show()
+
+        # Balances the filesystem
+        self.__calculate_differences()
+
+        # Hiding info window
+        info_dialog.hide()
+
+        # Main window will be shown again
+        self.on_show_one_window(False)
+
+    def __calculate_differences(self):
+        """Wraps all the operations to calculate differences.
+
+        """
+        # Gets the subvolume of the snapshot
+        subvolume = get_subvolume_by_snapshot_name(self.__snapshot_full_path)
+
+        if subvolume:
+            # Creating a directory to store all the diff files generated if it doesn't exist
+            diffs_path = os.path.join(util.settings.application_path, self.DIFFS_DIR, self.__snapshot_name)
+
+            if not os.path.exists(diffs_path):
+                os.makedirs(diffs_path)
+
+            # Getting the current subvolune name. This subvolume is the current one which is going to be
+            # used for the comparison. It is needed to remove all the empty strings within the list
+            subvolume_name_list = subvolume.subvolume_origin.split("/")
+            subvolume_name = list(filter(None, subvolume_name_list))[-1]
+
+            # Creating 3 different files to store differences
+            files_only_in_dir1_path = os.path.join(diffs_path, "{file_name}.txt".format(file_name=self.__snapshot_name))
+            files_only_in_dir2_path = os.path.join(diffs_path, "{file_name}.txt".format(
+                file_name=subvolume_name))
+            # files_only_in_dir1_path = os.path.join(diffs_path, "{file_name}.txt". format(file_name="dir1"))
+            # files_only_in_dir2_path = os.path.join(diffs_path, "{file_name}.txt". format(file_name="dir2"))
+            files_in_both_modified_path = os.path.join(diffs_path, self.MODIFIED_FILE)
+            files_only_in_dir1 = open(files_only_in_dir1_path, "w+")
+            files_only_in_dir2 = open(files_only_in_dir2_path, "w+")
+            files_in_both_modified = open(files_in_both_modified_path, "w+")
+
+            # Calculating differences
+            command = "{command} {dir1} {dir2}".format(command=self.DIFF_COMMAND, dir1=subvolume.subvolume_origin,
+                                                       dir2=self.__snapshot_full_path)
+            echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+            result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+            for line in iter(result.stdout.readline, b''):
+                line_decoded = line.decode('utf-8')
+                if " differ" in line_decoded:
+                    files_in_both_modified.write(line_decoded + "\r\n")
+                elif "Only in {dir1}".format(dir1=subvolume.subvolume_origin) in line_decoded:
+                    files_only_in_dir1.write(line_decoded + "\r\n")
+                elif "Only in {dir2}".format(dir2=self.__snapshot_full_path) in line_decoded:
+                    files_only_in_dir2.write(line_decoded + "\r\n")
+            # Closing files
+            files_only_in_dir1.close()
+            files_only_in_dir2.close()
+            files_in_both_modified.close()
+
+    def on_show_one_window(self, one_window):
+        """Emits a QT Signal to hide or show the rest of application windows.
+
+        Arguments:
+            one_window (boolean): Information window should be unique?.
+        """
+        self.show_one_window.emit(one_window)
+
+
 # Module's methods
 def delete_specific_snapshot(snapshot_full_path):
     """Deletes a specific snapshot.
@@ -421,3 +519,31 @@ def delete_specific_snapshot(snapshot_full_path):
         util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
         info_message = "Regenerating GRUB entries. Please wait..."
         logger.info(info_message)
+
+
+def get_subvolume_by_snapshot_name(snapshot_name):
+    """Gets a subvolume object using the name of the snapshot.
+
+    Arguments:
+        snapshot_name (string): name of the snapshot.
+
+        Returns:
+            Subvolume: The subvolume which belongs the snapshot. None if subvolume was not found.
+    """
+    # Logger
+    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    info_message = "Getting subvolume from snapshot's name {snapshot_name}".format(snapshot_name=snapshot_name)
+    logger.info(info_message)
+
+    subvolume_found = None
+
+    for subvolume_key in util.settings.subvolumes:
+        subvolume = util.settings.subvolumes[subvolume_key]
+        subvolume_snapshots_prefix = "{subvolume_dest}{subvolume_prefix}".format(
+            subvolume_dest=subvolume.subvolume_dest,
+            subvolume_prefix=subvolume.snapshot_name)
+        if snapshot_name.startswith(subvolume_snapshots_prefix):
+            info_message = "Found subvolume {subvolume}".format(subvolume=subvolume.subvolume_origin)
+            logger.info(info_message)
+            subvolume_found = subvolume
+    return subvolume_found
