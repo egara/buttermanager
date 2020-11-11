@@ -776,12 +776,6 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         # TODO: Here!!
-        # Disabling buttons
-        self.__disable_buttons()
-
-        # Waiting 10 msec in order to let self.__disable_buttons to take effect
-        QtTest.QTest.qWait(10)
-
         snapshot_to_diff = self.list_snapshots.selectedItems()
         if len(snapshot_to_diff) != 1:
             # Only one snapshot can be selected
@@ -790,19 +784,42 @@ class ButtermanagerMainWindow(QMainWindow):
                                                                  "subvolume.")
             info_dialog.show()
         else:
-            self.__differentiator = filesystem.snapshot.Differentiator(snapshot_to_diff[0].text())
+            # Disabling buttons
+            self.__disable_buttons()
+
+            # Waiting 10 msec in order to let self.__disable_buttons to take effect
+            QtTest.QTest.qWait(10)
+
+            # The user has to select the kind of operation
+            diff_window = window.windows.DiffWindow()
+
+            # Hidding the main window and showing the diff window in order to proceed
+            self.hide()
+
+            diff_window.show()
+            diff_process = diff_window.exec_()
+            if diff_process == 1:
+                # A full operation will be done
+                self.__differentiator = filesystem.snapshot.Differentiator(
+                    snapshot_to_diff[0].text(),
+                    filesystem.snapshot.Differentiator.OPERATION_FULL)
+            elif diff_process == 2:
+                # A partial operation will be done
+                self.__differentiator = filesystem.snapshot.Differentiator(
+                    snapshot_to_diff[0].text(),
+                    filesystem.snapshot.Differentiator.OPERATION_PARTIAL)
+
             self.__differentiator.show_one_window.connect(self.manage_window)
             self.__differentiator.start()
-            pass
 
-        #for snap in snapshots_to_delete:
-        #    filesystem.snapshot.delete_specific_snapshot(snap.text())
+            # Refreshing GUI
+            self.refresh_gui()
 
-        # Refreshing GUI
-        self.refresh_gui()
+            # Enabling buttons
+            self.__enable_buttons()
 
-        # Enabling buttons
-        self.__enable_buttons()
+            # Showing main window again
+            self.show()
 
     def delete_logs(self):
         """Deletes one or several logs.
