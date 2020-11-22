@@ -528,10 +528,10 @@ class SubvolumeWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Loading icons
-        self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
-        self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
+        self.button_add_subvolume_orig.setIcon(QIcon('images/folder_16px_icon.png'))
+        self.button_add_subvolume_orig.setIconSize(QSize(16, 16))
+        self.button_add_subvolume_dest.setIcon(QIcon('images/folder_16px_icon.png'))
+        self.button_add_subvolume_dest.setIconSize(QSize(16, 16))
 
         # Button events
         self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)

@@ -434,7 +434,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>173</y>
+            <y>132</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -453,7 +453,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>213</y>
+            <y>172</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -469,9 +469,25 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>253</y>
+            <y>212</y>
             <width>41</width>
             <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Find differences between the snapshot selected and the current state</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_folder">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>253</y>
+            <width>41</width>
+            <height>40</height>
            </rect>
           </property>
           <property name="toolTip">
@@ -506,7 +522,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>213</y>
+            <y>212</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -522,7 +538,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>173</y>
+            <y>172</y>
             <width>41</width>
             <height>34</height>
            </rect>

@@ -390,6 +390,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
                 self.button_diff.setIcon(QIcon('images/exchange_arrows_16px_icon.png'))
                 self.button_diff.setIconSize(QSize(16, 16))
+                self.button_folder.setIcon(QIcon('images/folder_16px_icon.png'))
+                self.button_folder.setIconSize(QSize(16, 16))
 
                 # Logs buttons
                 self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
