@@ -475,6 +475,10 @@ class Differentiator(QThread):
                 files_only_in_dir2 = open(files_only_in_dir2_path, "w+")
                 files_in_both_modified = open(files_in_both_modified_path, "w+")
 
+                files_in_both_modified.write("Files in both snapshots that have been modified" + "\r\n\r\n")
+                files_only_in_dir1.write("Files only in ${dir}".format(dir=subvolume.subvolume_origin) + "\r\n\r\n")
+                files_only_in_dir2.write("Files only in ${dir}".format(dir=self.__snapshot_full_path) + "\r\n\r\n")
+
                 # Calculating differences
                 command = "{command} {dir1} {dir2}".format(command=self.DIFF_COMMAND, dir1=subvolume.subvolume_origin,
                                                            dir2=self.__snapshot_full_path)
@@ -506,6 +510,14 @@ class Differentiator(QThread):
                 files_only_in_dir1.close()
                 files_only_in_dir2.close()
                 files_in_both_modified.close()
+
+                # Opening the file with the default application installed in the OS
+                # Warning, xdg-open is not working executing the code from PyCharm so
+                # it seems it doesn't work but it is really working
+                subprocess.call(['xdg-open', files_only_in_dir1_path])
+                subprocess.call(['xdg-open', files_only_in_dir2_path])
+                subprocess.call(['xdg-open', files_in_both_modified_path])
+
             else:
                 # Partial operation
                 # Creating only one file to store differences
@@ -536,6 +548,8 @@ class Differentiator(QThread):
                     transid=transid)
                 echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
                 result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+                temp_sorted_modified.write("- Files in both snapshots that have been modified" + "\r\n")
 
                 for line in iter(result.stdout.readline, b''):
                     line_decoded = line.decode('utf-8')
