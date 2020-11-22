@@ -302,6 +302,7 @@ class UpdatesChecker(QThread):
             self.__logger.error("Internet connection is not available... Error: {error}".format(error=error))
             return False
 
+
 # Module's methods
 def check_updates():
     """Checks for updates.
