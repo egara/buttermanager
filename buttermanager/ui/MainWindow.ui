@@ -475,7 +475,7 @@
            </rect>
           </property>
           <property name="toolTip">
-           <string>Find differences between the snapshot selected and the current state</string>
+           <string>Find differences between the selected snapshot and the current state</string>
           </property>
           <property name="text">
            <string/>
@@ -491,7 +491,7 @@
            </rect>
           </property>
           <property name="toolTip">
-           <string>Find differences between the snapshot selected and the current state</string>
+           <string>Open the selected snapshot in a file browser</string>
           </property>
           <property name="text">
            <string/>

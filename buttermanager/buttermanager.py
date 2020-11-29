@@ -23,6 +23,7 @@ import filesystem.filesystem
 import filesystem.snapshot
 import manager.upgrader
 import os
+import subprocess
 import sys
 import time
 import util.utils
@@ -419,6 +420,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
                 self.button_diff.clicked.connect(self.find_diffs)
+                self.button_folder.clicked.connect(self.open_file_explorer)
                 self.button_delete_log.clicked.connect(self.delete_logs)
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
@@ -777,13 +779,12 @@ class ButtermanagerMainWindow(QMainWindow):
         """Find differences between the snapshot selected and the current state of the subvolume related to it.
 
         """
-        # TODO: Here!!
         snapshot_to_diff = self.list_snapshots.selectedItems()
         if len(snapshot_to_diff) != 1:
             # Only one snapshot can be selected
-            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot in order "
-                                                                 "to find the differences between it and the current "
-                                                                 "subvolume.")
+            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot\n"
+                                                                 "in order to find the differences between\n"
+                                                                 "it and the current subvolume.")
             info_dialog.show()
         else:
             # Disabling buttons
@@ -822,6 +823,19 @@ class ButtermanagerMainWindow(QMainWindow):
 
             # Showing main window again
             self.show()
+
+    def open_file_explorer(self):
+        """Opens a file explorer to see all the files within a snapshot.
+
+        """
+        snapshots_selected = self.list_snapshots.selectedItems()
+        if len(snapshots_selected) != 1:
+            # Only one snapshot can be selected
+            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot \n"
+                                                                 "in order to open the file explorer.")
+            info_dialog.show()
+        else:
+            subprocess.call(['xdg-open', snapshots_selected[0].text()])
 
     def delete_logs(self):
         """Deletes one or several logs.
