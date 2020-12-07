@@ -425,11 +425,13 @@ class Differentiator(QThread):
     def run(self):
         # Main window will be hidden
         self.on_show_one_window(True)
-        info_dialog = window.windows.InfoWindow(None, "Calculating differences in '{snapshot_name}'. \n"
-                                                      "Please, be patient. This process can take several \n"
-                                                      "minutes. This window will be closed when the operation. \n"
-                                                      "is done. \n \n"
-                                                      "Please wait...".format(snapshot_name=self.__snapshot_full_path))
+        info_dialog = window.windows.InfoWindow(None, "Calculating differences in\n"
+                                                      "'{snapshot_name}'.\n"
+                                                      "Please, be patient. This process\n"
+                                                      "can take several minutes. This\n"
+                                                      "window will be closed when the\n"
+                                                      "operation is done. Calculating..."
+                                                      .format(snapshot_name=self.__snapshot_full_path))
         # Displaying info window
         info_dialog.show()
 
