@@ -434,7 +434,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>173</y>
+            <y>132</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -453,13 +453,45 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>213</y>
+            <y>172</y>
             <width>41</width>
             <height>34</height>
            </rect>
           </property>
           <property name="toolTip">
            <string>Remove one or several BTRF snapshots</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_diff">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>212</y>
+            <width>41</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Find differences between the selected snapshot and the current state</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_folder">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>253</y>
+            <width>41</width>
+            <height>40</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Open the selected snapshot in a file browser</string>
           </property>
           <property name="text">
            <string/>
@@ -490,7 +522,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>213</y>
+            <y>212</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -506,7 +538,7 @@
           <property name="geometry">
            <rect>
             <x>720</x>
-            <y>173</y>
+            <y>172</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -939,7 +971,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v2.0</string>
+           <string>v2.1</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

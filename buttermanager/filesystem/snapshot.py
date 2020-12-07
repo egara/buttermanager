@@ -22,23 +22,24 @@
 
 It provides also Snapshot class.
 """
-from sys import stderr
-
 import exception.exception
 import glob
 import os
-import re
+import shutil
 import sys
 import subprocess
 import time
 import util.settings
 import util.utils
 import window.windows
+from PyQt5.QtCore import QThread, pyqtSignal
+
 
 # Constants
 BTRFS_CREATE_SNAPSHOT_R_COMMAND = "sudo -S btrfs subvolume snapshot -r"
 BTRFS_CREATE_SNAPSHOT_RW_COMMAND = "sudo -S btrfs subvolume snapshot"
 BTRFS_DELETE_SNAPSHOT_COMMAND = "sudo -S btrfs subvolume delete"
+BTRFS_FIND_NEW_COMMAND = "sudo -S btrfs subvolume find-new"
 GRUB_BTRFS_COMMAND = "sudo -S grub-mkconfig -o /boot/grub/grub.cfg"
 
 
@@ -397,6 +398,190 @@ class RootSnapshotChecker:
         return info_window
 
 
+class Differentiator(QThread):
+    """Independent thread that will calculate the differences between a snapshot and its current state.
+
+    """
+    # Constants
+    DIFFS_DIR = "diffs"
+    DIFF_COMMAND = "sudo -S diff -qr"
+    MODIFIED_FILE = "modified.txt"
+    OPERATION_FULL = "full_operation"
+    OPERATION_PARTIAL = "partial_operation"
+
+    # Attributes
+    # pyqtSignal that will be emitted when this class requires to display
+    # a single information window on the screen
+    show_one_window = pyqtSignal('bool')
+
+    # Constructor
+    def __init__(self, snapshot_full_path, operation_type):
+        QThread.__init__(self)
+        self.__snapshot_full_path = snapshot_full_path
+        self.__snapshot_name = snapshot_full_path.split("/")[-1]
+        self.__operation_type = operation_type
+
+    # Methods
+    def run(self):
+        # Main window will be hidden
+        self.on_show_one_window(True)
+        info_dialog = window.windows.InfoWindow(None, "Calculating differences in\n"
+                                                      "'{snapshot_name}'.\n"
+                                                      "Please, be patient. This process\n"
+                                                      "can take several minutes. This\n"
+                                                      "window will be closed when the\n"
+                                                      "operation is done. Calculating..."
+                                                      .format(snapshot_name=self.__snapshot_full_path))
+        # Displaying info window
+        info_dialog.show()
+
+        # Calculates differences
+        self.__calculate_differences()
+
+        # Hiding info window
+        info_dialog.hide()
+
+        # Main window will be shown again
+        self.on_show_one_window(False)
+
+    def __calculate_differences(self):
+        """Wraps all the operations to calculate differences.
+
+        """
+        # Gets the subvolume of the snapshot
+        subvolume = get_subvolume_by_snapshot_name(self.__snapshot_full_path)
+
+        if subvolume:
+            # Creating a directory to store all the diff files generated if it doesn't exist
+            # or removing and creating it if it existed
+            diffs_path = os.path.join(util.settings.application_path, self.DIFFS_DIR, self.__snapshot_name)
+
+            if os.path.exists(diffs_path):
+                shutil.rmtree(diffs_path)
+
+            os.makedirs(diffs_path)
+
+            # Getting the current subvolune name. This subvolume is the current one which is going to be
+            # used for the comparison. It is needed to remove all the empty strings within the list
+            subvolume_name_list = subvolume.subvolume_origin.split("/")
+            subvolume_name = list(filter(None, subvolume_name_list))[-1]
+
+            if self.__operation_type == self.OPERATION_FULL:
+                # Full operation
+                # Creating 3 different files to store differences
+                files_only_in_dir1_path = os.path.join(diffs_path, "{file_name}.txt".format(file_name=subvolume_name))
+                files_only_in_dir2_path = os.path.join(diffs_path, "{file_name}.txt".format(
+                    file_name=self.__snapshot_name))
+                files_in_both_modified_path = os.path.join(diffs_path, self.MODIFIED_FILE)
+                files_only_in_dir1 = open(files_only_in_dir1_path, "w+")
+                files_only_in_dir2 = open(files_only_in_dir2_path, "w+")
+                files_in_both_modified = open(files_in_both_modified_path, "w+")
+
+                files_in_both_modified.write("Files in both snapshots that have been modified" + "\r\n\r\n")
+                files_only_in_dir1.write("Files only in ${dir}".format(dir=subvolume.subvolume_origin) + "\r\n\r\n")
+                files_only_in_dir2.write("Files only in ${dir}".format(dir=self.__snapshot_full_path) + "\r\n\r\n")
+
+                # Calculating differences
+                command = "{command} {dir1} {dir2}".format(command=self.DIFF_COMMAND, dir1=subvolume.subvolume_origin,
+                                                           dir2=self.__snapshot_full_path)
+                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+                for line in iter(result.stdout.readline, b''):
+                    line_decoded = line.decode('utf-8')
+                    if " differ" in line_decoded:
+                        file_modified_splitted = line_decoded.split(
+                            "Files {path}".format(path=subvolume.subvolume_origin))
+                        file_modified = "/" + file_modified_splitted[1].split(" ")[0]
+                        files_in_both_modified.write(file_modified + "\r\n")
+                    elif "Only in {dir1}".format(dir1=subvolume.subvolume_origin) in line_decoded:
+                        file_only_in_dir1_splitted = line_decoded.split("Only in {path}".format(
+                            path=subvolume.subvolume_origin))
+                        file_only_in_dir1_splitted = file_only_in_dir1_splitted[1].split(":")
+                        file_name = file_only_in_dir1_splitted[1].strip()
+                        file_only_in_dir1 = "/" + file_only_in_dir1_splitted[0] + "/" + file_name
+                        files_only_in_dir1.write(file_only_in_dir1 + "\r\n")
+                    elif "Only in {dir2}".format(dir2=self.__snapshot_full_path) in line_decoded:
+                        file_only_in_dir2_splitted = line_decoded.split("Only in {path}".format(
+                            path=self.__snapshot_full_path))
+                        file_only_in_dir2_splitted = file_only_in_dir2_splitted[1].split(":")
+                        file_name = file_only_in_dir2_splitted[1].strip()
+                        file_only_in_dir2 = file_only_in_dir2_splitted[0] + "/" + file_name
+                        files_only_in_dir2.write(file_only_in_dir2 + "\r\n")
+                # Closing files
+                files_only_in_dir1.close()
+                files_only_in_dir2.close()
+                files_in_both_modified.close()
+
+                # Opening the file with the default application installed in the OS
+                # Warning, xdg-open is not working executing the code from PyCharm so
+                # it seems it doesn't work but it is really working
+                subprocess.call(['xdg-open', files_only_in_dir1_path])
+                subprocess.call(['xdg-open', files_only_in_dir2_path])
+                subprocess.call(['xdg-open', files_in_both_modified_path])
+
+            else:
+                # Partial operation
+                # Creating only one file to store differences
+                temp_sorted_modified_path = os.path.join(diffs_path, "tmp.txt")
+                temp_sorted_modified = open(temp_sorted_modified_path, "w+")
+
+                # Calculating differences
+                # sudo btrfs subvolume find-new /mnt/defvol/_snapshots/root-20201021-0/  '9999999'
+                # sudo btrfs subvolume find-new /mnt/defvol/_active/rootvol/ 463579 | sed '$d' | cut -f17- -d' ' |
+                # sort | uniq
+
+                # First, old transid is calculated. This ID will be used as a reference for the comparison
+                transid = "9999999"
+                command = "{command} {dir1} {transid}".format(command=BTRFS_FIND_NEW_COMMAND,
+                                                              dir1=self.__snapshot_full_path, transid=transid)
+                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+                for line in iter(result.stdout.readline, b''):
+                    line_decoded = line.decode('utf-8')
+                    line_splitted = line_decoded.split(" ")
+                    transid = line_splitted[-1].strip()
+
+                # Then, the differences are obtained using transid
+                command = "{command} {dir1} {transid}".format(
+                    command=BTRFS_FIND_NEW_COMMAND,
+                    dir1=subvolume.subvolume_origin,
+                    transid=transid)
+                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
+
+                temp_sorted_modified.write("- Files in both snapshots that have been modified" + "\r\n")
+
+                for line in iter(result.stdout.readline, b''):
+                    line_decoded = line.decode('utf-8')
+                    line_splitted = line_decoded.split(" ")
+                    file_modified = "/" + line_splitted[-1].strip()
+                    temp_sorted_modified.write(file_modified + "\r\n")
+
+                # Closing file
+                temp_sorted_modified.close()
+
+                # Sorting file
+                files_in_both_modified_path = os.path.join(diffs_path, self.MODIFIED_FILE)
+                files_in_both_modified = open(files_in_both_modified_path, "w+")
+                command = "sort {file}".format(file=temp_sorted_modified_path)
+                subprocess.Popen(command.split(), stdout=files_in_both_modified)
+
+                # Opening the file with the default application installed in the OS
+                # Warning, xdg-open is not working executing the code from PyCharm so
+                # it seems it doesn't work but it is really working
+                subprocess.call(['xdg-open', files_in_both_modified_path])
+
+    def on_show_one_window(self, one_window):
+        """Emits a QT Signal to hide or show the rest of application windows.
+
+        Arguments:
+            one_window (boolean): Information window should be unique?.
+        """
+        self.show_one_window.emit(one_window)
+
+
 # Module's methods
 def delete_specific_snapshot(snapshot_full_path):
     """Deletes a specific snapshot.
@@ -421,3 +606,31 @@ def delete_specific_snapshot(snapshot_full_path):
         util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
         info_message = "Regenerating GRUB entries. Please wait..."
         logger.info(info_message)
+
+
+def get_subvolume_by_snapshot_name(snapshot_name):
+    """Gets a subvolume object using the name of the snapshot.
+
+    Arguments:
+        snapshot_name (string): name of the snapshot.
+
+        Returns:
+            Subvolume: The subvolume which belongs the snapshot. None if subvolume was not found.
+    """
+    # Logger
+    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    info_message = "Getting subvolume from snapshot's name {snapshot_name}".format(snapshot_name=snapshot_name)
+    logger.info(info_message)
+
+    subvolume_found = None
+
+    for subvolume_key in util.settings.subvolumes:
+        subvolume = util.settings.subvolumes[subvolume_key]
+        subvolume_snapshots_prefix = "{subvolume_dest}{subvolume_prefix}".format(
+            subvolume_dest=subvolume.subvolume_dest,
+            subvolume_prefix=subvolume.snapshot_name)
+        if snapshot_name.startswith(subvolume_snapshots_prefix):
+            info_message = "Found subvolume {subvolume}".format(subvolume=subvolume.subvolume_origin)
+            logger.info(info_message)
+            subvolume_found = subvolume
+    return subvolume_found

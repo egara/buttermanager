@@ -23,6 +23,7 @@ import filesystem.filesystem
 import filesystem.snapshot
 import manager.upgrader
 import os
+import subprocess
 import sys
 import time
 import util.utils
@@ -190,6 +191,9 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__current_filesystem_uuid = None
         # Balancer that will balance the current filesystem if it is needed
         self.__balancer = None
+        # Differentiator that will calculate the differences between a snapshot and the current
+        # subvolume
+        self.__differentiator = None
         # Upgrader that will upgrade the system if it is needed
         self.__upgrader = None
         # Updates checker that will check for updates if it is needed
@@ -385,6 +389,10 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_take_snapshot.setIconSize(QSize(16, 16))
                 self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
+                self.button_diff.setIcon(QIcon('images/exchange_arrows_16px_icon.png'))
+                self.button_diff.setIconSize(QSize(16, 16))
+                self.button_folder.setIcon(QIcon('images/folder_16px_icon.png'))
+                self.button_folder.setIconSize(QSize(16, 16))
 
                 # Logs buttons
                 self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
@@ -411,6 +419,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_delete_snapshot.clicked.connect(self.delete_snapshots)
+                self.button_diff.clicked.connect(self.find_diffs)
+                self.button_folder.clicked.connect(self.open_file_explorer)
                 self.button_delete_log.clicked.connect(self.delete_logs)
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
@@ -696,6 +706,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.spinbox_snapshots_to_keep.setEnabled(False)
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
+        self.button_diff.setEnabled(False)
         self.button_add_subvolume.setEnabled(False)
         self.button_delete_subvolume.setEnabled(False)
         self.button_edit_subvolume.setEnabled(False)
@@ -720,6 +731,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.spinbox_snapshots_to_keep.setEnabled(True)
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
+        self.button_diff.setEnabled(True)
         self.button_add_subvolume.setEnabled(True)
         self.button_delete_subvolume.setEnabled(True)
         self.button_edit_subvolume.setEnabled(True)
@@ -762,6 +774,68 @@ class ButtermanagerMainWindow(QMainWindow):
 
         # Enabling buttons
         self.__enable_buttons()
+
+    def find_diffs(self):
+        """Find differences between the snapshot selected and the current state of the subvolume related to it.
+
+        """
+        snapshot_to_diff = self.list_snapshots.selectedItems()
+        if len(snapshot_to_diff) != 1:
+            # Only one snapshot can be selected
+            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot\n"
+                                                                 "in order to find the differences between\n"
+                                                                 "it and the current subvolume.")
+            info_dialog.show()
+        else:
+            # Disabling buttons
+            self.__disable_buttons()
+
+            # Waiting 10 msec in order to let self.__disable_buttons to take effect
+            QtTest.QTest.qWait(10)
+
+            # The user has to select the kind of operation
+            diff_window = window.windows.DiffWindow()
+
+            # Hidding the main window and showing the diff window in order to proceed
+            self.hide()
+
+            diff_window.show()
+            diff_process = diff_window.exec_()
+            if diff_process == 1:
+                # A full operation will be done
+                self.__differentiator = filesystem.snapshot.Differentiator(
+                    snapshot_to_diff[0].text(),
+                    filesystem.snapshot.Differentiator.OPERATION_FULL)
+            elif diff_process == 2:
+                # A partial operation will be done
+                self.__differentiator = filesystem.snapshot.Differentiator(
+                    snapshot_to_diff[0].text(),
+                    filesystem.snapshot.Differentiator.OPERATION_PARTIAL)
+
+            self.__differentiator.show_one_window.connect(self.manage_window)
+            self.__differentiator.start()
+
+            # Refreshing GUI
+            self.refresh_gui()
+
+            # Enabling buttons
+            self.__enable_buttons()
+
+            # Showing main window again
+            self.show()
+
+    def open_file_explorer(self):
+        """Opens a file explorer to see all the files within a snapshot.
+
+        """
+        snapshots_selected = self.list_snapshots.selectedItems()
+        if len(snapshots_selected) != 1:
+            # Only one snapshot can be selected
+            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot \n"
+                                                                 "in order to open the file explorer.")
+            info_dialog.show()
+        else:
+            subprocess.call(['xdg-open', snapshots_selected[0].text()])
 
     def delete_logs(self):
         """Deletes one or several logs.

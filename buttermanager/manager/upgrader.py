@@ -295,12 +295,13 @@ class UpdatesChecker(QThread):
         """
         self.__logger.info("Checking Internet connection. Please wait...")
         try:
-            urllib.request.urlopen('https://www.google.com', timeout=1)
+            urllib.request.urlopen('https://www.google.com', timeout=20)
             self.__logger.info("Internet connection is available!")
             return True
         except urllib.error.URLError as error:
             self.__logger.error("Internet connection is not available... Error: {error}".format(error=error))
             return False
+
 
 # Module's methods
 def check_updates():

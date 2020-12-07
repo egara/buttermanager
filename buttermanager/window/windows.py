@@ -26,8 +26,8 @@ import filesystem.snapshot
 import subprocess
 import sys
 import util.settings
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog
-from PyQt5 import uic, QtCore, QtTest
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog, QPushButton, QVBoxLayout, QLabel
+from PyQt5 import uic, QtCore, QtTest, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSize
 from PyQt5.QtGui import QIcon, QTextCursor
 
@@ -528,10 +528,10 @@ class SubvolumeWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Loading icons
-        self.button_add_subvolume_orig.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        self.button_add_subvolume_orig.setIconSize(QSize(24, 24))
-        self.button_add_subvolume_dest.setIcon(QIcon('images/open_folder_24px_icon.png'))
-        self.button_add_subvolume_dest.setIconSize(QSize(24, 24))
+        self.button_add_subvolume_orig.setIcon(QIcon('images/folder_16px_icon.png'))
+        self.button_add_subvolume_orig.setIconSize(QSize(16, 16))
+        self.button_add_subvolume_dest.setIcon(QIcon('images/folder_16px_icon.png'))
+        self.button_add_subvolume_dest.setIconSize(QSize(16, 16))
 
         # Button events
         self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
@@ -831,3 +831,101 @@ class LogViewWindow(QMainWindow):
             self.text_log.moveCursor(QTextCursor.End)
             self.text_log.insertHtml(line + '<br>')
             self.text_log.moveCursor(QTextCursor.End)
+
+
+class DiffWindow(QDialog):
+    """Window to select the level of details when obtaining differences between two subvolumes.
+
+    This window will be displayed when user wants to get the differences between two different subvolumes.
+    If user choose Yes, ButterManager will perform a full process to obtain diferences, so it will take a lot
+    of time to complete but it will obtain files with differences in bot subolumes and files which are present
+    only in one subvolume or the other. If user chooses No, ButterManager will only obtain those files which
+    have been modified but this operation will be done quickly.
+
+    """
+    # Constructor
+    def __init__(self):
+        """ Constructor.
+        """
+        QDialog.__init__(self)
+
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
+
+        # UI elements
+        self.__ui_elements = []
+
+        # Logger
+        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+
+        self.__label_info = QLabel()
+        self.__label_info.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.__button_partial = QPushButton('Partial diff')
+        self.__button_full = QPushButton('Full diff')
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.__label_info)
+        layout.addWidget(self.__button_partial)
+        layout.addWidget(self.__button_full)
+
+        self.setLayout(layout)
+
+        # Initializing the window
+        self.init_ui()
+
+    def init_ui(self):
+        """Initializes the Graphic User Interface.
+
+        """
+        # Setting the window icon
+        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        self.setWindowTitle('Calculating differences')
+
+        # Adjusting font scale
+        # UI elements
+        self.__ui_elements = [self.__label_info, self.__button_partial, self.__button_full]
+        util.utils.scale_fonts(self.__ui_elements)
+        # Tooltips
+        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+
+        # Setting maximum and minimum  size for the main window
+        self.setMinimumHeight(285)
+        self.setMinimumWidth(420)
+        self.setMaximumHeight(285)
+        self.setMaximumWidth(420)
+
+        # Centering the window
+        qt_rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        qt_rectangle.moveCenter(center_point)
+        self.move(qt_rectangle.topLeft())
+
+        # Setting information
+        information = "Partial diff will calculate only modified files. \n " \
+                      "This operation will be done quickly. Full diff \n " \
+                      "will take long but it will obtain modified files \n " \
+                      "and those which are only in one of the subvolumes."
+        self.__label_info.setText(information)
+
+        # Buttons
+        self.__button_full.clicked.connect(self.full_operation)
+        self.__button_partial.clicked.connect(self.partial_operation)
+
+    def full_operation(self):
+        """User selects Full diff, so a full diff operation will be done.
+
+        """
+        self.__logger.info("Starting the process to obtain full differences between subvolumes. Please wait...")
+        self.done(1)
+
+    def partial_operation(self):
+        """User selects Partial diff, so a partial diff operation will be done.
+
+        """
+        self.__logger.info("Starting the process to obtain partial differences between subvolumes. Please wait...")
+        self.done(2)
