@@ -676,19 +676,22 @@ class ButtermanagerMainWindow(QMainWindow):
         """Saves the current content of the terminal into a file.
 
         """
-        current_date = time.strftime('%Y%m%d')
-        index = 0
-        log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
-        log_path = os.path.join(util.settings.logs_path, log_name)
-        while os.path.exists(log_path):
-            index += 1
+        try:
+            current_date = time.strftime('%Y%m%d')
+            index = 0
             log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
             log_path = os.path.join(util.settings.logs_path, log_name)
+            while os.path.exists(log_path):
+                index += 1
+                log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+                log_path = os.path.join(util.settings.logs_path, log_name)
 
-        # Gets the content and saves it
-        log = self.text_edit_console.toPlainText()
-        with open(log_path, 'a') as file:
-            file.write(log)
+            # Gets the content and saves it
+            log = self.text_edit_console.toPlainText()
+            with open(log_path, 'a') as file:
+                file.write(log)
+        except Exception as exception:
+            self.__logger.info("Error saving the log: " + str(exception))
 
     def __disable_buttons(self):
         """Disables all the buttons of the GUI.
