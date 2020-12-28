@@ -248,7 +248,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_settings_subvolumes, self.label_existing_subvolumes, self.label_logo,
                                   self.label_app_name, self.label_app_version, self.label_app_developer,
                                   self.label_app_email, self.label_app_developer_2, self.button_balance,
-                                  self.button_upgrade_system, self.button_snapshot, self.button_take_snapshot,
+                                  self.button_upgrade_system, self.button_upgrade_system_without_snapshots,
+                                  self.button_fa_take_snapshot, self.button_snapshot, self.button_take_snapshot,
                                   self.button_delete_snapshot, self.button_delete_log, self.button_view_log,
                                   self.button_edit_subvolume, self.button_delete_subvolume, self.button_add_subvolume,
                                   self.button_save_subvolume, self.button_github, self.button_close_terminal,
@@ -415,6 +416,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Button events
                 self.button_balance.clicked.connect(self.balance_filesystem)
                 self.button_upgrade_system.clicked.connect(self.upgrade_system)
+                self.button_upgrade_system_without_snapshots.clicked.connect(partial(self.upgrade_system, False))
+                self.button_fa_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_close_terminal.clicked.connect(self.close_terminal)
                 self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
