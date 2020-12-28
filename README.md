@@ -96,7 +96,7 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 2.2
 - More stability. Some bugs have been fixed and ButterManager should not crashed after upgrading the system.
 - Other operations are now Fast actions.
-- New fast actions implemented: Upgrade system with and without snapshots.
+- New fast actions implemented: Upgrade system with/without snapshots and Take snapshots.
 
 ### Version 2.1
 - Delete icon has been redesigned.
