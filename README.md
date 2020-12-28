@@ -4,7 +4,7 @@
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.1
+2.2
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -92,6 +92,11 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.2
+- More stability. Some bugs have been fixed and ButterManager should not crashed after upgrading the system.
+- Other operations are now Fast actions.
+- New fast actions implemented: Upgrade system with and without snapshots.
 
 ### Version 2.1
 - Delete icon has been redesigned.
