@@ -76,9 +76,9 @@
          <widget class="QPushButton" name="button_upgrade_system">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>34</x>
             <y>370</y>
-            <width>121</width>
+            <width>211</width>
             <height>34</height>
            </rect>
           </property>
@@ -86,7 +86,7 @@
            <string>Upgrade the system creating a previous snapshot and removing old snapshots according to configuration</string>
           </property>
           <property name="text">
-           <string>Upgrade System</string>
+           <string>Upgrade System with snapshots</string>
           </property>
          </widget>
          <widget class="QLabel" name="label_filesystem_info">
@@ -207,7 +207,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>Other operations</string>
+           <string>Fast actions</string>
           </property>
          </widget>
          <widget class="QLabel" name="label_filesystem_size">
@@ -383,7 +383,7 @@
          <widget class="QPushButton" name="button_regenerate_grub">
           <property name="geometry">
            <rect>
-            <x>160</x>
+            <x>614</x>
             <y>370</y>
             <width>121</width>
             <height>34</height>
@@ -394,6 +394,38 @@
           </property>
           <property name="text">
            <string>Regenerate GRUB</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_upgrade_system_without_snapshots">
+          <property name="geometry">
+           <rect>
+            <x>254</x>
+            <y>370</y>
+            <width>231</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Upgrade the system without creating or deleting snapshots</string>
+          </property>
+          <property name="text">
+           <string>Upgrade System without snapshots</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="button_fa_take_snapshot">
+          <property name="geometry">
+           <rect>
+            <x>494</x>
+            <y>370</y>
+            <width>111</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Take a BTRFS snapshot</string>
+          </property>
+          <property name="text">
+           <string>Take snapshots</string>
           </property>
          </widget>
         </widget>
@@ -971,7 +1003,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v2.1</string>
+           <string>v2.2</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

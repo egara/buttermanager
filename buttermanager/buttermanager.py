@@ -248,7 +248,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_settings_subvolumes, self.label_existing_subvolumes, self.label_logo,
                                   self.label_app_name, self.label_app_version, self.label_app_developer,
                                   self.label_app_email, self.label_app_developer_2, self.button_balance,
-                                  self.button_upgrade_system, self.button_snapshot, self.button_take_snapshot,
+                                  self.button_upgrade_system, self.button_upgrade_system_without_snapshots,
+                                  self.button_fa_take_snapshot, self.button_snapshot, self.button_take_snapshot,
                                   self.button_delete_snapshot, self.button_delete_log, self.button_view_log,
                                   self.button_edit_subvolume, self.button_delete_subvolume, self.button_add_subvolume,
                                   self.button_save_subvolume, self.button_github, self.button_close_terminal,
@@ -415,6 +416,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Button events
                 self.button_balance.clicked.connect(self.balance_filesystem)
                 self.button_upgrade_system.clicked.connect(self.upgrade_system)
+                self.button_upgrade_system_without_snapshots.clicked.connect(partial(self.upgrade_system, False))
+                self.button_fa_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_close_terminal.clicked.connect(self.close_terminal)
                 self.button_save_log.clicked.connect(self.save_log)
                 self.button_take_snapshot.clicked.connect(self.take_snapshot)
@@ -676,19 +679,22 @@ class ButtermanagerMainWindow(QMainWindow):
         """Saves the current content of the terminal into a file.
 
         """
-        current_date = time.strftime('%Y%m%d')
-        index = 0
-        log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
-        log_path = os.path.join(util.settings.logs_path, log_name)
-        while os.path.exists(log_path):
-            index += 1
+        try:
+            current_date = time.strftime('%Y%m%d')
+            index = 0
             log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
             log_path = os.path.join(util.settings.logs_path, log_name)
+            while os.path.exists(log_path):
+                index += 1
+                log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
+                log_path = os.path.join(util.settings.logs_path, log_name)
 
-        # Gets the content and saves it
-        log = self.text_edit_console.toPlainText()
-        with open(log_path, 'a') as file:
-            file.write(log)
+            # Gets the content and saves it
+            log = self.text_edit_console.toPlainText()
+            with open(log_path, 'a') as file:
+                file.write(log)
+        except Exception as exception:
+            self.__logger.info("Error saving the log: " + str(exception))
 
     def __disable_buttons(self):
         """Disables all the buttons of the GUI.

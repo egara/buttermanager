@@ -1,5 +1,5 @@
 name: buttermanager
-version: "2.0"
+version: "2.2"
 summary: Graphical tool to manage BTRFS filesystems
 description: Manage a BTRFS filesystem with this easy to use Graphical User Interface application programmed in Python and QT5. Create BTRFS snapshots, balance filesystems and upgrade the system safetly.
 type: app

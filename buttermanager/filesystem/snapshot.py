@@ -248,13 +248,18 @@ class Subvolume:
             log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
                                                        index=snapshot_name.split("-")[-1])
             log_path = os.path.join(util.settings.logs_path, log)
-            try:
-                os.remove(log_path)
-                info_message = "Log {log} deleted.\n".format(log=log)
-                self.__logger.info(info_message)
-            except OSError as os_error_exception:
-                info_message = "Error deleting log {log}. Error {os_error_exception}\n".format(log=log,
-                                                                                               exception=str(os_error_exception))
+            if os.path.exists(log_path):
+                try:
+                    os.remove(log_path)
+                    info_message = "Log {log} deleted.\n".format(log=log)
+                    self.__logger.info(info_message)
+                except OSError as os_error_exception:
+                    info_message = "Error deleting log {log}. Error {exception}\n".format(log=log,
+                                                                                          exception=str(
+                                                                                              os_error_exception))
+                    self.__logger.info(info_message)
+            else:
+                info_message = "Log {log} doesn't exist. Skipping...deleted.\n".format(log=log)
                 self.__logger.info(info_message)
 
             snapshots_to_delete -= 1

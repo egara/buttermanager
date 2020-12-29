@@ -103,17 +103,31 @@ class Upgrader(QThread):
             self.__logger.info("Starting system upgrading process.")
             sys.stdout.write("Starting system upgrading process. Please wait...")
             sys.stdout.write("\n")
-            sys.stdout.write("--------")
-            sys.stdout.write("\n")
-            sys.stdout.write("Creating snapshots and updating GRUB entries if it is necessary...")
-            sys.stdout.write("\n")
-            sys.stdout.write("--------")
 
             # Creates all the snapshots needed before upgrading the system
             # only if it is needed
             if self.__snapshots:
+                sys.stdout.write("\n")
+                sys.stdout.write("--------")
+                sys.stdout.write("\n")
+                sys.stdout.write("Creating snapshots and updating GRUB entries if it is necessary...")
+                sys.stdout.write("\n")
+                sys.stdout.write("--------")
+                sys.stdout.write("\n")
                 for snapshot in util.settings.subvolumes:
-                    util.settings.subvolumes[snapshot].create_snapshot()
+                    try:
+                        util.settings.subvolumes[snapshot].create_snapshot()
+                    except Exception as exception:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error creating the snapshot " +
+                                         util.settings.subvolumes[snapshot].subvolume_origin)
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error: " + str(exception))
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
 
             # Upgrades the system
             upgrading_command = ""
@@ -135,34 +149,67 @@ class Upgrader(QThread):
                 upgrading_command = FEDORA_DNF_UPGRADE_COMMAND
 
             if upgrading_command:
-                sys.stdout.write("Upgrading the system. Please wait...")
-                sys.stdout.write("\n")
-                util.utils.execute_command(upgrading_command, console=True)
+                try:
+                    sys.stdout.write("Upgrading the system. Please wait...")
+                    sys.stdout.write("\n")
+                    util.utils.execute_command(upgrading_command, console=True)
+                except Exception as exception:
+                    sys.stdout.write("\n")
+                    sys.stdout.write("--------")
+                    sys.stdout.write("\n")
+                    sys.stdout.write("Error upgrading the system")
+                    sys.stdout.write("\n")
+                    sys.stdout.write("Error: " + str(exception))
+                    sys.stdout.write("\n")
+                    sys.stdout.write("--------")
+                    sys.stdout.write("\n")
 
             # Upgrades AUR if distro is ArchLinux or derivatives
             if util.settings.user_os == util.utils.OS_ARCH:
                 if self.__include_aur:
-                    sys.stdout.write("\n")
-                    sys.stdout.write("--------")
-                    sys.stdout.write("\n")
-                    sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
-                    sys.stdout.write("\n")
-                    if util.utils.exist_program(ARCH_YAY_COMMAND):
-                        util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
-                    elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
-                        util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
-                    elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
-                        util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
+                    try:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
+                        sys.stdout.write("\n")
+                        if util.utils.exist_program(ARCH_YAY_COMMAND):
+                            util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
+                        elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
+                            util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
+                        elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
+                            util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
+                    except Exception as exception:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error upgrading AUR packages")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error: " + str(exception))
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
 
             # Upgrades snap packages
             if self.__include_snap:
                 if util.utils.exist_program(SNAP_COMMAND):
-                    sys.stdout.write("\n")
-                    sys.stdout.write("--------")
-                    sys.stdout.write("\n")
-                    sys.stdout.write("Updating snaps. Please wait...")
-                    sys.stdout.write("\n")
-                    util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
+                    try:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Updating snaps. Please wait...")
+                        sys.stdout.write("\n")
+                        util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
+                    except Exception as exception:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error upgrading snap packages")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error: " + str(exception))
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
 
             # Removes all the snapshots not needed any more it it is needed
             if self.__snapshots:
@@ -173,7 +220,19 @@ class Upgrader(QThread):
                     sys.stdout.write("Removing old snapshots if it is needed and updating GRUB entries. Please wait...")
                     sys.stdout.write("\n")
                     for snapshot in util.settings.subvolumes:
-                        util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
+                        try:
+                            util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
+                        except Exception as exception:
+                            sys.stdout.write("\n")
+                            sys.stdout.write("--------")
+                            sys.stdout.write("\n")
+                            sys.stdout.write("Error deleting the snapshot " +
+                                             util.settings.subvolumes[snapshot].subvolume_origin)
+                            sys.stdout.write("\n")
+                            sys.stdout.write("Error: " + str(exception))
+                            sys.stdout.write("\n")
+                            sys.stdout.write("--------")
+                            sys.stdout.write("\n")
 
             sys.stdout.write("\n")
             sys.stdout.write("--------")
@@ -185,7 +244,6 @@ class Upgrader(QThread):
 
             # Refreshing GUI
             self.on_refresh_gui()
-
         else:
             # There are not system updates
             self.__logger.info("Your system is up to date.")
