@@ -16,7 +16,6 @@ setuptools.setup(
     install_requires=[
        'PyQt5>=5.10.1',
        'PyYAML>=4.2b1',
-       'sip>=4.19.8'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
