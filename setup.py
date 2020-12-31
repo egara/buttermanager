@@ -27,4 +27,10 @@ setuptools.setup(
         "Topic :: System :: Filesystems",
         "Topic :: Utilities"
     ],
+    entry_points={
+        "console_scripts": [
+            "buttermanager = buttermanager.buttermanager:main",
+        ],
+    },
+
 )
