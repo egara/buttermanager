@@ -18,17 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import exception.exception
-import filesystem.filesystem
-import filesystem.snapshot
-import manager.upgrader
+from .exception import exception
+from .filesystem import filesystem, snapshot
+from .manager import upgrader
+from .util import utils, settings
+from .window import windows
 import os
 import subprocess
 import sys
 import time
-import util.utils
-import util.settings
-import window.windows
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices, QFontMetrics
@@ -60,14 +58,14 @@ class PasswordWindow(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.parent = parent
         # Configuring the application
-        self.__buttermanager_configurator = util.utils.ConfigManager()
+        self.__buttermanager_configurator = utils.ConfigManager()
         self.__buttermanager_configurator.configure()
         # UI elements
         self.__ui_elements = []
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         # Version checker
-        self.__version_checker = util.utils.VersionChecker(self)
+        self.__version_checker = utils.VersionChecker(self)
 
         # Initializing the application
         self.init_ui()
@@ -83,15 +81,15 @@ class PasswordWindow(QMainWindow):
         self.setWindowIcon(QIcon('images/buttermanager50.png'))
 
         # Calculating the base font size for all UI elements in the application
-        util.settings.base_font_size = self.get_base_font_size()
+        settings.base_font_size = self.get_base_font_size()
 
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_password, self.button_ok, self.button_cancel, self.button_lock,
                               self.input_password]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(240)
@@ -159,7 +157,7 @@ class PasswordWindow(QMainWindow):
 
     def load_main_window(self):
         # Storing user's password
-        util.settings.user_password = self.input_password.text()
+        settings.user_password = self.input_password.text()
 
         # Exiting password window
         self.hide()
@@ -184,7 +182,7 @@ class ButtermanagerMainWindow(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.parent = parent
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         # Current filesystem (it will be initialize in initialize method)
         self.__current_filesystem = None
         # Current filesystem uuid (it will be initialize in initialize method)
@@ -199,7 +197,7 @@ class ButtermanagerMainWindow(QMainWindow):
         # Updates checker that will check for updates if it is needed
         self.__updates_checker = None
         # Root snapshot checker
-        self.__root_snapshot_checker = filesystem.snapshot.RootSnapshotChecker(self)
+        self.__root_snapshot_checker = snapshot.RootSnapshotChecker(self)
         # UI elements
         self.__ui_elements = []
         # Initializing the application
@@ -261,11 +259,11 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub]
-            util.utils.scale_fonts(self.__ui_elements)
+            utils.scale_fonts(self.__ui_elements)
             self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
-            util.utils.scale_fonts(self.__ui_elements, 2)
+            utils.scale_fonts(self.__ui_elements, 2)
             # Tooltips
-            self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+            self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
             # Setting maximum and minimum  size for the main window
             self.setMinimumHeight(490)
@@ -288,11 +286,11 @@ class ButtermanagerMainWindow(QMainWindow):
             self.move(qt_rectangle.topLeft())
 
             # Retrieving BTRFS Filesystems uuid
-            uuid_filesystems = filesystem.filesystem.get_btrfs_filesystems()
+            uuid_filesystems = filesystem.get_btrfs_filesystems()
             if len(uuid_filesystems) > 0:
                 self.__current_filesystem_uuid = uuid_filesystems[0]
                 self.combobox_filesystem.addItems(uuid_filesystems)
-                self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
+                self.__current_filesystem = filesystem.Filesystem(self.__current_filesystem_uuid)
                 self.__logger.info("BTRFS filesystems found in the system:")
                 self.__logger.info(str(self.__current_filesystem))
 
@@ -317,10 +315,10 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # BEGIN -- Displaying settings options
                 # Retrieving snapshots to keep
-                self.spinbox_snapshots_to_keep.setValue(util.settings.snapshots_to_keep)
+                self.spinbox_snapshots_to_keep.setValue(settings.snapshots_to_keep)
 
                 # Retrieving remove snapshots decision
-                if util.settings.remove_snapshots == 0:
+                if settings.remove_snapshots == 0:
                     self.checkbox_dont_remove_snapshots.setChecked(True)
                 else:
                     self.checkbox_dont_remove_snapshots.setChecked(False)
@@ -333,51 +331,51 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.spinbox_snapshots_to_keep.show()
 
                 # Retrieving snap packages upgrade decision
-                if util.settings.snap_packages == 0:
+                if settings.snap_packages == 0:
                     self.checkbox_snap.setChecked(False)
                 else:
                     self.checkbox_snap.setChecked(True)
 
-                if util.utils.exist_program(SNAP_COMMAND):
+                if utils.exist_program(SNAP_COMMAND):
                     self.checkbox_snap.show()
                 else:
                     self.checkbox_snap.hide()
 
                 # Retrieving AUR packages upgrade decision
-                if util.settings.aur_repository == 0:
+                if settings.aur_repository == 0:
                     self.checkbox_aur.setChecked(False)
                 else:
                     self.checkbox_aur.setChecked(True)
 
-                if util.settings.user_os == util.utils.OS_ARCH:
+                if settings.user_os == utils.OS_ARCH:
                     self.checkbox_aur.show()
                 else:
                     self.checkbox_aur.hide()
 
                 # Retrieving check for updates at startup decision
-                if util.settings.check_at_startup == 0:
+                if settings.check_at_startup == 0:
                     self.checkbox_startup.setChecked(False)
                 else:
                     self.checkbox_startup.setChecked(True)
 
                 # Retrieving boot the system from GRUB using snapshots decision
-                if util.settings.grub_btrfs == 0:
+                if settings.grub_btrfs == 0:
                     self.checkbox_grub_btrfs.setChecked(False)
                     self.button_regenerate_grub.hide()
                 else:
                     self.checkbox_grub_btrfs.setChecked(True)
                     self.button_regenerate_grub.show()
 
-                if util.settings.user_os == util.utils.OS_ARCH or \
-                        util.settings.user_os == util.utils.OS_DEBIAN or \
-                        util.settings.user_os == util.utils.OS_SUSE or \
-                        util.settings.user_os == util.utils.OS_FEDORA:
+                if settings.user_os == utils.OS_ARCH or \
+                        settings.user_os == utils.OS_DEBIAN or \
+                        settings.user_os == utils.OS_SUSE or \
+                        settings.user_os == utils.OS_FEDORA:
                     self.checkbox_startup.show()
                 else:
                     self.checkbox_startup.hide()
 
                 # Retrieving save log decision
-                if util.settings.save_log == 0:
+                if settings.save_log == 0:
                     self.checkbox_log.setChecked(False)
                 else:
                     self.checkbox_log.setChecked(True)
@@ -443,8 +441,8 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_regenerate_grub.clicked.connect(self.regenerate_grub)
 
                 # If no subvolumes are defined, warning the user
-                if len(util.settings.subvolumes) == 0:
-                    info_dialog = window.windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes "
+                if len(settings.subvolumes) == 0:
+                    info_dialog = windows.GeneralInfoWindow(self, "Warning: You don't have any subvolumes "
                                                                          "added.\n"
                                                                          "If you upgrade the filesystem, no snapshots "
                                                                          "will\n"
@@ -471,7 +469,7 @@ class ButtermanagerMainWindow(QMainWindow):
                     consolidation = consolidate_window.exec_()
                     if consolidation == 1:
                         # User chose Ok button to consolidate root snapshot and the process finished succesfully
-                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                        info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "The snapshot you choose to boot the system \n"
                                                                          "has been consolidated as the default root \n"
                                                                          "snapshot. Please, reboot the system now.")
@@ -479,7 +477,7 @@ class ButtermanagerMainWindow(QMainWindow):
                     elif consolidation == 2:
                         # User chose Ok button to consolidate root snapshot and the process doesn't finished
                         # successfully
-                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                        info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "Error trying to substitute the root's path \n"
                                                                          "in fstab with the path of the new snapshot \n"
                                                                          "created")
@@ -487,7 +485,7 @@ class ButtermanagerMainWindow(QMainWindow):
                     elif consolidation == 3:
                         # User chose Ok button to consolidate root snapshot and the process doesn't finished
                         # successfully
-                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                        info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "Error removing root snapshot because it is \n"
                                                                          "not empty and there are subvolumes \n"
                                                                          "within it. The consolidation process \n"
@@ -495,7 +493,7 @@ class ButtermanagerMainWindow(QMainWindow):
                         info_dialog.show()
                     else:
                         # User chose Cancel button so the application must be closed
-                        info_dialog = window.windows.ProblemsFoundWindow(self,
+                        info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "In order to avoid problems, ButterManager \n"
                                                                          "cannot execute any operations under \n"
                                                                          "a non default root snapshot so it will be "
@@ -505,16 +503,16 @@ class ButtermanagerMainWindow(QMainWindow):
             else:
                 self.__logger.info("The application couldn't start normally. No BTRFS file system found.")
 
-                info_dialog = window.windows.ProblemsFoundWindow(self, "No BTRFS file system found. \n"
+                info_dialog = windows.ProblemsFoundWindow(self, "No BTRFS file system found. \n"
                                                                        "The application will be closed.")
                 info_dialog.show()
 
-        except exception.exception.NoCommandFound:
+        except exception.NoCommandFound:
             self.__logger.info("The application couldn't start normally. There are some programs needed that are not "
                                "installed.")
             self.__logger.info("Please, install these programs and start ButterManager again.")
 
-            info_dialog = window.windows.ProblemsFoundWindow(self, "These programs need to be installed for \n"
+            info_dialog = windows.ProblemsFoundWindow(self, "These programs need to be installed for \n"
                                                                    "the proper functioning of ButterManager:\n"
                                                                    "btrfs, findmnt.\n")
             info_dialog.show()
@@ -523,7 +521,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Creates the updates checker that will start in another thread and check system updates.
 
         """
-        self.__updates_checker = manager.upgrader.UpdatesChecker()
+        self.__updates_checker = upgrader.UpdatesChecker()
         self.__updates_checker.show_updates_window.connect(self.show_updates_window)
         self.__updates_checker.start()
 
@@ -536,7 +534,7 @@ class ButtermanagerMainWindow(QMainWindow):
         Arguments:
             command_line_output (list(:obj:`str`)): Packages to be updated. One per line.
         """
-        updates_window = window.windows.UpdatesWindow(self, command_line_output)
+        updates_window = windows.UpdatesWindow(self, command_line_output)
         updates_window.upgrade_system.connect(self.upgrade_system)
         updates_window.upgrade_system_without_snanpshots.connect(partial(self.upgrade_system, False))
         updates_window.show()
@@ -545,7 +543,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Runs the balance method.
 
         """
-        self.__balancer = filesystem.filesystem.BalanceManager(self.__current_filesystem.data_percentage,
+        self.__balancer = filesystem.BalanceManager(self.__current_filesystem.data_percentage,
                                                                self.__current_filesystem.metadata_percentage,
                                                                self.__current_filesystem.mounted_points[0])
         self.__balancer.show_one_window.connect(self.manage_window)
@@ -573,7 +571,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
         """
         # Calculating new values for the current filesystem
-        self.__current_filesystem = filesystem.filesystem.Filesystem(self.__current_filesystem_uuid)
+        self.__current_filesystem = filesystem.Filesystem(self.__current_filesystem_uuid)
         # Displaying all the info related to the current filesystem
         self.fill_filesystem_info(self.__current_filesystem)
 
@@ -614,7 +612,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_close_terminal.show()
         # Save log button will only be displayed when the logs are
         # not saved automatically
-        if util.settings.save_log == 0:
+        if settings.save_log == 0:
             self.button_save_log.show()
         else:
             self.button_save_log.hide()
@@ -624,20 +622,20 @@ class ButtermanagerMainWindow(QMainWindow):
         self.adjustSize()
 
         # Checking if there is any subvolume defined by the user
-        if len(util.settings.subvolumes) == 0:
+        if len(settings.subvolumes) == 0:
             snapshots = False
 
         # Gathering user settings
         dont_remove_snapshots = self.checkbox_dont_remove_snapshots.isChecked()
         include_aur = False
-        if util.settings.user_os == util.utils.OS_ARCH:
+        if settings.user_os == utils.OS_ARCH:
             include_aur = self.checkbox_aur.isChecked()
         include_snap = False
-        if util.utils.exist_program(SNAP_COMMAND):
+        if utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
 
         # Upgrading the system
-        self.__upgrader = manager.upgrader.Upgrader(dont_remove_snapshots, include_aur,
+        self.__upgrader = upgrader.Upgrader(dont_remove_snapshots, include_aur,
                                                     include_snap, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
@@ -683,11 +681,11 @@ class ButtermanagerMainWindow(QMainWindow):
             current_date = time.strftime('%Y%m%d')
             index = 0
             log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
-            log_path = os.path.join(util.settings.logs_path, log_name)
+            log_path = os.path.join(settings.logs_path, log_name)
             while os.path.exists(log_path):
                 index += 1
                 log_name = "{current_date}-{index}.txt".format(current_date=current_date, index=str(index))
-                log_path = os.path.join(util.settings.logs_path, log_name)
+                log_path = os.path.join(settings.logs_path, log_name)
 
             # Gets the content and saves it
             log = self.text_edit_console.toPlainText()
@@ -750,7 +748,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Takes a BTRFS subvolume snapshot.
 
         """
-        snapshot_window = window.windows.SnapshotWindow(self)
+        snapshot_window = windows.SnapshotWindow(self)
         # Connecting the signals emitted by the snapshot window with this slot
         snapshot_window.refresh_gui.connect(self.refresh_gui)
         snapshot_window.enable_buttons.connect(self.__enable_buttons)
@@ -773,7 +771,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
         snapshots_to_delete = self.list_snapshots.selectedItems()
         for snap in snapshots_to_delete:
-            filesystem.snapshot.delete_specific_snapshot(snap.text())
+            snapshot.delete_specific_snapshot(snap.text())
 
         # Refreshing GUI
         self.refresh_gui()
@@ -788,7 +786,7 @@ class ButtermanagerMainWindow(QMainWindow):
         snapshot_to_diff = self.list_snapshots.selectedItems()
         if len(snapshot_to_diff) != 1:
             # Only one snapshot can be selected
-            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot\n"
+            info_dialog = windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot\n"
                                                                  "in order to find the differences between\n"
                                                                  "it and the current subvolume.")
             info_dialog.show()
@@ -800,7 +798,7 @@ class ButtermanagerMainWindow(QMainWindow):
             QtTest.QTest.qWait(10)
 
             # The user has to select the kind of operation
-            diff_window = window.windows.DiffWindow()
+            diff_window = windows.DiffWindow()
 
             # Hidding the main window and showing the diff window in order to proceed
             self.hide()
@@ -809,14 +807,14 @@ class ButtermanagerMainWindow(QMainWindow):
             diff_process = diff_window.exec_()
             if diff_process == 1:
                 # A full operation will be done
-                self.__differentiator = filesystem.snapshot.Differentiator(
+                self.__differentiator = snapshot.Differentiator(
                     snapshot_to_diff[0].text(),
-                    filesystem.snapshot.Differentiator.OPERATION_FULL)
+                    snapshot.Differentiator.OPERATION_FULL)
             elif diff_process == 2:
                 # A partial operation will be done
-                self.__differentiator = filesystem.snapshot.Differentiator(
+                self.__differentiator = snapshot.Differentiator(
                     snapshot_to_diff[0].text(),
-                    filesystem.snapshot.Differentiator.OPERATION_PARTIAL)
+                    snapshot.Differentiator.OPERATION_PARTIAL)
 
             self.__differentiator.show_one_window.connect(self.manage_window)
             self.__differentiator.start()
@@ -837,7 +835,7 @@ class ButtermanagerMainWindow(QMainWindow):
         snapshots_selected = self.list_snapshots.selectedItems()
         if len(snapshots_selected) != 1:
             # Only one snapshot can be selected
-            info_dialog = window.windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot \n"
+            info_dialog = windows.GeneralInfoWindow(self, "Please, select one (and only one) snapshot \n"
                                                                  "in order to open the file explorer.")
             info_dialog.show()
         else:
@@ -849,7 +847,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         logs_to_delete = self.list_logs.selectedItems()
         for log in logs_to_delete:
-            os.remove(os.path.join(util.settings.logs_path, log.text()))
+            os.remove(os.path.join(settings.logs_path, log.text()))
 
         # Refreshing GUI
         self.refresh_gui()
@@ -860,14 +858,14 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         logs_to_view = self.list_logs.selectedItems()
         for log in logs_to_view:
-            log_window = window.windows.LogViewWindow(self, os.path.join(util.settings.logs_path, log.text()))
+            log_window = windows.LogViewWindow(self, os.path.join(settings.logs_path, log.text()))
             log_window.show()
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
 
         """
-        subvolume_window = window.windows.SubvolumeWindow(self)
+        subvolume_window = windows.SubvolumeWindow(self)
         # Connecting the signal emitted by the subvolume window with this slot
         subvolume_window.refresh_gui.connect(self.refresh_gui)
         # Displaying snapshot window
@@ -881,18 +879,18 @@ class ButtermanagerMainWindow(QMainWindow):
         if self.checkbox_dont_remove_snapshots.isChecked():
             self.label_snapshots_to_keep.hide()
             self.spinbox_snapshots_to_keep.hide()
-            util.settings.properties_manager.set_property('remove_snapshots', 0)
+            settings.properties_manager.set_property('remove_snapshots', 0)
         else:
             self.label_snapshots_to_keep.show()
             self.spinbox_snapshots_to_keep.show()
-            util.settings.properties_manager.set_property('remove_snapshots', 1)
+            settings.properties_manager.set_property('remove_snapshots', 1)
 
     def snapshots_to_keep_valuechange(self):
         """Actions when user changes the value of the snapshots to keep.
 
         """
         # Storing value in settings
-        util.settings.properties_manager.set_property('snapshots_to_keep', self.spinbox_snapshots_to_keep.value())
+        settings.properties_manager.set_property('snapshots_to_keep', self.spinbox_snapshots_to_keep.value())
 
     def include_snap(self):
         """Actions when user checks include snap packages.
@@ -900,9 +898,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_snap.isChecked():
-            util.settings.properties_manager.set_property('snap_packages', 1)
+            settings.properties_manager.set_property('snap_packages', 1)
         else:
-            util.settings.properties_manager.set_property('snap_packages', 0)
+            settings.properties_manager.set_property('snap_packages', 0)
 
     def include_aur(self):
         """Actions when user checks include AUR packages.
@@ -910,9 +908,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_aur.isChecked():
-            util.settings.properties_manager.set_property('aur_repository', 1)
+            settings.properties_manager.set_property('aur_repository', 1)
         else:
-            util.settings.properties_manager.set_property('aur_repository', 0)
+            settings.properties_manager.set_property('aur_repository', 0)
 
     def include_log(self):
         """Actions when user checks include log.
@@ -920,9 +918,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_log.isChecked():
-            util.settings.properties_manager.set_property('save_log', 1)
+            settings.properties_manager.set_property('save_log', 1)
         else:
-            util.settings.properties_manager.set_property('save_log', 0)
+            settings.properties_manager.set_property('save_log', 0)
 
     def include_startup(self):
         """Actions when user checks check updates at startup.
@@ -930,9 +928,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_startup.isChecked():
-            util.settings.properties_manager.set_property('check_at_startup', 1)
+            settings.properties_manager.set_property('check_at_startup', 1)
         else:
-            util.settings.properties_manager.set_property('check_at_startup', 0)
+            settings.properties_manager.set_property('check_at_startup', 0)
 
     def include_grub_btrfs(self):
         """Actions when user checks boot the system from GRUB using snapshots.
@@ -940,17 +938,17 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_grub_btrfs.isChecked():
-            util.settings.properties_manager.set_property('grub_btrfs', 1)
+            settings.properties_manager.set_property('grub_btrfs', 1)
             self.button_regenerate_grub.show()
         else:
-            util.settings.properties_manager.set_property('grub_btrfs', 0)
+            settings.properties_manager.set_property('grub_btrfs', 0)
             self.button_regenerate_grub.hide()
 
     def on_combobox_subvolumes_changed(self):
         current_subvolume = self.combobox_subvolumes.currentText()
         if current_subvolume:
-            self.line_edit_snapshot_where.setText(util.settings.subvolumes[current_subvolume].subvolume_dest)
-            self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[current_subvolume].snapshot_name)
+            self.line_edit_snapshot_where.setText(settings.subvolumes[current_subvolume].subvolume_dest)
+            self.line_edit_snapshot_prefix.setText(settings.subvolumes[current_subvolume].snapshot_name)
 
     def edit_subvolume(self):
         """Actions when user wants to edit a defined subvolume.
@@ -978,7 +976,7 @@ class ButtermanagerMainWindow(QMainWindow):
         new_snapshot_where = self.line_edit_snapshot_where.text()
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
-        util.settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix)
+        settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix)
 
         # Refreshing components
         self.refresh_gui()
@@ -989,7 +987,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing the modified values
         subvolume_selected = self.combobox_subvolumes.currentText()
-        util.settings.properties_manager.set_subvolume(subvolume_selected, None, None)
+        settings.properties_manager.set_subvolume(subvolume_selected, None, None)
 
         # Refreshing components
         self.refresh_gui()
@@ -1020,8 +1018,8 @@ class ButtermanagerMainWindow(QMainWindow):
         snapshots = []
         self.list_snapshots.addItems(snapshots)
         # Loading the snapshots detected
-        for subvolume in util.settings.subvolumes:
-            snapshots.extend(util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name())
+        for subvolume in settings.subvolumes:
+            snapshots.extend(settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name())
         self.list_snapshots.addItems(snapshots)
 
     def fill_logs(self):
@@ -1033,7 +1031,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.list_logs.clear()
 
         # Adding the logs to the list
-        logs = os.listdir(util.settings.logs_path)
+        logs = os.listdir(settings.logs_path)
         self.list_logs.addItems(logs)
 
     def fill_subvolumes(self):
@@ -1044,21 +1042,21 @@ class ButtermanagerMainWindow(QMainWindow):
         self.combobox_subvolumes.clear()
         # Adding the new subvolumes to the combobox
         list_subvolumes = []
-        if len(util.settings.subvolumes) > 0:
-            for subvolume in util.settings.subvolumes:
+        if len(settings.subvolumes) > 0:
+            for subvolume in settings.subvolumes:
                 list_subvolumes.append(subvolume)
             self.combobox_subvolumes.addItems(list_subvolumes)
             self.line_edit_snapshot_where.setDisabled(True)
-            self.line_edit_snapshot_where.setText(util.settings.subvolumes[list_subvolumes[0]].subvolume_dest)
+            self.line_edit_snapshot_where.setText(settings.subvolumes[list_subvolumes[0]].subvolume_dest)
             self.line_edit_snapshot_prefix.setDisabled(True)
-            self.line_edit_snapshot_prefix.setText(util.settings.subvolumes[list_subvolumes[0]].snapshot_name)
+            self.line_edit_snapshot_prefix.setText(settings.subvolumes[list_subvolumes[0]].snapshot_name)
 
     def refresh_subvolume_buttons(self):
         """Shows or hide subvolume buttons in the GUI.
 
         """
         # They will be shown only if some subvolume is defined by the user
-        if len(util.settings.subvolumes) > 0:
+        if len(settings.subvolumes) > 0:
             self.button_save_subvolume.hide()
             self.button_edit_subvolume.show()
             self.button_delete_subvolume.show()
@@ -1100,7 +1098,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """Shows the appropiate labels related to the space left of the system.
 
         """
-        filesystem_space_pertentage = util.utils.get_percentage(self.__current_filesystem.total_size,
+        filesystem_space_pertentage = utils.get_percentage(self.__current_filesystem.total_size,
                                                                 self.__current_filesystem.total_allocated)
         if filesystem_space_pertentage <= 70:
             self.label_space_ok.show()
@@ -1131,7 +1129,7 @@ class ButtermanagerMainWindow(QMainWindow):
         QtTest.QTest.qWait(100)
 
         # Run grub-btrfs in order to regenerate GRUB entries
-        util.utils.execute_command(filesystem.snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
+        utils.execute_command(snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
 
         # Refreshing GUI
         self.refresh_gui()
@@ -1140,11 +1138,14 @@ class ButtermanagerMainWindow(QMainWindow):
         self.__enable_buttons()
 
         # Displaying info
-        info_dialog = window.windows.GeneralInfoWindow(self, "GRUB menu has been regenerated.")
+        info_dialog = windows.GeneralInfoWindow(self, "GRUB menu has been regenerated.")
         info_dialog.show()
 
 
-if __name__ == '__main__':
+def main():
+    """Main wrapper for starting the program
+
+    """
     # Creating application instance
     application = QApplication(sys.argv)
     # Creating main window instance

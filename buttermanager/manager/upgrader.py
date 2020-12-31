@@ -21,11 +21,10 @@
 """This module gathers all the managers built for the application.
 
 """
-import manager
+from .. import manager
+from ..util import settings, utils
 import sys
 import urllib.request
-import util.settings
-import util.utils
 from PyQt5.QtCore import QThread, pyqtSignal
 from urllib.error import URLError
 
@@ -72,7 +71,7 @@ class Upgrader(QThread):
     def __init__(self, dont_remove_snapshots, include_aur, include_snap, snapshots):
         QThread.__init__(self)
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         # Dont' remove snapshots when upgrading the system
         self.__dont_remove_snapthosts = dont_remove_snapshots
         # Include AUR packages upgrade
@@ -114,15 +113,15 @@ class Upgrader(QThread):
                 sys.stdout.write("\n")
                 sys.stdout.write("--------")
                 sys.stdout.write("\n")
-                for snapshot in util.settings.subvolumes:
+                for snapshot in settings.subvolumes:
                     try:
-                        util.settings.subvolumes[snapshot].create_snapshot()
+                        settings.subvolumes[snapshot].create_snapshot()
                     except Exception as exception:
                         sys.stdout.write("\n")
                         sys.stdout.write("--------")
                         sys.stdout.write("\n")
                         sys.stdout.write("Error creating the snapshot " +
-                                         util.settings.subvolumes[snapshot].subvolume_origin)
+                                         settings.subvolumes[snapshot].subvolume_origin)
                         sys.stdout.write("\n")
                         sys.stdout.write("Error: " + str(exception))
                         sys.stdout.write("\n")
@@ -131,28 +130,28 @@ class Upgrader(QThread):
 
             # Upgrades the system
             upgrading_command = ""
-            if util.settings.user_os == util.utils.OS_ARCH:
+            if settings.user_os == utils.OS_ARCH:
                 upgrading_command = ARCH_PACMAN_UPGRADE_COMMAND
-            elif util.settings.user_os == util.utils.OS_DEBIAN:
+            elif settings.user_os == utils.OS_DEBIAN:
                 # First, it is necessary to update the system
                 sys.stdout.write("\n")
                 sys.stdout.write("--------")
                 sys.stdout.write("\n")
                 sys.stdout.write("Updating the system. Please wait...")
                 sys.stdout.write("\n")
-                util.utils.execute_command(DEBIAN_APT_UPDATE_COMMAND, console=True)
+                utils.execute_command(DEBIAN_APT_UPDATE_COMMAND, console=True)
                 sys.stdout.write("\n")
                 upgrading_command = DEBIAN_APT_UPGRADE_COMMAND
-            elif util.settings.user_os == util.utils.OS_SUSE:
+            elif settings.user_os == utils.OS_SUSE:
                 upgrading_command = SUSE_ZYPPER_UPGRADE_COMMAND
-            elif util.settings.user_os == util.utils.OS_FEDORA:
+            elif settings.user_os == utils.OS_FEDORA:
                 upgrading_command = FEDORA_DNF_UPGRADE_COMMAND
 
             if upgrading_command:
                 try:
                     sys.stdout.write("Upgrading the system. Please wait...")
                     sys.stdout.write("\n")
-                    util.utils.execute_command(upgrading_command, console=True)
+                    utils.execute_command(upgrading_command, console=True)
                 except Exception as exception:
                     sys.stdout.write("\n")
                     sys.stdout.write("--------")
@@ -165,7 +164,7 @@ class Upgrader(QThread):
                     sys.stdout.write("\n")
 
             # Upgrades AUR if distro is ArchLinux or derivatives
-            if util.settings.user_os == util.utils.OS_ARCH:
+            if settings.user_os == utils.OS_ARCH:
                 if self.__include_aur:
                     try:
                         sys.stdout.write("\n")
@@ -173,12 +172,12 @@ class Upgrader(QThread):
                         sys.stdout.write("\n")
                         sys.stdout.write("Updating AUR packages if it is needed. Please wait...")
                         sys.stdout.write("\n")
-                        if util.utils.exist_program(ARCH_YAY_COMMAND):
-                            util.utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
-                        elif util.utils.exist_program(ARCH_TRIZEN_COMMAND):
-                            util.utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
-                        elif util.utils.exist_program(ARCH_YAOURT_COMMAND):
-                            util.utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
+                        if utils.exist_program(ARCH_YAY_COMMAND):
+                            utils.execute_command(ARCH_YAY_UPGRADE_COMMAND, console=True)
+                        elif utils.exist_program(ARCH_TRIZEN_COMMAND):
+                            utils.execute_command(ARCH_TRIZEN_UPGRADE_COMMAND, console=True)
+                        elif utils.exist_program(ARCH_YAOURT_COMMAND):
+                            utils.execute_command(ARCH_YAOURT_UPGRADE_COMMAND, console=True)
                     except Exception as exception:
                         sys.stdout.write("\n")
                         sys.stdout.write("--------")
@@ -192,14 +191,14 @@ class Upgrader(QThread):
 
             # Upgrades snap packages
             if self.__include_snap:
-                if util.utils.exist_program(SNAP_COMMAND):
+                if utils.exist_program(SNAP_COMMAND):
                     try:
                         sys.stdout.write("\n")
                         sys.stdout.write("--------")
                         sys.stdout.write("\n")
                         sys.stdout.write("Updating snaps. Please wait...")
                         sys.stdout.write("\n")
-                        util.utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
+                        utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
                     except Exception as exception:
                         sys.stdout.write("\n")
                         sys.stdout.write("--------")
@@ -219,15 +218,15 @@ class Upgrader(QThread):
                     sys.stdout.write("\n")
                     sys.stdout.write("Removing old snapshots if it is needed and updating GRUB entries. Please wait...")
                     sys.stdout.write("\n")
-                    for snapshot in util.settings.subvolumes:
+                    for snapshot in settings.subvolumes:
                         try:
-                            util.settings.subvolumes[snapshot].delete_snapshots(util.settings.snapshots_to_keep)
+                            settings.subvolumes[snapshot].delete_snapshots(settings.snapshots_to_keep)
                         except Exception as exception:
                             sys.stdout.write("\n")
                             sys.stdout.write("--------")
                             sys.stdout.write("\n")
                             sys.stdout.write("Error deleting the snapshot " +
-                                             util.settings.subvolumes[snapshot].subvolume_origin)
+                                             settings.subvolumes[snapshot].subvolume_origin)
                             sys.stdout.write("\n")
                             sys.stdout.write("Error: " + str(exception))
                             sys.stdout.write("\n")
@@ -288,7 +287,7 @@ class UpdatesChecker(QThread):
     def __init__(self):
         QThread.__init__(self)
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
     # Methods
     def run(self):
@@ -317,27 +316,27 @@ class UpdatesChecker(QThread):
         # Checking updates only if Internet connection is available
         if internet_available:
             # Checking updates only if the user selected the option
-            if util.settings.check_at_startup == 1:
+            if settings.check_at_startup == 1:
                 # Emmiting the signal only if there are updates
                 if manager.upgrader.check_updates():
                     commandline_output = []
-                    if util.settings.user_os == util.utils.OS_ARCH:
+                    if settings.user_os == utils.OS_ARCH:
                         refresh_repositories_command = manager.upgrader.ARCH_PACMAN_REFRESH_REPOSITORIES
-                        util.utils.execute_command(refresh_repositories_command)
+                        utils.execute_command(refresh_repositories_command)
                         check_for_updates_command = manager.upgrader.ARCH_PACMAN_CHECK_UPDATES
-                        commandline_output = util.utils.execute_command(check_for_updates_command)
+                        commandline_output = utils.execute_command(check_for_updates_command)
 
-                    elif util.settings.user_os == util.utils.OS_DEBIAN:
+                    elif settings.user_os == utils.OS_DEBIAN:
                         check_for_updates_command = manager.upgrader.DEBIAN_APT_CHECK_UPDATES
-                        commandline_output = util.utils.execute_command(check_for_updates_command)
+                        commandline_output = utils.execute_command(check_for_updates_command)
 
-                    elif util.settings.user_os == util.utils.OS_SUSE:
+                    elif settings.user_os == utils.OS_SUSE:
                         check_for_updates_command = manager.upgrader.SUSE_ZYPPER_CHECK_UPDATES
-                        commandline_output = util.utils.execute_command(check_for_updates_command)
+                        commandline_output = utils.execute_command(check_for_updates_command)
 
-                    elif util.settings.user_os == util.utils.OS_FEDORA:
+                    elif settings.user_os == utils.OS_FEDORA:
                         check_for_updates_command = manager.upgrader.FEDORA_DNF_CHECK_UPDATES
-                        commandline_output = util.utils.execute_command(check_for_updates_command)
+                        commandline_output = utils.execute_command(check_for_updates_command)
 
                     # If there are updates, emits the signal thta will be captured in buttermanager.py
                     self.show_updates_window.emit(commandline_output)
@@ -369,7 +368,7 @@ def check_updates():
         boolean: true if there are updates; false otherwise.
     """
     # Logger
-    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger = utils.Logger(sys.modules['__main__'].__file__).get()
     logger.info("Checking for system updates.")
     sys.stdout.write("Checking for system updates.")
     sys.stdout.write("\n")
@@ -377,33 +376,33 @@ def check_updates():
     sys.stdout.write("\n")
 
     updates = False
-    if util.settings.user_os == util.utils.OS_ARCH:
+    if settings.user_os == utils.OS_ARCH:
         refresh_repositories_command = ARCH_PACMAN_REFRESH_REPOSITORIES
-        util.utils.execute_command(refresh_repositories_command)
+        utils.execute_command(refresh_repositories_command)
         check_for_updates_command = ARCH_PACMAN_CHECK_UPDATES
-        commandline_output = util.utils.execute_command(check_for_updates_command)
+        commandline_output = utils.execute_command(check_for_updates_command)
 
         for line in commandline_output.split("\n"):
             if line:
                 updates = True
 
-    elif util.settings.user_os == util.utils.OS_DEBIAN:
+    elif settings.user_os == utils.OS_DEBIAN:
         check_for_updates_command = DEBIAN_APT_CHECK_UPDATES
-        commandline_output = util.utils.execute_command(check_for_updates_command)
+        commandline_output = utils.execute_command(check_for_updates_command)
         lines = commandline_output.split("\n")
         if len(lines) > 2:
             updates = True
 
-    elif util.settings.user_os == util.utils.OS_SUSE:
+    elif settings.user_os == utils.OS_SUSE:
         check_for_updates_command = SUSE_ZYPPER_CHECK_UPDATES
-        commandline_output = util.utils.execute_command(check_for_updates_command)
+        commandline_output = utils.execute_command(check_for_updates_command)
         lines = commandline_output.split("\n")
         if len(lines) > 4:
             updates = True
 
-    elif util.settings.user_os == util.utils.OS_FEDORA:
+    elif settings.user_os == utils.OS_FEDORA:
         check_for_updates_command = FEDORA_DNF_CHECK_UPDATES
-        commandline_output = util.utils.execute_command(check_for_updates_command)
+        commandline_output = utils.execute_command(check_for_updates_command)
         lines = commandline_output.split("\n")
         if len(lines) > 2:
             updates = True

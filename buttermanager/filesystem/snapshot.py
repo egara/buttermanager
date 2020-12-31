@@ -22,16 +22,15 @@
 
 It provides also Snapshot class.
 """
-import exception.exception
+from ..exception import exception
+from ..util import settings, utils
+from ..window import windows
 import glob
 import os
 import shutil
 import sys
 import subprocess
 import time
-import util.settings
-import util.utils
-import window.windows
 from PyQt5.QtCore import QThread, pyqtSignal
 
 
@@ -59,7 +58,7 @@ class Subvolume:
             snapshot_name (str): Prefix for all the subvolumes created from origin
         """
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         self.subvolume_origin = subvolume_origin if subvolume_origin[-1] == '/' else subvolume_origin + '/'
         self.subvolume_dest = subvolume_dest if subvolume_dest[-1] == '/' else subvolume_dest + '/'
         self.snapshot_name = snapshot_name
@@ -87,7 +86,7 @@ class Subvolume:
         snapshot_full_name = "{snapshot_full_name}-{number}".format(snapshot_full_name=snapshot_full_name,
                                                                     number=len(snapshots_with_same_name))
         # Checks if grub-btrfs integration is enabled
-        if util.settings.properties_manager.get_property("grub_btrfs"):
+        if settings.properties_manager.get_property("grub_btrfs"):
             # Checks if /etc/fstab is in subvolume_origin
             fstab_path = self.subvolume_origin + 'etc/fstab'
             if os.path.isfile(fstab_path):
@@ -122,7 +121,7 @@ class Subvolume:
                         subvolume_dest=self.subvolume_dest,
                         snapshot_full_name=snapshot_full_name
                     )
-                    util.utils.execute_command(command, console=True, root=True)
+                    utils.execute_command(command, console=True, root=True)
 
                     # Obtaining the real subvolume for the new snapshot created
                     subvolume_snapshot_created_real = None
@@ -186,12 +185,12 @@ class Subvolume:
                     if everything_ok:
                         # subvolume_origin_real will be stored in configuration file in order to let the
                         # user to consolidate the system's rollback to any snapshot different from the main one
-                        util.settings.properties_manager.set_property('path_to_consolidate_root_snapshot',
+                        settings.properties_manager.set_property('path_to_consolidate_root_snapshot',
                                                                       subvolume_origin_real)
 
                         # Run grub-btrfs in order to regenerate GRUB entries
                         self.__logger.info("Regenerating GRUB entries. Please wait...")
-                        util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+                        utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
                 else:
                     # The original subvolume mounted for / couldn't be found
@@ -207,7 +206,7 @@ class Subvolume:
                     subvolume_dest=self.subvolume_dest,
                     snapshot_full_name=snapshot_full_name
                 )
-                util.utils.execute_command(command, console=True, root=True)
+                utils.execute_command(command, console=True, root=True)
         else:
             command = "{command} {subvolume_origin} {subvolume_dest}{snapshot_full_name}".format(
                 command=BTRFS_CREATE_SNAPSHOT_R_COMMAND,
@@ -215,7 +214,7 @@ class Subvolume:
                 subvolume_dest=self.subvolume_dest,
                 snapshot_full_name=snapshot_full_name
             )
-            util.utils.execute_command(command, console=True, root=True)
+            utils.execute_command(command, console=True, root=True)
 
     def delete_snapshots(self, snapshots_to_keep):
         """Deletes all the snapshots needed to keep the desired number set by the user.
@@ -240,14 +239,14 @@ class Subvolume:
         while snapshots_to_delete > 0:
             # Deletes the snapshot
             command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
-            util.utils.execute_command(command, console=True, root=True)
+            utils.execute_command(command, console=True, root=True)
             info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
             self.__logger.info(info_message)
             # Deletes the log if it exists
             snapshot_name = snapshots[index].split("/")[-1]
             log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
                                                        index=snapshot_name.split("-")[-1])
-            log_path = os.path.join(util.settings.logs_path, log)
+            log_path = os.path.join(settings.logs_path, log)
             if os.path.exists(log_path):
                 try:
                     os.remove(log_path)
@@ -266,9 +265,9 @@ class Subvolume:
             index += 1
 
         # Checks if grub-btrfs integration is enabled
-        if util.settings.properties_manager.get_property("grub_btrfs"):
+        if settings.properties_manager.get_property("grub_btrfs"):
             # Run grub-btrfs in order to regenerate GRUB entries
-            util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+            utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
     def delete_origin(self):
         """Deletes the original subvolume, i.e. the subvolume in subvolume_origin
@@ -300,7 +299,7 @@ class Subvolume:
                 break
         if errors:
             # Subvolume is not empty so it can't be deleted. Exception is thrown
-            raise exception.exception.BtrfsSnapshotDeletion("Error: {snapshot} is not empty.\n".
+            raise exception.BtrfsSnapshotDeletion("Error: {snapshot} is not empty.\n".
                                                             format(snapshot=self.subvolume_origin))
         else:
             info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=self.subvolume_origin)
@@ -330,7 +329,7 @@ class RootSnapshotChecker:
         self.__snapshot_to_clone_in_root_full_path = None
         self.__root_subvolume = None
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         self.__logger.info("Checking if the current snapshot used for root is the default. Please wait...")
         self.__parent_window = parent_window
 
@@ -343,7 +342,7 @@ class RootSnapshotChecker:
                      false otherwise.
         """
         # First, it is necessary to check if path_to_consolidate_root_snapshot is defined
-        if util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot") != 0:
+        if settings.properties_manager.get_property("path_to_consolidate_root_snapshot") != 0:
             # Obtaining the mounted subvolume for root partition
             # mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d=
             command_string = """mount | grep 'on / ' | grep -o 'subvol=/.*' | cut -f2- -d="""
@@ -359,10 +358,10 @@ class RootSnapshotChecker:
                 # Converting bytes into string
                 mounted_snapshot_raw = mounted_snapshot_raw.decode("utf-8")
                 # Removing first / if path_to_consolidate_root_snapshot doesn't start with /
-                if not util.settings.properties_manager.get_property("path_to_consolidate_root_snapshot")\
+                if not settings.properties_manager.get_property("path_to_consolidate_root_snapshot")\
                         .startswith("/"):
                     mounted_snapshot_raw = mounted_snapshot_raw[1:]
-            if mounted_snapshot_raw != util.settings.properties_manager. \
+            if mounted_snapshot_raw != settings.properties_manager. \
                     get_property("path_to_consolidate_root_snapshot"):
                 # If mounted snapshot is different from the supposed default root subvolume
                 # it means that user has booted the system using an alternate snapshot from GRUB.
@@ -372,8 +371,8 @@ class RootSnapshotChecker:
                 # Obtaining the snapshot mounted
                 mounted_snapshot_full_path = None
                 while mounted_snapshot_full_path is None:
-                    for subvolume in util.settings.subvolumes:
-                        snapshots = util.settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name()
+                    for subvolume in settings.subvolumes:
+                        snapshots = settings.subvolumes[subvolume].get_all_snapshots_with_the_same_name()
                         for snapshot in snapshots:
                             if mounted_snapshot_raw in snapshot:
                                 mounted_snapshot_full_path = snapshot
@@ -382,7 +381,7 @@ class RootSnapshotChecker:
                             break
 
                 self.__snapshot_to_clone_in_root_full_path = mounted_snapshot_full_path
-                self.__root_subvolume = util.settings.subvolumes[subvolume]
+                self.__root_subvolume = settings.subvolumes[subvolume]
                 return False
             else:
                 return True
@@ -397,7 +396,7 @@ class RootSnapshotChecker:
         Returns:
             QDialog: The dialog window to consolidate the root snapshot.
         """
-        info_window = window.windows.ConsolidateSnapshotWindow(self.__parent_window,
+        info_window = windows.ConsolidateSnapshotWindow(self.__parent_window,
                                                                self.__snapshot_to_clone_in_root_full_path,
                                                                self.__root_subvolume)
         return info_window
@@ -430,7 +429,7 @@ class Differentiator(QThread):
     def run(self):
         # Main window will be hidden
         self.on_show_one_window(True)
-        info_dialog = window.windows.InfoWindow(None, "Calculating differences in\n"
+        info_dialog = windows.InfoWindow(None, "Calculating differences in\n"
                                                       "'{snapshot_name}'.\n"
                                                       "Please, be patient. This process\n"
                                                       "can take several minutes. This\n"
@@ -459,7 +458,7 @@ class Differentiator(QThread):
         if subvolume:
             # Creating a directory to store all the diff files generated if it doesn't exist
             # or removing and creating it if it existed
-            diffs_path = os.path.join(util.settings.application_path, self.DIFFS_DIR, self.__snapshot_name)
+            diffs_path = os.path.join(settings.application_path, self.DIFFS_DIR, self.__snapshot_name)
 
             if os.path.exists(diffs_path):
                 shutil.rmtree(diffs_path)
@@ -489,7 +488,7 @@ class Differentiator(QThread):
                 # Calculating differences
                 command = "{command} {dir1} {dir2}".format(command=self.DIFF_COMMAND, dir1=subvolume.subvolume_origin,
                                                            dir2=self.__snapshot_full_path)
-                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                echo = subprocess.Popen(['echo', settings.user_password], stdout=subprocess.PIPE)
                 result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
                 for line in iter(result.stdout.readline, b''):
@@ -540,7 +539,7 @@ class Differentiator(QThread):
                 transid = "9999999"
                 command = "{command} {dir1} {transid}".format(command=BTRFS_FIND_NEW_COMMAND,
                                                               dir1=self.__snapshot_full_path, transid=transid)
-                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                echo = subprocess.Popen(['echo', settings.user_password], stdout=subprocess.PIPE)
                 result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
                 for line in iter(result.stdout.readline, b''):
@@ -553,7 +552,7 @@ class Differentiator(QThread):
                     command=BTRFS_FIND_NEW_COMMAND,
                     dir1=subvolume.subvolume_origin,
                     transid=transid)
-                echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+                echo = subprocess.Popen(['echo', settings.user_password], stdout=subprocess.PIPE)
                 result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
                 temp_sorted_modified.write("- Files in both snapshots that have been modified" + "\r\n")
@@ -596,19 +595,19 @@ def delete_specific_snapshot(snapshot_full_path):
 
     """
     # Logger
-    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger = utils.Logger(sys.modules['__main__'].__file__).get()
     info_message = "Deleting snapshot {snapshot}".format(snapshot=snapshot_full_path)
     logger.info(info_message)
 
     command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshot_full_path)
-    util.utils.execute_command(command, root=True)
+    utils.execute_command(command, root=True)
     info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshot_full_path)
     logger.info(info_message)
 
     # Checks if grub-btrfs integration is enabled
-    if util.settings.properties_manager.get_property("grub_btrfs"):
+    if settings.properties_manager.get_property("grub_btrfs"):
         # Run grub-btrfs in order to regenerate GRUB entries
-        util.utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+        utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
         info_message = "Regenerating GRUB entries. Please wait..."
         logger.info(info_message)
 
@@ -623,14 +622,14 @@ def get_subvolume_by_snapshot_name(snapshot_name):
             Subvolume: The subvolume which belongs the snapshot. None if subvolume was not found.
     """
     # Logger
-    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger = utils.Logger(sys.modules['__main__'].__file__).get()
     info_message = "Getting subvolume from snapshot's name {snapshot_name}".format(snapshot_name=snapshot_name)
     logger.info(info_message)
 
     subvolume_found = None
 
-    for subvolume_key in util.settings.subvolumes:
-        subvolume = util.settings.subvolumes[subvolume_key]
+    for subvolume_key in settings.subvolumes:
+        subvolume = settings.subvolumes[subvolume_key]
         subvolume_snapshots_prefix = "{subvolume_dest}{subvolume_prefix}".format(
             subvolume_dest=subvolume.subvolume_dest,
             subvolume_prefix=subvolume.snapshot_name)
