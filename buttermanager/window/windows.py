@@ -23,6 +23,7 @@
 """
 import exception.exception
 import filesystem.snapshot
+import os
 import subprocess
 import sys
 import util.settings
@@ -60,10 +61,12 @@ class InfoWindow(QDialog):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/InfoWindow.ui", self)
+        info_window_ui = os.path.join(util.settings.ui_dir, 'InfoWindow.ui')
+        uic.loadUi(info_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -115,10 +118,12 @@ class GeneralInfoWindow(QDialog):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/GeneralInfoWindow.ui", self)
+        general_window_ui = os.path.join(util.settings.ui_dir, 'GeneralInfoWindow.ui')
+        uic.loadUi(general_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -188,10 +193,12 @@ class ConsolidateSnapshotWindow(QDialog):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/ConsolidateSnapshotWindow.ui", self)
+        consolidate_snapshot_window_ui = os.path.join(util.settings.ui_dir, 'ConsolidateSnapshotWindow.ui')
+        uic.loadUi(consolidate_snapshot_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -336,10 +343,12 @@ class SnapshotWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/SnapshotWindow.ui", self)
+        snapshot_window_ui = os.path.join(util.settings.ui_dir, 'SnapshotWindow.ui')
+        uic.loadUi(snapshot_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -500,10 +509,12 @@ class SubvolumeWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/SubvolumeWindow.ui", self)
+        subvolume_window_ui = os.path.join(util.settings.ui_dir, 'SubvolumeWindow.ui')
+        uic.loadUi(subvolume_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -528,9 +539,10 @@ class SubvolumeWindow(QMainWindow):
         self.move(qt_rectangle.topLeft())
 
         # Loading icons
-        self.button_add_subvolume_orig.setIcon(QIcon('images/folder_16px_icon.png'))
+        folder_icon = os.path.join(util.settings.images_dir, 'folder_16px_icon.png')
+        self.button_add_subvolume_orig.setIcon(QIcon(folder_icon))
         self.button_add_subvolume_orig.setIconSize(QSize(16, 16))
-        self.button_add_subvolume_dest.setIcon(QIcon('images/folder_16px_icon.png'))
+        self.button_add_subvolume_dest.setIcon(QIcon(folder_icon))
         self.button_add_subvolume_dest.setIconSize(QSize(16, 16))
 
         # Button events
@@ -638,10 +650,12 @@ class UpdatesWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/UpdatesWindow.ui", self)
+        updates_window_ui = os.path.join(util.settings.ui_dir, 'UpdatesWindow.ui')
+        uic.loadUi(updates_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -733,10 +747,12 @@ class ProblemsFoundWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/ProblemsFoundWindow.ui", self)
+        problems_found_window_ui = os.path.join(util.settings.ui_dir, 'ProblemsFoundWindow.ui')
+        uic.loadUi(problems_found_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -800,10 +816,12 @@ class LogViewWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/LogViewWindow.ui", self)
+        log_view_window_ui = os.path.join(util.settings.ui_dir, 'LogViewWindow.ui')
+        uic.loadUi(log_view_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Adjusting font scale
         # UI elements
@@ -883,7 +901,8 @@ class DiffWindow(QDialog):
 
         """
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
         self.setWindowTitle('Calculating differences')
 
         # Adjusting font scale

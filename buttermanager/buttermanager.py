@@ -62,6 +62,10 @@ class PasswordWindow(QMainWindow):
         # Configuring the application
         self.__buttermanager_configurator = util.utils.ConfigManager()
         self.__buttermanager_configurator.configure()
+        # Locating ui and images directories
+        util.settings.ui_dir = os.path.join(os.path.dirname(__file__), 'ui')
+        util.settings.images_dir = os.path.join(os.path.dirname(__file__), 'images')
+
         # UI elements
         self.__ui_elements = []
         # Logger
@@ -77,10 +81,12 @@ class PasswordWindow(QMainWindow):
 
         """
         # Loading User Interface
-        uic.loadUi("ui/PasswordWindow.ui", self)
+        password_window_ui = os.path.join(util.settings.ui_dir, 'PasswordWindow.ui')
+        uic.loadUi(password_window_ui, self)
 
         # Setting the window icon
-        self.setWindowIcon(QIcon('images/buttermanager50.png'))
+        buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+        self.setWindowIcon(QIcon(buttermanager_icon))
 
         # Calculating the base font size for all UI elements in the application
         util.settings.base_font_size = self.get_base_font_size()
@@ -100,7 +106,8 @@ class PasswordWindow(QMainWindow):
         self.setMaximumWidth(320)
 
         # Setting lock icon
-        self.button_lock.setIcon(QIcon('images/lock_24px_icon.png'))
+        lock_icon = os.path.join(util.settings.images_dir, 'lock_24px_icon.png')
+        self.button_lock.setIcon(QIcon(lock_icon))
         self.button_lock.setIconSize(QSize(24, 24))
 
         # Centering the window
@@ -231,10 +238,12 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         try:
             # Loading User Interface
-            uic.loadUi("ui/MainWindow.ui", self)
+            main_window_ui = os.path.join(util.settings.ui_dir, 'MainWindow.ui')
+            uic.loadUi(main_window_ui, self)
 
             # Setting the window icon
-            self.setWindowIcon(QIcon('images/buttermanager50.png'))
+            buttermanager_icon = os.path.join(util.settings.images_dir, 'buttermanager50.png')
+            self.setWindowIcon(QIcon(buttermanager_icon))
 
             # Adjusting font scale
             # UI elements
@@ -386,32 +395,39 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # Setting buttons and icons
                 # Snapshot buttons
-                self.button_take_snapshot.setIcon(QIcon('images/add_16px_icon.png'))
+                add_icon = os.path.join(util.settings.images_dir, 'add_16px_icon.png')
+                self.button_take_snapshot.setIcon(QIcon(add_icon))
                 self.button_take_snapshot.setIconSize(QSize(16, 16))
-                self.button_delete_snapshot.setIcon(QIcon('images/remove_16px_icon.png'))
+                remove_icon = os.path.join(util.settings.images_dir, 'remove_16px_icon.png')
+                self.button_delete_snapshot.setIcon(QIcon(remove_icon))
                 self.button_delete_snapshot.setIconSize(QSize(16, 16))
-                self.button_diff.setIcon(QIcon('images/exchange_arrows_16px_icon.png'))
+                exchange_arrows_icon = os.path.join(util.settings.images_dir, 'exchange_arrows_16px_icon.png')
+                self.button_diff.setIcon(QIcon(exchange_arrows_icon))
                 self.button_diff.setIconSize(QSize(16, 16))
-                self.button_folder.setIcon(QIcon('images/folder_16px_icon.png'))
+                folder_icon = os.path.join(util.settings.images_dir, 'folder_16px_icon.png')
+                self.button_folder.setIcon(QIcon(folder_icon))
                 self.button_folder.setIconSize(QSize(16, 16))
 
                 # Logs buttons
-                self.button_view_log.setIcon(QIcon('images/view_24px_icon.png'))
+                view_icon = os.path.join(util.settings.images_dir, 'view_24px_icon.png')
+                self.button_view_log.setIcon(QIcon(view_icon))
                 self.button_view_log.setIconSize(QSize(24, 24))
                 self.button_delete_log.setIcon(QIcon('images/remove_16px_icon.png'))
                 self.button_delete_log.setIconSize(QSize(16, 16))
 
                 # Subvolume buttons
-                self.button_save_subvolume.setIcon(QIcon('images/accept_16px_icon.png'))
+                accept_icon = os.path.join(util.settings.images_dir, 'accept_16px_icon.png')
+                self.button_save_subvolume.setIcon(QIcon(accept_icon))
                 self.button_save_subvolume.setIconSize(QSize(16, 16))
-                self.button_edit_subvolume.setIcon(QIcon('images/edit_16px_icon.png'))
+                edit_icon = os.path.join(util.settings.images_dir, 'edit_16px_icon.png')
+                self.button_edit_subvolume.setIcon(QIcon(edit_icon))
                 self.button_edit_subvolume.setIconSize(QSize(16, 16))
-                self.button_delete_subvolume.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_subvolume.setIcon(QIcon(remove_icon))
                 self.button_delete_subvolume.setIconSize(QSize(16, 16))
                 self.refresh_subvolume_buttons()
 
                 # Displaying logo within About tab
-                self.label_logo.setPixmap(QPixmap('images/buttermanager50.png'))
+                self.label_logo.setPixmap(QPixmap(buttermanager_icon))
 
                 # Button events
                 self.button_balance.clicked.connect(self.balance_filesystem)

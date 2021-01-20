@@ -67,6 +67,10 @@ subvolumes = {}
 properties_manager = None
 # Base fot size for all the UI elements
 base_font_size = 10
+# Location of the UI layouts directory
+ui_dir = ""
+# Location of the images directory
+images_dir = ""
 
 
 class PropertiesManager:
