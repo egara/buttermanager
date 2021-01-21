@@ -21,12 +21,11 @@
 """This module gathers all the additional windows for displaying information in the application.
 
 """
-import exception.exception
-import filesystem.snapshot
-import os
+from ..exception import exception
+from ..filesystem import snapshot
+from ..util import settings, utils
 import subprocess
 import sys
-import util.settings
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog, QPushButton, QVBoxLayout, QLabel
 from PyQt5 import uic, QtCore, QtTest, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSize
@@ -71,9 +70,9 @@ class InfoWindow(QDialog):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_info]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(240)
@@ -128,9 +127,9 @@ class GeneralInfoWindow(QDialog):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_info, self.button_box]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
@@ -179,7 +178,7 @@ class ConsolidateSnapshotWindow(QDialog):
         self.__ui_elements = []
 
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         # Initializing private attributes
         self.__snapshot_to_clone_in_root_full_path = snapshot_to_clone_in_root_full_path
@@ -203,9 +202,9 @@ class ConsolidateSnapshotWindow(QDialog):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_info, self.button_box]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
@@ -239,11 +238,11 @@ class ConsolidateSnapshotWindow(QDialog):
             self.__root_subvolume.delete_origin()
             # Creates a new snapshot for root
             command = "{command} {subvolume_origin} {subvolume_dest}".format(
-                command=filesystem.snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
+                command=snapshot.BTRFS_CREATE_SNAPSHOT_RW_COMMAND,
                 subvolume_origin=self.__snapshot_to_clone_in_root_full_path,
                 subvolume_dest=self.__root_subvolume.subvolume_origin[:-1]
             )
-            util.utils.execute_command(command, console=True, root=True)
+            utils.execute_command(command, console=True, root=True)
             # Replace /etc/fstab with the default snapshot
             # Substitute the entry in fstab for root
 
@@ -295,9 +294,9 @@ class ConsolidateSnapshotWindow(QDialog):
             try:
                 subprocess.check_output(command, shell=True)
                 # Checks if grub-btrfs integration is enabled
-                if util.settings.properties_manager.get_property("grub_btrfs"):
+                if settings.properties_manager.get_property("grub_btrfs"):
                     # Run grub-btrfs in order to regenerate GRUB entries
-                    util.utils.execute_command(filesystem.snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
+                    utils.execute_command(snapshot.GRUB_BTRFS_COMMAND, console=True, root=True)
                 # The consolidation process was OK so this QDialong window is closed and returns integer 1
                 self.done(1)
             except subprocess.CalledProcessError as subprocess_exception:
@@ -305,7 +304,7 @@ class ConsolidateSnapshotWindow(QDialog):
                                     "path of the new snapshot created. Reason: " + str(subprocess_exception.reason))
                 # The consolidation process was KO so this QDialong window is closed and returns integer 2
                 self.done(2)
-        except exception.exception.BtrfsSnapshotDeletion as btrfs_snapshot_exception:
+        except exception.BtrfsSnapshotDeletion as btrfs_snapshot_exception:
             self.__logger.error("Error removing root snapshot {root_snapshot} because it is not empty and there are "
                                 "subvolumes within it "
                                 .format(root_snapshot=self.__root_subvolume.subvolume_origin[:-1]))
@@ -333,7 +332,7 @@ class SnapshotWindow(QMainWindow):
         self.__ui_elements = []
 
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         # Initializing the window
         self.init_ui()
@@ -354,9 +353,9 @@ class SnapshotWindow(QMainWindow):
         # UI elements
         self.__ui_elements = [self.radiobutton_all_subvolumes, self.radiobutton_one_subvolume,
                               self.combobox_subvolumes, self.button_ok, self.button_cancel]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(300)
@@ -375,7 +374,7 @@ class SnapshotWindow(QMainWindow):
 
         # Retrieveing subvolumes
         subvolumes = []
-        for subvolume in util.settings.subvolumes:
+        for subvolume in settings.subvolumes:
             subvolumes.append(subvolume)
         self.combobox_subvolumes.addItems(subvolumes)
 
@@ -416,11 +415,11 @@ class SnapshotWindow(QMainWindow):
         QtTest.QTest.qWait(10)
 
         if self.radiobutton_all_subvolumes.isChecked():
-            for subvolume in util.settings.subvolumes:
-                util.settings.subvolumes[subvolume].create_snapshot()
+            for subvolume in settings.subvolumes:
+                settings.subvolumes[subvolume].create_snapshot()
         else:
             subvolume_selected = self.combobox_subvolumes.currentText()
-            util.settings.subvolumes[subvolume_selected].create_snapshot()
+            settings.subvolumes[subvolume_selected].create_snapshot()
 
         # Refreshing GUI
         self.on_refresh_gui()
@@ -499,7 +498,7 @@ class SubvolumeWindow(QMainWindow):
         self.__ui_elements = []
 
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         # Initializing the window
         self.init_ui()
@@ -522,9 +521,9 @@ class SubvolumeWindow(QMainWindow):
                               self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
                               self.label_subvolume_origin_2, self.line_subvolume_origin, self.line_subvolume_dest,
                               self.line_snapshot_name]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(300)
@@ -590,7 +589,7 @@ class SubvolumeWindow(QMainWindow):
             info_dialog.show()
         else:
             # Adding a new subvolume
-            util.settings.properties_manager.set_subvolume(origin, dest, name)
+            settings.properties_manager.set_subvolume(origin, dest, name)
 
             # Refreshing GUI
             self.on_refresh_gui()
@@ -637,7 +636,7 @@ class UpdatesWindow(QMainWindow):
         self.__ui_elements = []
 
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         # Command line text
         self.__command_line_text = command_line_text
@@ -661,9 +660,9 @@ class UpdatesWindow(QMainWindow):
         # UI elements
         self.__ui_elements = [self.button_upgrade_system, self.button_cancel,
                               self.button_upgrade_system_without_snapshots, self.label_updates, self.text_edit_console]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(442)
@@ -684,7 +683,7 @@ class UpdatesWindow(QMainWindow):
             self.text_edit_console.moveCursor(QTextCursor.End)
 
         # Hiding upgrade button with snapshots if there is no subvolume defined
-        if len(util.settings.subvolumes) == 0:
+        if len(settings.subvolumes) == 0:
             self.button_upgrade_system.hide()
 
         # Button events
@@ -757,9 +756,9 @@ class ProblemsFoundWindow(QMainWindow):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_info, self.button_ok]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
@@ -803,7 +802,7 @@ class LogViewWindow(QMainWindow):
         # UI elements
         self.__ui_elements = []
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         # Command line text
         self.__log_path = log_path
@@ -826,9 +825,9 @@ class LogViewWindow(QMainWindow):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.label_log, self.text_log]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(442)
@@ -878,7 +877,7 @@ class DiffWindow(QDialog):
         self.__ui_elements = []
 
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
 
         self.__label_info = QLabel()
         self.__label_info.setAlignment(QtCore.Qt.AlignCenter)
@@ -908,9 +907,9 @@ class DiffWindow(QDialog):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.__label_info, self.__button_partial, self.__button_full]
-        util.utils.scale_fonts(self.__ui_elements)
+        utils.scale_fonts(self.__ui_elements)
         # Tooltips
-        self.setStyleSheet(" QToolTip{font: " + str(util.settings.base_font_size) + "pt}")
+        self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
