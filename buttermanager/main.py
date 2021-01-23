@@ -1,4 +1,4 @@
-from buttermanager.buttermanager import PasswordWindow
+from .buttermanager.buttermanager import PasswordWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 

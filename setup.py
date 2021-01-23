@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/egara/buttermanager",
     packages=setuptools.find_packages(),
-    package_data={'buttermanager': ['ui/*', 'images/*']},
+    package_data={'buttermanager': ['buttermanager/ui/*', 'buttermanager/images/*']},
     install_requires=[
        'PyQt5>=5.10.1',
        'PyYAML>=4.2b1',
@@ -30,7 +30,7 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            "buttermanager = buttermanager.buttermanager:main",
+            "buttermanager = buttermanager.main:main",
         ],
     },
 
