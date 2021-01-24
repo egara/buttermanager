@@ -1,4 +1,4 @@
-from .buttermanager.buttermanager import PasswordWindow
+from buttermanager.buttermanager import PasswordWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -10,7 +10,7 @@ def main():
     # Creating application instance
     application = QApplication(sys.argv)
     # Creating main window instance
-    password_window = PasswordWindow(None)
+    PasswordWindow(None)
     # Launching the application
     application.exec_()
 
