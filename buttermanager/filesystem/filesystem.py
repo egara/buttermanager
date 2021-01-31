@@ -22,10 +22,10 @@
 
 It provides also Filesystem class.
 """
-import exception.exception
+from ..exception import exception
+from ..window import windows
 import sys
-import util.utils
-import window.windows
+from ..util import utils
 from PyQt5.QtCore import QThread, pyqtSignal
 
 # Constants
@@ -152,7 +152,7 @@ class Filesystem:
         """
         try:
             devices = []
-            commandline_output = util.utils.execute_command(BTRFS_SHOW_COMMAND, root=True)
+            commandline_output = utils.execute_command(BTRFS_SHOW_COMMAND, root=True)
             filesystem_found = False
 
             for line in commandline_output.split("\n"):
@@ -174,7 +174,7 @@ class Filesystem:
 
             return devices
 
-        except exception.exception.NoCommandFound as no_command_found_exception:
+        except exception.NoCommandFound as no_command_found_exception:
             raise no_command_found_exception
 
     def __get_mounted_device(self):
@@ -185,7 +185,7 @@ class Filesystem:
         """
         try:
             mounted_device = ''
-            commandline_output = util.utils.execute_command(FINDMT_COMMAND)
+            commandline_output = utils.execute_command(FINDMT_COMMAND)
             for device in self.devices:
                 if device in commandline_output:
                     mounted_device = device
@@ -193,7 +193,7 @@ class Filesystem:
 
             return mounted_device
 
-        except exception.exception.NoCommandFound as no_command_found_exception:
+        except exception.NoCommandFound as no_command_found_exception:
             raise no_command_found_exception
 
     def __get_mounted_points(self):
@@ -206,7 +206,7 @@ class Filesystem:
             mounted_points = []
             device = self.__get_mounted_device()
             command = "{command} {device}".format(command=FINDMT_COMMAND, device=device)
-            commandline_output = util.utils.execute_command(command)
+            commandline_output = utils.execute_command(command)
 
             for line in commandline_output.split("\n"):
                 if len(line) > 0:
@@ -214,7 +214,7 @@ class Filesystem:
 
             return mounted_points
 
-        except exception.exception.NoCommandFound as no_command_found_exception:
+        except exception.NoCommandFound as no_command_found_exception:
             raise no_command_found_exception
 
     def __get_filesystem_info(self, mounted_point):
@@ -240,7 +240,7 @@ class Filesystem:
                            'metadata_size': '0', 'metadata_used': '0', 'metadata_percentage': 0,
                            'system_size': '0', 'system_used': '0', 'system_percentage': 0}
         command = "{command} {point}".format(command=BTRFS_USAGE_COMMAND, point=mounted_point)
-        commandline_output = util.utils.execute_command(command, root=True)
+        commandline_output = utils.execute_command(command, root=True)
 
         for line in commandline_output.split("\n"):
             if DEVICE_SIZE in line:
@@ -255,7 +255,7 @@ class Filesystem:
                     # New versions of btrfs-progs already include the percentage
                     data_used = data_used.split()[0].strip()
                 filesystem_info['data_used'] = data_used
-                filesystem_info['data_percentage'] = util.utils.get_percentage(filesystem_info['data_size'],
+                filesystem_info['data_percentage'] = utils.get_percentage(filesystem_info['data_size'],
                                                                                filesystem_info['data_used'])
             elif METADATA in line:
                 metadata_size = line.split(SIZE)[1].split(',')[0].strip()
@@ -265,13 +265,13 @@ class Filesystem:
                     # New versions of btrfs-progs already include the percentage
                     metadata_used = metadata_used.split()[0].strip()
                 filesystem_info['metadata_used'] = metadata_used
-                filesystem_info['metadata_percentage'] = util.utils.get_percentage(filesystem_info['metadata_size'],
+                filesystem_info['metadata_percentage'] = utils.get_percentage(filesystem_info['metadata_size'],
                                                                                    filesystem_info['metadata_used'])
             elif SYSTEM in line:
                 system_size = line.split(SIZE)[1].split(',')[0].strip()
                 filesystem_info['system_size'] = system_size
                 filesystem_info['system_used'] = line.split(USED)[1].strip()
-                filesystem_info['system_percentage'] = util.utils.get_percentage(filesystem_info['system_size'],
+                filesystem_info['system_percentage'] = utils.get_percentage(filesystem_info['system_size'],
                                                                                  filesystem_info['system_used'])
 
         return filesystem_info
@@ -304,7 +304,7 @@ def get_btrfs_filesystems(mounted=True):
     if mounted:
         command += " --mounted"
 
-    commandline_output = util.utils.execute_command(command, root=True)
+    commandline_output = utils.execute_command(command, root=True)
 
     for line in commandline_output.split("\n"):
         if UUID in line:
@@ -323,7 +323,7 @@ def balance_filesystem(filter, percentage, mounted_point):
         mounted_point: path to balance.
     """
     # Logger
-    logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+    logger = utils.Logger(sys.modules['__main__'].__file__).get()
     logger.info("Balancing {mounted_point} using filter {filter} and "
                 "percentage {percentage}".format(mounted_point=mounted_point,
                                                  filter=filter,
@@ -334,7 +334,7 @@ def balance_filesystem(filter, percentage, mounted_point):
                                                                         percentage=percentage,
                                                                         mounted_point=mounted_point)
     logger.info("Command executed {command}".format(command=command))
-    commandline_output = util.utils.execute_command(command, root=True)
+    commandline_output = utils.execute_command(command, root=True)
     for line in commandline_output.split("\n"):
         logger.info(line)
 
@@ -363,7 +363,7 @@ class BalanceManager(QThread):
     def run(self):
         # Main window will be hidden
         self.on_show_one_window(True)
-        info_dialog = window.windows.InfoWindow(None, "Balancing '{mounted_point}' mounted point. \n"
+        info_dialog = windows.InfoWindow(None, "Balancing '{mounted_point}' mounted point. \n"
                                                       "This window will be closed automatically \n"
                                                       "when the operation is done. \n \n"
                                                       "Please wait...".format(mounted_point=self.__mounted_point))

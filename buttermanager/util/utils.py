@@ -21,8 +21,10 @@
 """This module gathers all the utils and tools for buttermanager application.
 
 """
-import exception.exception
-import filesystem.snapshot
+from . import settings
+from ..exception import exception
+from ..filesystem import snapshot
+from ..window import windows
 import logging
 import logging.handlers
 import os
@@ -30,10 +32,8 @@ import pathlib
 import shutil
 import subprocess
 import sys
-import util.settings
 import urllib.request
 import urllib.error
-import window.windows
 import yaml
 
 # Constants
@@ -65,15 +65,15 @@ class ConfigManager:
     # Constructor
     def __init__(self):
         # Setting global values related to the application
-        util.settings.application_name = self.APP_NAME
-        application_directory = ".{name}".format(name=util.settings.application_name)
-        util.settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
-        util.settings.logs_path = os.path.join(util.settings.application_path, self.LOGS_DIR)
+        settings.application_name = self.APP_NAME
+        application_directory = ".{name}".format(name=settings.application_name)
+        settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
+        settings.logs_path = os.path.join(settings.application_path, self.LOGS_DIR)
 
         # Creating application's directory if it is needed
-        if not os.path.exists(util.settings.application_path):
+        if not os.path.exists(settings.application_path):
             # Application directory does not exist. Creating directory...
-            os.makedirs(util.settings.application_path)
+            os.makedirs(settings.application_path)
 
             # Creating buttermanager.yaml file with default values
             config_file_as_dictionary = '''
@@ -90,15 +90,15 @@ class ConfigManager:
                 subvolumes_prefix:
             '''
             config_file_dictionary = yaml.load(config_file_as_dictionary)
-            conf_file_path = '{application_path}/{conf_file}'.format(application_path=util.settings.application_path,
-                                                                     conf_file=util.settings.CONF_FILE)
+            conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
+                                                                     conf_file=settings.CONF_FILE)
             conf_file = open(conf_file_path, 'w')
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
         # Creating logs directory it it doesn't exist
-        if not os.path.exists(util.settings.logs_path):
-            os.makedirs(util.settings.logs_path)
+        if not os.path.exists(settings.logs_path):
+            os.makedirs(settings.logs_path)
 
         # Logger
         self.__logger = Logger(self.__class__.__name__).get()
@@ -108,50 +108,50 @@ class ConfigManager:
 
         """
         # Version
-        util.settings.application_version = util.settings.VERSION
+        settings.application_version = settings.VERSION
 
         # Checking OS
         if exist_program(SUSE_PM):
-            util.settings.user_os = OS_SUSE
+            settings.user_os = OS_SUSE
         elif exist_program(DEBIAN_PM):
-            util.settings.user_os = OS_DEBIAN
+            settings.user_os = OS_DEBIAN
         elif exist_program(ARCH_PM):
-            util.settings.user_os = OS_ARCH
+            settings.user_os = OS_ARCH
         elif exist_program(FEDORA_PM):
-            util.settings.user_os = OS_FEDORA
-        self.__logger.info("Checking OS. {os} found".format(os=util.settings.user_os))
+            settings.user_os = OS_FEDORA
+        self.__logger.info("Checking OS. {os} found".format(os=settings.user_os))
 
         # Creating a properties manager to manage all the application properties
         self.__logger.info("Creating PropertiesManager...")
-        util.settings.properties_manager = util.settings.PropertiesManager()
+        settings.properties_manager = settings.PropertiesManager()
 
         # Retrieving configuration...
         self.__logger.info("Retrieving user's configuration from buttermanager.yaml file and loading it in memory...")
         # Do the user want to remove snapshots during the upgrading process)
-        util.settings.remove_snapshots = int(util.settings.properties_manager.get_property('remove_snapshots'))
+        settings.remove_snapshots = int(settings.properties_manager.get_property('remove_snapshots'))
 
         # Number of snapshots to keep after the upgrading process
-        util.settings.snapshots_to_keep = int(util.settings.properties_manager.get_property('snapshots_to_keep'))
+        settings.snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
 
         # Do the user want to update snap packages during the upgrading process
-        util.settings.snap_packages = int(util.settings.properties_manager.get_property('snap_packages'))
+        settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))
 
         # Do the user want to update AUR packages during the upgrading process
-        util.settings.aur_repository = int(util.settings.properties_manager.get_property('aur_repository'))
+        settings.aur_repository = int(settings.properties_manager.get_property('aur_repository'))
 
         # Do the user want to check for updates at startup
-        util.settings.check_at_startup = int(util.settings.properties_manager.get_property('check_at_startup'))
+        settings.check_at_startup = int(settings.properties_manager.get_property('check_at_startup'))
 
         # Do user want to boot the system from GRUB using snapshots
-        util.settings.grub_btrfs = int(util.settings.properties_manager.get_property('grub_btrfs'))
+        settings.grub_btrfs = int(settings.properties_manager.get_property('grub_btrfs'))
 
         # The path of the root snapshot that must be within /etc/fstab as / mount point
         # It will be 0 if this property is not defined yet or it is empty
-        util.settings.path_to_consolidate_root_snapshot = util.settings.properties_manager.\
+        settings.path_to_consolidate_root_snapshot = settings.properties_manager.\
             get_property('path_to_consolidate_root_snapshot')
 
         # Do the user want to save logs automatically
-        util.settings.save_log = int(util.settings.properties_manager.get_property('save_log'))
+        settings.save_log = int(settings.properties_manager.get_property('save_log'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()
@@ -159,7 +159,7 @@ class ConfigManager:
         for subvolume in subvolumes_list:
             subvolumes[subvolume.subvolume_origin] = subvolume
 
-        util.settings.subvolumes = subvolumes
+        settings.subvolumes = subvolumes
 
 
 class Logger(object):
@@ -167,7 +167,7 @@ class Logger(object):
 
     """
     def __init__(self, class_name):
-        name = os.path.join(util.settings.application_path, "buttermanager.log")
+        name = os.path.join(settings.application_path, "buttermanager.log")
         logger = logging.getLogger(class_name)
         logger.setLevel(logging.DEBUG)
 
@@ -188,7 +188,7 @@ class VersionChecker:
     """
     def __init__(self, parent_window):
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = Logger(self.__class__.__name__).get()
         self.__logger.info("Checking for a new version of ButterManager. Please wait...")
         self.__version_url = VERSION_URL
         self.__parent_window = parent_window
@@ -208,15 +208,15 @@ class VersionChecker:
             self.__logger.error("Error checking new versions of ButterManager. Reason: " + str(exception.reason))
         else:
             self.__logger.info("Last version is " + last_version + " and current version is " +
-                               util.settings.application_version)
+                               settings.application_version)
 
-            if last_version != util.settings.application_version:
-                if util.settings.user_os == OS_ARCH:
-                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+            if last_version != settings.application_version:
+                if settings.user_os == OS_ARCH:
+                    info_window = windows.GeneralInfoWindow(self.__parent_window, "New version " +
                                                                    last_version + " is available. Update ButterManager "
                                                                                   "via AUR")
                 else:
-                    info_window = window.windows.GeneralInfoWindow(self.__parent_window, "New version " +
+                    info_window = windows.GeneralInfoWindow(self.__parent_window, "New version " +
                                                                    last_version + " is available. Check the repository "
                                                                    "\nof the project "
                                                                    "(https://github.com/egara/buttermanager)\n "
@@ -245,7 +245,7 @@ def execute_command(command, console=False, root=False):
         sudo_position = program.index("sudo")
         single_command = program[sudo_position + 2]
     if exist_program(single_command, root=root):
-        echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+        echo = subprocess.Popen(['echo', settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
@@ -264,9 +264,9 @@ def execute_command(command, console=False, root=False):
         return commandline_output
     else:
         # Logger
-        logger = util.utils.Logger(sys.modules['__main__'].__file__).get()
+        logger = Logger(sys.modules['__main__'].__file__).get()
         logger.info(single_command + " program does not exist in the system")
-        raise exception.exception.NoCommandFound()
+        raise exception.NoCommandFound()
 
 
 def get_percentage(total, parcial):
@@ -362,7 +362,7 @@ def exist_program(program, root=False):
     if root:
         command = "sudo -S which " + program
         # Checking if the program executed by the command is installed in the system
-        echo = subprocess.Popen(['echo', util.settings.user_password], stdout=subprocess.PIPE)
+        echo = subprocess.Popen(['echo', settings.user_password], stdout=subprocess.PIPE)
         # run method receives a list, so it is necessary to convert command string into a list using split
         result = subprocess.Popen(command.split(), stdin=echo.stdout, stdout=subprocess.PIPE)
 
@@ -383,15 +383,15 @@ def get_subvolumes():
         list (:obj:`list` of :obj:`Subvolume`): subvolumes objects defined by the user.
     """
     subvolumes = []
-    subvolumes_orig_raw = util.settings.properties_manager.get_property('subvolumes_orig')
-    subvolumes_dest_raw = util.settings.properties_manager.get_property('subvolumes_dest')
-    subvolumes_prefix_raw = util.settings.properties_manager.get_property('subvolumes_prefix')
+    subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
+    subvolumes_dest_raw = settings.properties_manager.get_property('subvolumes_dest')
+    subvolumes_prefix_raw = settings.properties_manager.get_property('subvolumes_prefix')
     if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
         subvolumes_orig = subvolumes_orig_raw.split("|")
         subvolumes_dest = subvolumes_dest_raw.split("|")
         subvolumes_prefix = subvolumes_prefix_raw.split("|")
         for index, subvolume_orig in enumerate(subvolumes_orig):
-            subvolume = filesystem.snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
+            subvolume = snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
             subvolumes.append(subvolume)
 
     return subvolumes
@@ -404,7 +404,7 @@ def scale_fonts(ui_elements, reduced_point_size=0):
         ui_elements (list): UI elements to change the font
         reduced_point_size (int): Integer to reduce the base font pint size
     """
-    font_size = util.settings.base_font_size - reduced_point_size
+    font_size = settings.base_font_size - reduced_point_size
     # Changing the font for every UI element
     for label in ui_elements:
         font = label.font()
