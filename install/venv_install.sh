@@ -56,7 +56,6 @@ pip install --upgrade pip
 pip install -r requirements.txt
 echo ""
 echo ""
-echo ""
 echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 @@@@@@@@@@@@&&%%#########%%%%%#########%%&&@@@@@@@+
 @@@@@@@&&&#((%&&#(/*****************/(%&&%((%&&@@@+
@@ -76,7 +75,6 @@ echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 %#((#%&@@@&&(#&*******************#%*%#*&##&&@@@@@+
 @&%%%@@@@@&&(#&///////////////////#%/%#/&##&&@@@@@+
 @@@@@@@@@@&&###############################&&@@@@@'
-echo ""
 echo ""
 echo ""
 echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"

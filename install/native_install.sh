@@ -48,7 +48,6 @@ cd /opt/buttermanager/
 sudo $python_bin setup.py install --record installed_files.txt
 echo ""
 echo ""
-echo ""
 echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 @@@@@@@@@@@@&&%%#########%%%%%#########%%&&@@@@@@@+
 @@@@@@@&&&#((%&&#(/*****************/(%&&%((%&&@@@+
@@ -68,7 +67,6 @@ echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 %#((#%&@@@&&(#&*******************#%*%#*&##&&@@@@@+
 @&%%%@@@@@&&(#&///////////////////#%/%#/&##&&@@@@@+
 @@@@@@@@@@&&###############################&&@@@@@'
-echo ""
 echo ""
 echo ""
 echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"
