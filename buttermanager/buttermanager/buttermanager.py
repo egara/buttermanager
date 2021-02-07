@@ -427,7 +427,7 @@ class ButtermanagerMainWindow(QMainWindow):
 
                 # Button events
                 self.button_balance.clicked.connect(self.balance_filesystem)
-                self.button_upgrade_system.clicked.connect(self.upgrade_system)
+                self.button_upgrade_system.clicked.connect(partial(self.upgrade_system, True))
                 self.button_upgrade_system_without_snapshots.clicked.connect(partial(self.upgrade_system, False))
                 self.button_fa_take_snapshot.clicked.connect(self.take_snapshot)
                 self.button_close_terminal.clicked.connect(self.close_terminal)
