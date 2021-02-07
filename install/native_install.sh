@@ -30,6 +30,7 @@ sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R /opt/buttermanager
 echo "Copying all the files needed into /opt/buttermanager"
 cp -ar ../buttermanager/* /opt/buttermanager/buttermanager
 cp -ar ../setup.py /opt/buttermanager/
+cp -ar ../README.md /opt/buttermanager
 cp -ar ../aur/buttermanager.svg /opt/buttermanager/gui/
 
 # Creating desktop launcher
