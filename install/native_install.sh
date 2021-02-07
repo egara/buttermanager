@@ -46,6 +46,9 @@ cp ../packaging/buttermanager.desktop ~/.local/share/applications/
 echo "Installing libraries and ButterManager natively..."
 cd /opt/buttermanager/
 sudo $python_bin setup.py install --record installed_files.txt
+echo ""
+echo ""
+echo ""
 echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 @@@@@@@@@@@@&&%%#########%%%%%#########%%&&@@@@@@@+
 @@@@@@@&&&#((%&&#(/*****************/(%&&%((%&&@@@+
@@ -65,5 +68,7 @@ echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 %#((#%&@@@&&(#&*******************#%*%#*&##&&@@@@@+
 @&%%%@@@@@&&(#&///////////////////#%/%#/&##&&@@@@@+
 @@@@@@@@@@&&###############################&&@@@@@'
-
+echo ""
+echo ""
+echo ""
 echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"

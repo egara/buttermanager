@@ -30,7 +30,7 @@ sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R /opt/buttermanager
 echo "Copying all the files needed into /opt/buttermanager"
 cp -ar ../buttermanager/* /opt/buttermanager/buttermanager
 cp -ar ../requirements.txt /opt/buttermanager/
-cp -ar ../aur/buttermanager.svg /opt/buttermanager/gui/
+cp -ar ../packaging/buttermanager.svg /opt/buttermanager/gui/
 
 # Creating desktop launcher
 echo -e "Creating desktop launcher..."
@@ -54,5 +54,29 @@ source env/bin/activate
 echo -e "Installing all the required modules into the virtual environment. Please wait..."
 pip install --upgrade pip
 pip install -r requirements.txt
-
+echo ""
+echo ""
+echo ""
+echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
+@@@@@@@@@@@@&&%%#########%%%%%#########%%&&@@@@@@@+
+@@@@@@@&&&#((%&&#(/*****************/(%&&%((%&&@@@+
+@@@@@@&%(#%#/*****************************/#%##%&@+
+@@@@@&#(&(*****************/%%%%/************#%(%&+
+@@@@&&##&/***************#%#****%%***********(&(%&+
+@@@@@&&#(#%%%%%*******/%%/******#&******%%%%%#(%&&+
+@@@@@@@&&&%%(#&*****(%(*******(%#*******&#(%%&&&@@+
+@@@@@@@@@@&&(#&**/%%*,.****/%%/*********&##&&@@@@@+
+@@@@@@@@@@&&((/(%#**.,.**(%%************&##&&@@@@@+
+@@@@@@@@@@&&#%%(****.,,#%/**************&##&&@@@@@+
+@@@@@@@@@@&&%/*******%%*****************&##&&@@@@@+
+@@@@@@@&&%#(#%%(*/#%(*******************&##&&@@@@@+
+@@@@@&%%((((#%&%%%**********************&##&&@@@@@+
+@@&&%#(((#%&##&**********************%#*&##&&@@@@@+
+&%%((((#&&&&(#&*******************//*%#*&##&&@@@@@+
+%#((#%&@@@&&(#&*******************#%*%#*&##&&@@@@@+
+@&%%%@@@@@&&(#&///////////////////#%/%#/&##&&@@@@@+
+@@@@@@@@@@&&###############################&&@@@@@'
+echo ""
+echo ""
+echo ""
 echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"
