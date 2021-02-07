@@ -29,7 +29,7 @@ sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R /opt/buttermanager
 # Copying all the files needed
 echo "Copying all the files needed into /opt/buttermanager"
 cp -ar ../buttermanager/* /opt/buttermanager/buttermanager
-cp -ar ../requirements.txt /opt/buttermanager/
+cp -ar ../setup.py /opt/buttermanager/
 cp -ar ../aur/buttermanager.svg /opt/buttermanager/gui/
 
 # Creating desktop launcher
@@ -39,18 +39,11 @@ then
     echo "Directory ~/.local/share/applications/ doesn't exist. Creating it to store ButterManager desktop launcher."
     mkdir ~/.local/share/applications/ 
 fi
-cp ../aur/buttermanager.desktop ~/.local/share/applications/
+cp ../packaging/buttermanager.desktop ~/.local/share/applications/
 
-# Creating virtual environment
-echo "Creating virtual environment..."
+# Installing libraries and ButterManager natively
+echo "Installing libraries and ButterManager natively..."
 cd /opt/buttermanager/
-$python_bin -m venv env
+sudo $python_bin setup.py install --record installed_files.txt
 
-# Enabling virtual environment
-echo -e "Enabling virtual environment..."
-source env/bin/activate
-
-# Installing requirements
-echo -e "Installing all the required modules into the virtual environment. Please wait..."
-pip install --upgrade pip
-pip install -r requirements.txt
+echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"
