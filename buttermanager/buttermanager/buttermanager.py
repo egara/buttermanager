@@ -714,6 +714,8 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         self.button_balance.setEnabled(False)
         self.button_upgrade_system.setEnabled(False)
+        self.button_upgrade_system_without_snapshots.setEnabled(False)
+        self.button_fa_take_snapshot.setEnabled(False)
         self.button_close_terminal.setEnabled(False)
         self.checkbox_dont_remove_snapshots.setEnabled(False)
         self.checkbox_startup.setEnabled(False)
@@ -725,6 +727,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
         self.button_diff.setEnabled(False)
+        self.button_folder.setEnabled(False)
         self.button_add_subvolume.setEnabled(False)
         self.button_delete_subvolume.setEnabled(False)
         self.button_edit_subvolume.setEnabled(False)
@@ -739,6 +742,8 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         self.button_balance.setEnabled(True)
         self.button_upgrade_system.setEnabled(True)
+        self.button_upgrade_system_without_snapshots.setEnabled(True)
+        self.button_fa_take_snapshot.setEnabled(True)
         self.button_close_terminal.setEnabled(True)
         self.checkbox_dont_remove_snapshots.setEnabled(True)
         self.checkbox_startup.setEnabled(True)
@@ -750,6 +755,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
         self.button_diff.setEnabled(True)
+        self.button_folder.setEnabled(True)
         self.button_add_subvolume.setEnabled(True)
         self.button_delete_subvolume.setEnabled(True)
         self.button_edit_subvolume.setEnabled(True)
