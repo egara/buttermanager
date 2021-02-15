@@ -21,10 +21,10 @@
 """This module gathers all the global attributes, methods and classes needed for application settings.
 
 """
+from . import utils
+from .. import filesystem
 import os
 import yaml
-import util.utils
-import filesystem
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
@@ -67,6 +67,10 @@ subvolumes = {}
 properties_manager = None
 # Base fot size for all the UI elements
 base_font_size = 10
+# Location of the UI layouts directory
+ui_dir = ""
+# Location of the images directory
+images_dir = ""
 
 
 class PropertiesManager:
@@ -81,7 +85,7 @@ class PropertiesManager:
     # Constructor
     def __init__(self):
         # Logger
-        self.__logger = util.utils.Logger(self.__class__.__name__).get()
+        self.__logger = utils.Logger(self.__class__.__name__).get()
         # Setting global values related to the application
         self.__conf_file_path = '{application_path}/{conf_file}'.format(application_path=application_path,
                                                                         conf_file=CONF_FILE)
