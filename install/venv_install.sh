@@ -77,4 +77,4 @@ echo '@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@+
 @@@@@@@@@@&&###############################&&@@@@@'
 echo ""
 echo ""
-echo "The installation has successfully finished. Now, you should find a new icon and desktop launcher called ButterManager"
+echo "The installation has finished. Please, review the logs in order to see if everything was OK. Remember that 'python-setuptools' and 'python-virtualenv' packages needs to be installed before executing this script. In addition, if you are on Ubuntu or derivative, 'libxcb-xinerama0' needs to be installed too. Now, you should find a new icon and desktop launcher called ButterManager"
