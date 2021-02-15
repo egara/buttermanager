@@ -1,5 +1,5 @@
 Name:           buttermanager
-Version:        2.2
+Version:        2.3
 Release:        0%{?dist}
 Summary:        Tool for managing Btrfs snapshots, balancing filesystems and more
 
@@ -47,6 +47,9 @@ sed -e "s/^Exec=.*/Exec=%{name}/" \
 %{_datadir}/icons/hicolor/scalable/%{name}.svg
 
 %changelog
+* Mon Feb 15 2021 Neal Gompa <ngompa13@gmail.com> - 2.3-0
+- New release 2.3
+
 * Wed Dec 30 2020 Neal Gompa <ngompa13@gmail.com> - 2.2-0
 - New release 2.2
 

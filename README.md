@@ -4,7 +4,7 @@
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.2
+2.3
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -37,7 +37,7 @@ In order to install ButterManager manually, you have to install these packages (
 
 - Python 3
 - **python-setuptool** (f.i. the name of the package in Ubuntu is **python3-setuptools**).
-- **python-virtualenv** (f.i. the name of the package in Ubuntu is **python3-venv**).
+- **python-virtualenv** (f.i. the name of the package in Ubuntu is **python3-venv**). This package will only be needed if you use **venv_install.sh** script (see below).
 - **grub-btrfs**. Please, go to its GitHub repository [https://github.com/Antynea/grub-btrfs](https://github.com/Antynea/grub-btrfs) and follow the instructions to install it if the package is not in the official repository of your distribution.
 - **libxinerama**: This depency has been reported by some users (thanks Adam!) who install ButterManager on Ubuntu 20.04 (proper) (the name of the package in Ubuntu is **libxcb-xinerama0**)
 
@@ -50,16 +50,23 @@ Once you meet all the requirements, follow these steps:
 
   ```
 
-1. Install ButterManager using the installation script
+1. Install ButterManager using one of the following installation scripts:
+	1. **Native Installation**: This is the preferred method. It is slimmer because no virtual environment is created in order to execute ButterManager. This installation method will install the dependencies needed in your system natively and create an executable script for running the application. You will be able to execute ButterManager from the terminal typing **buttermanager** or directly via a shortcut created. In order to install ButterManager just open a terminal and execute:
 
-  ```
-    cd buttermanager
-    cd install
-    ./install.sh
+    ```
+      cd buttermanager
+      cd install
+      ./native-install.sh
+      
+    ```
 
-  ```
-  
-1. The installation process will create a desktop launcher to run ButterManager directly.
+	1. **Venv Installation**: If the first method doesn't run ButterManager properly, please try this second one. The installation process will create a virtual environment with all the dependencies needed and a desktop launcher to run ButterManager directly. In order to install ButterManager just open a terminal and type:
+
+    ```
+      cd buttermanager
+      cd install
+      ./venv-install.sh
+    ```  
 
 1. If you want to uninstall ButterManager:
 
@@ -67,31 +74,30 @@ Once you meet all the requirements, follow these steps:
     cd buttermanager
     cd install
     ./uninstall.sh
-
   ```
 
 ### From AUR ###
 If you are an Arch Linux user or your distribution is a derivative (Manjaro, EndevourOS...), ButterManager is in AUR. Depending on your package manager for AUR, type:
 
-  ```
     yaourt -S buttermanager
 
-  ```
-
 Or
-  ```
+
     trizen -S buttermanager
 
-  ```
-
 Or
-  ```
+
     yay -S buttermanager
 
-  ```
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.3
+- Thanks to Fedora guys (Neal Gompa @Conan-Kudo and Michel Alexandre Salim @michel-slm) ButterManager has been restructured in order to be packaged for Fedora. Because of that, now the application won't need to be installed within a virtual environment so the package installation footprint will be very much smaller.
+- Two new installation methods have been created for users who wants to install ButterManager from source code: [native and venv](https://github.com/egara/buttermanager/tree/master/install). The first one is the recommended but the second one is still supported just in case native installation doesn't work properly.
+- Issue #26 fixed: Now, the **Upgrade with snapshots** button creates snapshots and removes the old ones if needed.
+- All the fast action buttons are disabled when a critical operation is executing.
 
 ### Version 2.2
 - More stability. Some bugs have been fixed and ButterManager should not crashed after upgrading the system.
