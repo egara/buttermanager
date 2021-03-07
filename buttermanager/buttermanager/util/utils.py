@@ -25,6 +25,9 @@ from . import settings
 from ..exception import exception
 from ..filesystem import snapshot
 from ..window import windows
+from PyQt5.QtWidgets import QFileDialog
+from tkinter import Tk
+from tkinter.filedialog import askdirectory
 import logging
 import logging.handlers
 import os
@@ -120,6 +123,17 @@ class ConfigManager:
         elif exist_program(FEDORA_PM):
             settings.user_os = OS_FEDORA
         self.__logger.info("Checking OS. {os} found".format(os=settings.user_os))
+
+        # Checking Desktop Environment
+        settings.desktop_environment = get_desktop_environment()
+        self.__logger.info("Checking Desktop Environment. {de} found".format(de=settings.desktop_environment))
+
+        # Checking Installation Type
+        if not os.path.exists("/opt/buttermanager/buttermanager"):
+            settings.installation_type = "native"
+        else:
+            settings.installation_type = "venv"
+        self.__logger.info("Installation type: {installation}".format(installation=settings.installation_type))
 
         # Creating a properties manager to manage all the application properties
         self.__logger.info("Creating PropertiesManager...")
@@ -410,3 +424,53 @@ def scale_fonts(ui_elements, reduced_point_size=0):
         font = label.font()
         font.setPointSize(font_size)
         label.setFont(font)
+
+
+def get_desktop_environment():
+    """Gets desktop environment.
+    """
+    desktop_environment = 'generic'
+    if os.environ.get('KDE_FULL_SESSION') == 'true':
+        desktop_environment = 'kde'
+    elif os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+        desktop_environment = 'gnome'
+    else:
+        try:
+            info = subprocess.getoutput('xprop -root _DT_SAVE_MODE')
+            if ' = "xfce4"' in info:
+                desktop_environment = 'xfce'
+        except (OSError, RuntimeError):
+            pass
+    return desktop_environment
+
+
+def open_file_browser_directory():
+    """Opens a file browser to select a directory.
+
+    A bug has being detected in KDE Plasma native installatiom. When a native file browser is opened to
+    select a directory, then the application crashes. This doesn't happen in GNOME for example. So a
+    fallback has had to be implemented for this case, suing TKinter.
+
+    Returns:
+        str: Path of the directory selected
+    """
+
+    # Creating a QFileDialog or Tkinter file browser to select the directory
+    # Only directories will be allowed
+    selected_path = ""
+    if settings.desktop_environment == 'kde' and settings.installation_type == 'native':
+        Tk().withdraw()
+        filename = askdirectory()
+
+        if filename:
+            selected_path = filename
+    else:
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog)
+
+        if file_dialog.exec_():
+            selected_path = file_dialog.selectedFiles()[0]
+
+    return selected_path

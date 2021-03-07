@@ -27,8 +27,8 @@ from ..util import settings, utils
 import os
 import subprocess
 import sys
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog, QPushButton, QVBoxLayout, QLabel
-from PyQt5 import uic, QtCore, QtTest, QtWidgets
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QPushButton, QVBoxLayout, QLabel
+from PyQt5 import uic, QtCore, QtTest
 from PyQt5.QtCore import pyqtSignal, QSize
 from PyQt5.QtGui import QIcon, QTextCursor
 
@@ -555,27 +555,15 @@ class SubvolumeWindow(QMainWindow):
         """Adds the origin path for the subvolume to manage.
 
         """
-        # Creating a QFileDialog to select the directory
-        # Only directories will be allowed
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-
-        if file_dialog.exec_():
-            self.line_subvolume_origin.setText(file_dialog.selectedFiles()[0])
+        selected_path = utils.open_file_browser_directory()
+        self.line_subvolume_origin.setText(selected_path)
 
     def add_subvolume_dest(self):
         """Adds the destination where the snapshot of the subvolume will be stored.
 
         """
-        # Creating a QFileDialog to select the directory
-        # Only directories will be allowed
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-
-        if file_dialog.exec_():
-            self.line_subvolume_dest.setText(file_dialog.selectedFiles()[0])
+        selected_path = utils.open_file_browser_directory()
+        self.line_subvolume_dest.setText(selected_path)
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.

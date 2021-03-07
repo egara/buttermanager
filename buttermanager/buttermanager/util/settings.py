@@ -71,6 +71,10 @@ base_font_size = 10
 ui_dir = ""
 # Location of the images directory
 images_dir = ""
+# Desktop environment
+desktop_environment = ""
+# Installation type
+installation_type = ""
 
 
 class PropertiesManager:
