@@ -444,12 +444,15 @@ def get_desktop_environment():
     return desktop_environment
 
 
-def open_file_browser_directory():
+def open_file_browser_directory(parent_window):
     """Opens a file browser to select a directory.
 
     A bug has being detected in KDE Plasma native installatiom. When a native file browser is opened to
     select a directory, then the application crashes. This doesn't happen in GNOME for example. So a
     fallback has had to be implemented for this case, suing TKinter.
+
+    Arguments:
+        parent_window: Parent window
 
     Returns:
         str: Path of the directory selected
@@ -465,7 +468,7 @@ def open_file_browser_directory():
         if filename:
             selected_path = filename
     else:
-        file_dialog = QFileDialog()
+        file_dialog = QFileDialog(parent_window)
         file_dialog.setFileMode(QFileDialog.Directory)
         file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
         file_dialog.setOption(QFileDialog.DontUseNativeDialog)

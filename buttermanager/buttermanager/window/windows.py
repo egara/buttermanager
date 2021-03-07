@@ -555,14 +555,14 @@ class SubvolumeWindow(QMainWindow):
         """Adds the origin path for the subvolume to manage.
 
         """
-        selected_path = utils.open_file_browser_directory()
+        selected_path = utils.open_file_browser_directory(self.parent)
         self.line_subvolume_origin.setText(selected_path)
 
     def add_subvolume_dest(self):
         """Adds the destination where the snapshot of the subvolume will be stored.
 
         """
-        selected_path = utils.open_file_browser_directory()
+        selected_path = utils.open_file_browser_directory(self.parent)
         self.line_subvolume_dest.setText(selected_path)
 
     def add_subvolume(self):
