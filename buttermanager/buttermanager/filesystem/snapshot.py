@@ -48,7 +48,7 @@ class Subvolume:
 
     """
     # Constructor
-    def __init__(self, subvolume_origin, subvolume_dest, snapshot_name):
+    def __init__(self, subvolume_origin, subvolume_dest, snapshot_name, snapshots_to_keep):
         """ Constructor.
 
         Arguments:
@@ -56,12 +56,14 @@ class Subvolume:
             subvolume_dest (str): Full path to the subvolume where all of the subvolumes created from origin are going
             to be stored.
             snapshot_name (str): Prefix for all the subvolumes created from origin
+            snapshots_to_keep (int): Number of snapshots to keep for this subvolume
         """
         # Logger
         self.__logger = utils.Logger(self.__class__.__name__).get()
         self.subvolume_origin = subvolume_origin if subvolume_origin[-1] == '/' else subvolume_origin + '/'
         self.subvolume_dest = subvolume_dest if subvolume_dest[-1] == '/' else subvolume_dest + '/'
         self.snapshot_name = snapshot_name
+        self.snapshots_to_keep = snapshots_to_keep
         self.__current_date = time.strftime('%Y%m%d')
 
     # Methods
@@ -216,12 +218,9 @@ class Subvolume:
             )
             utils.execute_command(command, console=True, root=True)
 
-    def delete_snapshots(self, snapshots_to_keep):
+    def delete_snapshots(self):
         """Deletes all the snapshots needed to keep the desired number set by the user.
         It will delete the related logs if they exist
-
-        Arguments:
-            snapshots_to_keep (int): number of snapshots to keep in the filesystem.
 
         """
         info_message = "Deleting snapshot of {subvolume_origin} in {subvolume_dest}. " \
@@ -234,7 +233,7 @@ class Subvolume:
 
         # Removing all the snapshots needed starting with the oldest one until reach
         # the limit defined by the user
-        snapshots_to_delete = len(snapshots) - snapshots_to_keep
+        snapshots_to_delete = len(snapshots) - self.snapshots_to_keep
         index = 0
         while snapshots_to_delete > 0:
             # Deletes the snapshot

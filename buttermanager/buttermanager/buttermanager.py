@@ -249,8 +249,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_filesystem_allocated, self.label_filesystem_allocated_value,
                                   self.label_filesystem_lost_info, self.label_filesystem_info_more, self.label_space_ok,
                                   self.label_space_danger, self.label_space_ko, self.label_space_data_danger,
-                                  self.label_settings_upgrade, self.label_snapshots_to_keep,
-                                  self.label_settings_subvolumes, self.label_existing_subvolumes, self.label_logo,
+                                  self.label_settings_upgrade, self.label_settings_subvolumes,
+                                  self.label_existing_subvolumes, self.label_logo,
                                   self.label_app_name, self.label_app_version, self.label_app_developer,
                                   self.label_app_email, self.label_app_developer_2, self.button_balance,
                                   self.button_upgrade_system, self.button_upgrade_system_without_snapshots,
@@ -261,8 +261,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.button_save_log, self.text_edit_console, self.progressbar_metadata,
                                   self.progressbar_data, self.combobox_filesystem, self.list_snapshots, self.list_logs,
                                   self.combobox_subvolumes, self.line_edit_snapshot_where,
-                                  self.line_edit_snapshot_prefix, self.spinbox_snapshots_to_keep,
-                                  self.checkbox_dont_remove_snapshots, self.checkbox_startup, self.checkbox_log,
+                                  self.line_edit_snapshot_prefix, self.checkbox_dont_remove_snapshots,
+                                  self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub]
@@ -321,21 +321,11 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.fill_subvolumes()
 
                 # BEGIN -- Displaying settings options
-                # Retrieving snapshots to keep
-                self.spinbox_snapshots_to_keep.setValue(settings.snapshots_to_keep)
-
                 # Retrieving remove snapshots decision
                 if settings.remove_snapshots == 0:
                     self.checkbox_dont_remove_snapshots.setChecked(True)
                 else:
                     self.checkbox_dont_remove_snapshots.setChecked(False)
-
-                if self.checkbox_dont_remove_snapshots.isChecked():
-                    self.label_snapshots_to_keep.hide()
-                    self.spinbox_snapshots_to_keep.hide()
-                else:
-                    self.label_snapshots_to_keep.show()
-                    self.spinbox_snapshots_to_keep.show()
 
                 # Retrieving snap packages upgrade decision
                 if settings.snap_packages == 0:
@@ -439,7 +429,6 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_delete_log.clicked.connect(self.delete_logs)
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
-                self.spinbox_snapshots_to_keep.valueChanged.connect(self.snapshots_to_keep_valuechange)
                 self.checkbox_snap.clicked.connect(self.include_snap)
                 self.checkbox_aur.clicked.connect(self.include_aur)
                 self.checkbox_log.clicked.connect(self.include_log)
@@ -723,7 +712,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.checkbox_snap.setEnabled(False)
         self.checkbox_aur.setEnabled(False)
         self.checkbox_grub_btrfs.setEnabled(False)
-        self.spinbox_snapshots_to_keep.setEnabled(False)
         self.button_take_snapshot.setEnabled(False)
         self.button_delete_snapshot.setEnabled(False)
         self.button_diff.setEnabled(False)
@@ -751,7 +739,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.checkbox_snap.setEnabled(True)
         self.checkbox_aur.setEnabled(True)
         self.checkbox_grub_btrfs.setEnabled(True)
-        self.spinbox_snapshots_to_keep.setEnabled(True)
         self.button_take_snapshot.setEnabled(True)
         self.button_delete_snapshot.setEnabled(True)
         self.button_diff.setEnabled(True)
@@ -897,20 +884,9 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing value in settings
         if self.checkbox_dont_remove_snapshots.isChecked():
-            self.label_snapshots_to_keep.hide()
-            self.spinbox_snapshots_to_keep.hide()
             settings.properties_manager.set_property('remove_snapshots', 0)
         else:
-            self.label_snapshots_to_keep.show()
-            self.spinbox_snapshots_to_keep.show()
             settings.properties_manager.set_property('remove_snapshots', 1)
-
-    def snapshots_to_keep_valuechange(self):
-        """Actions when user changes the value of the snapshots to keep.
-
-        """
-        # Storing value in settings
-        settings.properties_manager.set_property('snapshots_to_keep', self.spinbox_snapshots_to_keep.value())
 
     def include_snap(self):
         """Actions when user checks include snap packages.
@@ -980,6 +956,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_delete_subvolume.hide()
         self.line_edit_snapshot_where.setDisabled(False)
         self.line_edit_snapshot_prefix.setDisabled(False)
+        self.spinbox_edit_snapshots_to_keep.setDisabled(False)
 
     def save_subvolume(self):
         """Actions when user finishes to edit a subvolume.
@@ -991,12 +968,15 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_delete_subvolume.show()
         self.line_edit_snapshot_where.setDisabled(True)
         self.line_edit_snapshot_prefix.setDisabled(True)
+        self.spinbox_edit_snapshots_to_keep.setDisabled(True)
 
         # Storing the modified values
         new_snapshot_where = self.line_edit_snapshot_where.text()
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
-        settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix)
+        snapshots_to_keep = self.spinbox_edit_snapshots_to_keep.value()
+        settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix,
+                                                  snapshots_to_keep)
 
         # Refreshing components
         self.refresh_gui()
@@ -1070,6 +1050,8 @@ class ButtermanagerMainWindow(QMainWindow):
             self.line_edit_snapshot_where.setText(settings.subvolumes[list_subvolumes[0]].subvolume_dest)
             self.line_edit_snapshot_prefix.setDisabled(True)
             self.line_edit_snapshot_prefix.setText(settings.subvolumes[list_subvolumes[0]].snapshot_name)
+            self.spinbox_edit_snapshots_to_keep.setDisabled(True)
+            self.spinbox_edit_snapshots_to_keep.setValue(int(settings.subvolumes[list_subvolumes[0]].snapshots_to_keep))
 
     def refresh_subvolume_buttons(self):
         """Shows or hide subvolume buttons in the GUI.

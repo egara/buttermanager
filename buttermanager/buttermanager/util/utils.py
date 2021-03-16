@@ -73,6 +73,9 @@ class ConfigManager:
         settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
         settings.logs_path = os.path.join(settings.application_path, self.LOGS_DIR)
 
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+
         # Creating application's directory if it is needed
         if not os.path.exists(settings.application_path):
             # Application directory does not exist. Creating directory...
@@ -84,13 +87,13 @@ class ConfigManager:
                 check_at_startup: 0
                 remove_snapshots: 1
                 snap_packages: 0
-                snapshots_to_keep: 3
                 save_log: 1
                 grub_btrfs: 0
                 path_to_consolidate_root_snapshot: 0
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
+                subvolumes_snapshots_to_keep:
             '''
             config_file_dictionary = yaml.load(config_file_as_dictionary)
             conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
@@ -102,9 +105,6 @@ class ConfigManager:
         # Creating logs directory it it doesn't exist
         if not os.path.exists(settings.logs_path):
             os.makedirs(settings.logs_path)
-
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
 
     def configure(self):
         """Configures the application.
@@ -139,13 +139,13 @@ class ConfigManager:
         self.__logger.info("Creating PropertiesManager...")
         settings.properties_manager = settings.PropertiesManager()
 
+        # Triggering migration process
+        self.migrate_properties()
+
         # Retrieving configuration...
         self.__logger.info("Retrieving user's configuration from buttermanager.yaml file and loading it in memory...")
         # Do the user want to remove snapshots during the upgrading process)
         settings.remove_snapshots = int(settings.properties_manager.get_property('remove_snapshots'))
-
-        # Number of snapshots to keep after the upgrading process
-        settings.snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
 
         # Do the user want to update snap packages during the upgrading process
         settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))
@@ -174,6 +174,43 @@ class ConfigManager:
             subvolumes[subvolume.subvolume_origin] = subvolume
 
         settings.subvolumes = subvolumes
+
+    def migrate_properties(self):
+        """Migrates buttermanager.yaml properties file from one version to another if necessary.
+
+        """
+        # Checking if it is necessary to do some migrations to newer versions
+
+        # ##########################################
+        # BEGIN Version 2.3 or older -> 2.4 or newer
+        # ##########################################
+        # Number of snapshots per subvolume have been introduced in version 2.4
+        # Filling this property in case the user comes from version 2.3
+        snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
+        if snapshots_to_keep != 0:
+            # snapshots_to_keep property is still in buttermanager.yaml
+            self.__logger.info("Migrating from version 2.3 or older to version 2.4 or newer. Please wait...")
+            self.__logger.info("snapshots_to_keep property will be removed from buttermanager.yaml configuration "
+                               "file and every subvolume defined will have its own property")
+            subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
+            subvolumes_snapshots_to_keep_raw = ""
+            if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
+                subvolumes_orig = subvolumes_orig_raw.split("|")
+                for index, subvolume_orig in enumerate(subvolumes_orig):
+                    subvolumes_snapshots_to_keep_raw += str(snapshots_to_keep)
+                    if index + 1 < len(subvolumes_orig):
+                        subvolumes_snapshots_to_keep_raw += "|"
+            # Adding the new property
+            settings.properties_manager.set_property('subvolumes_snapshots_to_keep', subvolumes_snapshots_to_keep_raw)
+
+            # Removing old snapshots_to_keep property
+            settings.properties_manager.remove_property('snapshots_to_keep')
+
+        # ########################################
+        # END Version 2.3 or older -> 2.4 or newer
+        # ########################################
+
+        self.__logger.info("Migration process has finished successfully!")
 
 
 class Logger(object):
@@ -400,12 +437,15 @@ def get_subvolumes():
     subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
     subvolumes_dest_raw = settings.properties_manager.get_property('subvolumes_dest')
     subvolumes_prefix_raw = settings.properties_manager.get_property('subvolumes_prefix')
+    subvolumes_snapshots_to_keep_raw = settings.properties_manager.get_property('subvolumes_snapshots_to_keep')
     if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
         subvolumes_orig = subvolumes_orig_raw.split("|")
         subvolumes_dest = subvolumes_dest_raw.split("|")
         subvolumes_prefix = subvolumes_prefix_raw.split("|")
+        subvolumes_snapshots_to_keep = subvolumes_snapshots_to_keep_raw.split("|")
         for index, subvolume_orig in enumerate(subvolumes_orig):
-            subvolume = snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
+            subvolume = snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index],
+                                           subvolumes_snapshots_to_keep[index])
             subvolumes.append(subvolume)
 
     return subvolumes

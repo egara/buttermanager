@@ -220,7 +220,7 @@ class Upgrader(QThread):
                     sys.stdout.write("\n")
                     for snapshot in settings.subvolumes:
                         try:
-                            settings.subvolumes[snapshot].delete_snapshots(settings.snapshots_to_keep)
+                            settings.subvolumes[snapshot].delete_snapshots()
                         except Exception as exception:
                             sys.stdout.write("\n")
                             sys.stdout.write("--------")
