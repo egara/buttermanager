@@ -520,7 +520,7 @@ class SubvolumeWindow(QMainWindow):
         # UI elements
         self.__ui_elements = [self.button_ok, self.button_cancel, self.button_add_subvolume_orig,
                               self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
-                              self.label_subvolume_origin_2, self.line_subvolume_origin, self.line_subvolume_dest,
+                              self.label_subvolume_prefix, self.line_subvolume_origin, self.line_subvolume_dest,
                               self.line_snapshot_name]
         utils.scale_fonts(self.__ui_elements)
         # Tooltips
@@ -573,12 +573,13 @@ class SubvolumeWindow(QMainWindow):
         origin = self.line_subvolume_origin.text()
         dest = self.line_subvolume_dest.text()
         name = self.line_snapshot_name.text()
-        if not origin or not dest or not name:
+        snapshots_to_keep = str(self.spinbox_snapshots_to_keep.value())
+        if not origin or not dest or not name or not snapshots_to_keep:
             info_dialog = GeneralInfoWindow(self, "Please, fill all the fields.")
             info_dialog.show()
         else:
             # Adding a new subvolume
-            settings.properties_manager.set_subvolume(origin, dest, name)
+            settings.properties_manager.set_subvolume(origin, dest, name, snapshots_to_keep)
 
             # Refreshing GUI
             self.on_refresh_gui()

@@ -987,7 +987,7 @@ class ButtermanagerMainWindow(QMainWindow):
         """
         # Storing the modified values
         subvolume_selected = self.combobox_subvolumes.currentText()
-        settings.properties_manager.set_subvolume(subvolume_selected, None, None)
+        settings.properties_manager.set_subvolume(subvolume_selected, None, None, None)
 
         # Refreshing components
         self.refresh_gui()
