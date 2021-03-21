@@ -957,7 +957,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.line_edit_snapshot_where.setDisabled(False)
         self.line_edit_snapshot_prefix.setDisabled(False)
         self.spinbox_edit_snapshots_to_keep.setDisabled(False)
-        self.checkbox_edit_dont_remove.snapshots.setDisabled(False)
+        self.checkbox_edit_dont_remove_snapshots.setDisabled(False)
 
     def save_subvolume(self):
         """Actions when user finishes to edit a subvolume.
@@ -970,7 +970,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.line_edit_snapshot_where.setDisabled(True)
         self.line_edit_snapshot_prefix.setDisabled(True)
         self.spinbox_edit_snapshots_to_keep.setDisabled(True)
-        self.checkbox_edit_dont_remove.snapshots.setDisabled(True)
+        self.checkbox_edit_dont_remove_snapshots.setDisabled(True)
 
         # Storing the modified values
         new_snapshot_where = self.line_edit_snapshot_where.text()
