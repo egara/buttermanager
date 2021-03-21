@@ -957,6 +957,7 @@ class ButtermanagerMainWindow(QMainWindow):
         self.line_edit_snapshot_where.setDisabled(False)
         self.line_edit_snapshot_prefix.setDisabled(False)
         self.spinbox_edit_snapshots_to_keep.setDisabled(False)
+        self.checkbox_edit_dont_remove.snapshots.setDisabled(False)
 
     def save_subvolume(self):
         """Actions when user finishes to edit a subvolume.
@@ -969,12 +970,17 @@ class ButtermanagerMainWindow(QMainWindow):
         self.line_edit_snapshot_where.setDisabled(True)
         self.line_edit_snapshot_prefix.setDisabled(True)
         self.spinbox_edit_snapshots_to_keep.setDisabled(True)
+        self.checkbox_edit_dont_remove.snapshots.setDisabled(True)
 
         # Storing the modified values
         new_snapshot_where = self.line_edit_snapshot_where.text()
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
         snapshots_to_keep = self.spinbox_edit_snapshots_to_keep.value()
+
+        if self.checkbox_edit_dont_remove_snapshots.isChecked():
+            snapshots_to_keep = -1
+
         settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix,
                                                   snapshots_to_keep)
 
@@ -1050,8 +1056,23 @@ class ButtermanagerMainWindow(QMainWindow):
             self.line_edit_snapshot_where.setText(settings.subvolumes[list_subvolumes[0]].subvolume_dest)
             self.line_edit_snapshot_prefix.setDisabled(True)
             self.line_edit_snapshot_prefix.setText(settings.subvolumes[list_subvolumes[0]].snapshot_name)
-            self.spinbox_edit_snapshots_to_keep.setDisabled(True)
-            self.spinbox_edit_snapshots_to_keep.setValue(int(settings.subvolumes[list_subvolumes[0]].snapshots_to_keep))
+
+            snapshots_to_keep = int(settings.subvolumes[list_subvolumes[0]].snapshots_to_keep)
+
+            if snapshots_to_keep == -1:
+                # Enable Don't remove snapshots
+                self.checkbox_edit_dont_remove_snapshots.show()
+                self.checkbox_edit_dont_remove_snapshots.setChecked(True)
+                self.checkbox_edit_dont_remove_snapshots.setDisabled(True)
+                # Hide snapshots to keep
+                self.spinbox_edit_snapshots_to_keep.hide()
+            else:
+                # Enable snapshots to keep
+                self.spinbox_edit_snapshots_to_keep.show()
+                self.spinbox_edit_snapshots_to_keep.setDisabled(True)
+                self.spinbox_edit_snapshots_to_keep.setValue(snapshots_to_keep)
+                # Hide Don't remove snapshots
+                self.checkbox_edit_dont_remove_snapshots.hide()
 
     def refresh_subvolume_buttons(self):
         """Shows or hide subvolume buttons in the GUI.
