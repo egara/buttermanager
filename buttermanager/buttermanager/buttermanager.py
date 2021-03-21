@@ -428,7 +428,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_folder.clicked.connect(self.open_file_explorer)
                 self.button_delete_log.clicked.connect(self.delete_logs)
                 self.button_view_log.clicked.connect(self.view_log)
-                self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
+                self.checkbox_edit_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.checkbox_snap.clicked.connect(self.include_snap)
                 self.checkbox_aur.clicked.connect(self.include_aur)
                 self.checkbox_log.clicked.connect(self.include_log)
@@ -880,13 +880,12 @@ class ButtermanagerMainWindow(QMainWindow):
 
     def dont_remove_snapshots(self):
         """Actions when user checks don't remove snapshots.
-
         """
-        # Storing value in settings
-        if self.checkbox_dont_remove_snapshots.isChecked():
-            settings.properties_manager.set_property('remove_snapshots', 0)
+        if self.checkbox_edit_dont_remove_snapshots.isChecked():
+            self.spinbox_edit_snapshots_to_keep.hide()
         else:
-            settings.properties_manager.set_property('remove_snapshots', 1)
+            self.spinbox_edit_snapshots_to_keep.show()
+            self.spinbox_edit_snapshots_to_keep.setValue(1)
 
     def include_snap(self):
         """Actions when user checks include snap packages.
@@ -1071,8 +1070,9 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.spinbox_edit_snapshots_to_keep.show()
                 self.spinbox_edit_snapshots_to_keep.setDisabled(True)
                 self.spinbox_edit_snapshots_to_keep.setValue(snapshots_to_keep)
-                # Hide Don't remove snapshots
-                self.checkbox_edit_dont_remove_snapshots.hide()
+                # Show Don't remove snapshots and disable it
+                self.checkbox_edit_dont_remove_snapshots.show()
+                self.checkbox_edit_dont_remove_snapshots.setDisabled(True)
 
     def refresh_subvolume_buttons(self):
         """Shows or hide subvolume buttons in the GUI.
