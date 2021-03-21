@@ -187,24 +187,30 @@ class ConfigManager:
         # Number of snapshots per subvolume have been introduced in version 2.4
         # Filling this property in case the user comes from version 2.3
         snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
+        remove_snapshots = settings.properties_manager.get_property('remove_snapshots')
         if snapshots_to_keep != 0:
             # snapshots_to_keep property is still in buttermanager.yaml
             self.__logger.info("Migrating from version 2.3 or older to version 2.4 or newer. Please wait...")
-            self.__logger.info("snapshots_to_keep property will be removed from buttermanager.yaml configuration "
-                               "file and every subvolume defined will have its own property")
+            self.__logger.info("snapshots_to_keep property and remove_snapshots will be removed from buttermanager.yaml"
+                               " configuration file and every subvolume defined will have their own properties")
             subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
             subvolumes_snapshots_to_keep_raw = ""
             if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
                 subvolumes_orig = subvolumes_orig_raw.split("|")
                 for index, subvolume_orig in enumerate(subvolumes_orig):
+                    if remove_snapshots == 0:
+                        # From this moment, when snapshots_to_keep is -1, then the user havve decided not to
+                        # delete any snapshot
+                        snapshots_to_keep = -1
                     subvolumes_snapshots_to_keep_raw += str(snapshots_to_keep)
                     if index + 1 < len(subvolumes_orig):
                         subvolumes_snapshots_to_keep_raw += "|"
             # Adding the new property
             settings.properties_manager.set_property('subvolumes_snapshots_to_keep', subvolumes_snapshots_to_keep_raw)
 
-            # Removing old snapshots_to_keep property
+            # Removing old snapshots_to_keep and remove_snapshots properties
             settings.properties_manager.remove_property('snapshots_to_keep')
+            settings.properties_manager.remove_property('remove_snapshots')
 
         # ########################################
         # END Version 2.3 or older -> 2.4 or newer
