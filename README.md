@@ -50,7 +50,7 @@ Try again, and now the upgrading should work. After installation, run ButterMana
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.3
+2.4
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -139,6 +139,11 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.4
+- Delete log icon button fixed.
+- Issue #28 fixed. There is an error for Plasma Desktop (and PyQT5) when the file explorer is opened and the user tries to select a directory when setting subvolumes up. Only for this case, TK will be used as workaround.
+- 'Don't remove snapshots' and 'Snapshots to keep' parameters are not global anymore. The user will be able to configure them per subvolume. 
 
 ### Version 2.3
 - Thanks to Fedora guys (Neal Gompa @Conan-Kudo and Michel Alexandre Salim @michel-slm) ButterManager has been restructured in order to be packaged for Fedora. Because of that, now the application won't need to be installed within a virtual environment so the package installation footprint will be very much smaller.
