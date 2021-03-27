@@ -391,7 +391,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 view_icon = os.path.join(settings.images_dir, 'view_24px_icon.png')
                 self.button_view_log.setIcon(QIcon(view_icon))
                 self.button_view_log.setIconSize(QSize(24, 24))
-                self.button_delete_log.setIcon(QIcon('images/remove_16px_icon.png'))
+                self.button_delete_log.setIcon(QIcon(remove_icon))
                 self.button_delete_log.setIconSize(QSize(16, 16))
 
                 # Subvolume buttons
