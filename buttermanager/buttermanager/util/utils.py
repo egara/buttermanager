@@ -85,7 +85,6 @@ class ConfigManager:
             config_file_as_dictionary = '''
                 aur_repository: 0
                 check_at_startup: 0
-                remove_snapshots: 1
                 snap_packages: 0
                 save_log: 1
                 grub_btrfs: 0
@@ -144,8 +143,6 @@ class ConfigManager:
 
         # Retrieving configuration...
         self.__logger.info("Retrieving user's configuration from buttermanager.yaml file and loading it in memory...")
-        # Do the user want to remove snapshots during the upgrading process)
-        settings.remove_snapshots = int(settings.properties_manager.get_property('remove_snapshots'))
 
         # Do the user want to update snap packages during the upgrading process
         settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))

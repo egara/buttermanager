@@ -590,19 +590,6 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
-          <property name="geometry">
-           <rect>
-            <x>19</x>
-            <y>289</y>
-            <width>241</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Don't remove any snapshot</string>
-          </property>
-         </widget>
          <widget class="QLabel" name="label_settings_upgrade">
           <property name="geometry">
            <rect>
@@ -627,7 +614,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>370</y>
+            <y>350</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -640,7 +627,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>350</y>
+            <y>330</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -828,7 +815,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>310</y>
+            <y>290</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -841,7 +828,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>330</y>
+            <y>310</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -854,7 +841,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>390</y>
+            <y>370</y>
             <width>411</width>
             <height>22</height>
            </rect>

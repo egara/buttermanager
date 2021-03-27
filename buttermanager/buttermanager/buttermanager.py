@@ -261,8 +261,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.button_save_log, self.text_edit_console, self.progressbar_metadata,
                                   self.progressbar_data, self.combobox_filesystem, self.list_snapshots, self.list_logs,
                                   self.combobox_subvolumes, self.line_edit_snapshot_where,
-                                  self.line_edit_snapshot_prefix, self.checkbox_dont_remove_snapshots,
-                                  self.checkbox_startup, self.checkbox_log,
+                                  self.line_edit_snapshot_prefix, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub]
@@ -321,12 +320,6 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.fill_subvolumes()
 
                 # BEGIN -- Displaying settings options
-                # Retrieving remove snapshots decision
-                if settings.remove_snapshots == 0:
-                    self.checkbox_dont_remove_snapshots.setChecked(True)
-                else:
-                    self.checkbox_dont_remove_snapshots.setChecked(False)
-
                 # Retrieving snap packages upgrade decision
                 if settings.snap_packages == 0:
                     self.checkbox_snap.setChecked(False)
@@ -629,7 +622,6 @@ class ButtermanagerMainWindow(QMainWindow):
             snapshots = False
 
         # Gathering user settings
-        dont_remove_snapshots = self.checkbox_dont_remove_snapshots.isChecked()
         include_aur = False
         if settings.user_os == utils.OS_ARCH:
             include_aur = self.checkbox_aur.isChecked()
@@ -638,8 +630,7 @@ class ButtermanagerMainWindow(QMainWindow):
             include_snap = self.checkbox_snap.isChecked()
 
         # Upgrading the system
-        self.__upgrader = upgrader.Upgrader(dont_remove_snapshots, include_aur,
-                                                    include_snap, snapshots)
+        self.__upgrader = upgrader.Upgrader(include_aur, include_snap, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
@@ -706,7 +697,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system_without_snapshots.setEnabled(False)
         self.button_fa_take_snapshot.setEnabled(False)
         self.button_close_terminal.setEnabled(False)
-        self.checkbox_dont_remove_snapshots.setEnabled(False)
         self.checkbox_startup.setEnabled(False)
         self.checkbox_log.setEnabled(False)
         self.checkbox_snap.setEnabled(False)
@@ -733,7 +723,6 @@ class ButtermanagerMainWindow(QMainWindow):
         self.button_upgrade_system_without_snapshots.setEnabled(True)
         self.button_fa_take_snapshot.setEnabled(True)
         self.button_close_terminal.setEnabled(True)
-        self.checkbox_dont_remove_snapshots.setEnabled(True)
         self.checkbox_startup.setEnabled(True)
         self.checkbox_log.setEnabled(True)
         self.checkbox_snap.setEnabled(True)

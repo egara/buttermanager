@@ -219,7 +219,7 @@ class Subvolume:
             utils.execute_command(command, console=True, root=True)
 
     def delete_snapshots(self):
-        """Deletes all the snapshots needed to keep the desired number set by the user.
+        """Deletes (or not if user has defined it) all the snapshots needed to keep the desired number set by the user.
         It will delete the related logs if they exist
 
         """
@@ -228,45 +228,48 @@ class Subvolume:
                                                subvolume_dest=self.subvolume_dest)
         self.__logger.info(info_message)
 
-        # Checking how many snapshots are with the same name ordered by date
-        snapshots = self.get_all_snapshots_with_the_same_name()
+        # If user has selected not delete any snapshot, this operation won't be done
+        if int(self.snapshots_to_keep) > -1:
+            # Checking how many snapshots are with the same name ordered by date
+            snapshots = self.get_all_snapshots_with_the_same_name()
 
-        # Removing all the snapshots needed starting with the oldest one until reach
-        # the limit defined by the user
-        snapshots_to_delete = len(snapshots) - self.snapshots_to_keep
-        index = 0
-        while snapshots_to_delete > 0:
-            # Deletes the snapshot
-            command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND, snapshot=snapshots[index])
-            utils.execute_command(command, console=True, root=True)
-            info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
-            self.__logger.info(info_message)
-            # Deletes the log if it exists
-            snapshot_name = snapshots[index].split("/")[-1]
-            log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
-                                                       index=snapshot_name.split("-")[-1])
-            log_path = os.path.join(settings.logs_path, log)
-            if os.path.exists(log_path):
-                try:
-                    os.remove(log_path)
-                    info_message = "Log {log} deleted.\n".format(log=log)
-                    self.__logger.info(info_message)
-                except OSError as os_error_exception:
-                    info_message = "Error deleting log {log}. Error {exception}\n".format(log=log,
-                                                                                          exception=str(
-                                                                                              os_error_exception))
-                    self.__logger.info(info_message)
-            else:
-                info_message = "Log {log} doesn't exist. Skipping...deleted.\n".format(log=log)
+            # Removing all the snapshots needed starting with the oldest one until reach
+            # the limit defined by the user
+            snapshots_to_delete = len(snapshots) - self.snapshots_to_keep
+            index = 0
+            while snapshots_to_delete > 0:
+                # Deletes the snapshot
+                command = "{command} {snapshot}".format(command=BTRFS_DELETE_SNAPSHOT_COMMAND,
+                                                        snapshot=snapshots[index])
+                utils.execute_command(command, console=True, root=True)
+                info_message = "Snapshot {snapshot} deleted.\n".format(snapshot=snapshots[index])
                 self.__logger.info(info_message)
+                # Deletes the log if it exists
+                snapshot_name = snapshots[index].split("/")[-1]
+                log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
+                                                           index=snapshot_name.split("-")[-1])
+                log_path = os.path.join(settings.logs_path, log)
+                if os.path.exists(log_path):
+                    try:
+                        os.remove(log_path)
+                        info_message = "Log {log} deleted.\n".format(log=log)
+                        self.__logger.info(info_message)
+                    except OSError as os_error_exception:
+                        info_message = "Error deleting log {log}. Error {exception}\n".format(log=log,
+                                                                                              exception=str(
+                                                                                                  os_error_exception))
+                        self.__logger.info(info_message)
+                else:
+                    info_message = "Log {log} doesn't exist. Skipping...deleted.\n".format(log=log)
+                    self.__logger.info(info_message)
 
-            snapshots_to_delete -= 1
-            index += 1
+                snapshots_to_delete -= 1
+                index += 1
 
-        # Checks if grub-btrfs integration is enabled
-        if settings.properties_manager.get_property("grub_btrfs"):
-            # Run grub-btrfs in order to regenerate GRUB entries
-            utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
+            # Checks if grub-btrfs integration is enabled
+            if settings.properties_manager.get_property("grub_btrfs"):
+                # Run grub-btrfs in order to regenerate GRUB entries
+                utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
 
     def delete_origin(self):
         """Deletes the original subvolume, i.e. the subvolume in subvolume_origin
