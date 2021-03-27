@@ -521,7 +521,8 @@ class SubvolumeWindow(QMainWindow):
         self.__ui_elements = [self.button_ok, self.button_cancel, self.button_add_subvolume_orig,
                               self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
                               self.label_subvolume_prefix, self.line_subvolume_origin, self.line_subvolume_dest,
-                              self.line_snapshot_name]
+                              self.line_snapshot_name, self.label_subvolume_snapshots_to_keep,
+                              self.spinbox_snapshots_to_keep, self.checkbox_dont_remove_snapshots]
         utils.scale_fonts(self.__ui_elements)
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
@@ -545,9 +546,13 @@ class SubvolumeWindow(QMainWindow):
         self.button_add_subvolume_dest.setIcon(QIcon(folder_icon))
         self.button_add_subvolume_dest.setIconSize(QSize(16, 16))
 
+        # Snapshots to keep by default will be 1
+        self.spinbox_snapshots_to_keep.setValue(1)
+
         # Button events
         self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
         self.button_add_subvolume_dest.clicked.connect(self.add_subvolume_dest)
+        self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
         self.button_ok.clicked.connect(self.add_subvolume)
         self.button_cancel.clicked.connect(self.cancel)
 
@@ -573,7 +578,10 @@ class SubvolumeWindow(QMainWindow):
         origin = self.line_subvolume_origin.text()
         dest = self.line_subvolume_dest.text()
         name = self.line_snapshot_name.text()
-        snapshots_to_keep = str(self.spinbox_snapshots_to_keep.value())
+        snapshots_to_keep = "-1"
+        if not self.checkbox_dont_remove_snapshots.isChecked():
+            snapshots_to_keep = str(self.spinbox_snapshots_to_keep.value())
+
         if not origin or not dest or not name or not snapshots_to_keep:
             info_dialog = GeneralInfoWindow(self, "Please, fill all the fields.")
             info_dialog.show()
@@ -586,6 +594,17 @@ class SubvolumeWindow(QMainWindow):
 
             # Closes the window
             self.cancel()
+
+    def dont_remove_snapshots(self):
+        """Actions when user checks don't remove snapshots.
+        """
+        if self.checkbox_dont_remove_snapshots.isChecked():
+            self.spinbox_snapshots_to_keep.hide()
+            self.label_subvolume_snapshots_to_keep.hide()
+        else:
+            self.spinbox_snapshots_to_keep.show()
+            self.label_subvolume_snapshots_to_keep.show()
+            self.spinbox_snapshots_to_keep.setValue(1)
 
     def cancel(self):
         """Closes the window.

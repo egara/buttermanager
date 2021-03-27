@@ -934,6 +934,24 @@ class ButtermanagerMainWindow(QMainWindow):
             self.line_edit_snapshot_where.setText(settings.subvolumes[current_subvolume].subvolume_dest)
             self.line_edit_snapshot_prefix.setText(settings.subvolumes[current_subvolume].snapshot_name)
 
+            snapshots_to_keep = int(settings.subvolumes[current_subvolume].snapshots_to_keep)
+
+            if snapshots_to_keep == -1:
+                # Enable Don't remove snapshots
+                self.checkbox_edit_dont_remove_snapshots.show()
+                self.checkbox_edit_dont_remove_snapshots.setChecked(True)
+                self.checkbox_edit_dont_remove_snapshots.setDisabled(True)
+                # Hide snapshots to keep
+                self.spinbox_edit_snapshots_to_keep.hide()
+            else:
+                # Enable snapshots to keep
+                self.spinbox_edit_snapshots_to_keep.show()
+                self.spinbox_edit_snapshots_to_keep.setDisabled(True)
+                self.spinbox_edit_snapshots_to_keep.setValue(snapshots_to_keep)
+                # Show Don't remove snapshots and disable it
+                self.checkbox_edit_dont_remove_snapshots.show()
+                self.checkbox_edit_dont_remove_snapshots.setDisabled(True)
+
     def edit_subvolume(self):
         """Actions when user wants to edit a defined subvolume.
 
@@ -964,10 +982,9 @@ class ButtermanagerMainWindow(QMainWindow):
         new_snapshot_where = self.line_edit_snapshot_where.text()
         new_snapshot_prefix = self.line_edit_snapshot_prefix.text()
         subvolume_selected = self.combobox_subvolumes.currentText()
-        snapshots_to_keep = self.spinbox_edit_snapshots_to_keep.value()
-
-        if self.checkbox_edit_dont_remove_snapshots.isChecked():
-            snapshots_to_keep = -1
+        snapshots_to_keep = -1
+        if not self.checkbox_edit_dont_remove_snapshots.isChecked():
+            snapshots_to_keep = self.spinbox_edit_snapshots_to_keep.value()
 
         settings.properties_manager.set_subvolume(subvolume_selected, new_snapshot_where, new_snapshot_prefix,
                                                   snapshots_to_keep)
