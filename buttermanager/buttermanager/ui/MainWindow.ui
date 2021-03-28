@@ -869,7 +869,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(snapshots to keep)</string>
+           <string>(Snapshots to keep)</string>
           </property>
          </widget>
          <widget class="QSpinBox" name="spinbox_edit_snapshots_to_keep">

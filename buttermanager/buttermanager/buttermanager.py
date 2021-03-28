@@ -261,12 +261,14 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.button_save_log, self.text_edit_console, self.progressbar_metadata,
                                   self.progressbar_data, self.combobox_filesystem, self.list_snapshots, self.list_logs,
                                   self.combobox_subvolumes, self.line_edit_snapshot_where,
-                                  self.line_edit_snapshot_prefix, self.checkbox_startup, self.checkbox_log,
+                                  self.line_edit_snapshot_prefix, self.checkbox_edit_dont_remove_snapshots,
+                                  self.spinbox_edit_snapshots_to_keep, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub]
             utils.scale_fonts(self.__ui_elements)
-            self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix]
+            self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
+                                  self.label_settings_subvolumes_snapshots_to_keep]
             utils.scale_fonts(self.__ui_elements, 2)
             # Tooltips
             self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
