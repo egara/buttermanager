@@ -56,14 +56,14 @@ class Subvolume:
             subvolume_dest (str): Full path to the subvolume where all of the subvolumes created from origin are going
             to be stored.
             snapshot_name (str): Prefix for all the subvolumes created from origin
-            snapshots_to_keep (int): Number of snapshots to keep for this subvolume
+            snapshots_to_keep (str): Number of snapshots to keep for this subvolume
         """
         # Logger
         self.__logger = utils.Logger(self.__class__.__name__).get()
         self.subvolume_origin = subvolume_origin if subvolume_origin[-1] == '/' else subvolume_origin + '/'
         self.subvolume_dest = subvolume_dest if subvolume_dest[-1] == '/' else subvolume_dest + '/'
         self.snapshot_name = snapshot_name
-        self.snapshots_to_keep = snapshots_to_keep
+        self.snapshots_to_keep = int(snapshots_to_keep)
         self.__current_date = time.strftime('%Y%m%d')
 
     # Methods
@@ -229,7 +229,7 @@ class Subvolume:
         self.__logger.info(info_message)
 
         # If user has selected not delete any snapshot, this operation won't be done
-        if int(self.snapshots_to_keep) > -1:
+        if self.snapshots_to_keep > -1:
             # Checking how many snapshots are with the same name ordered by date
             snapshots = self.get_all_snapshots_with_the_same_name()
 
