@@ -591,6 +591,7 @@ class Differentiator(QThread):
 # Module's methods
 def delete_specific_snapshot(snapshot_full_path):
     """Deletes a specific snapshot.
+    It will delete the specific log related if it exists too.
 
     Arguments:
         snapshot_full_path (string): path to the snapshot that user wants to delete.
@@ -611,6 +612,24 @@ def delete_specific_snapshot(snapshot_full_path):
         # Run grub-btrfs in order to regenerate GRUB entries
         utils.execute_command(GRUB_BTRFS_COMMAND, console=True, root=True)
         info_message = "Regenerating GRUB entries. Please wait..."
+        logger.info(info_message)
+
+    # Deletes the log if it exists
+    snapshot_name = snapshot_full_path.split("/")[-1]
+    log = "{snapshot_name}-{index}.txt".format(snapshot_name=snapshot_name.split("-")[-2],
+                                               index=snapshot_name.split("-")[-1])
+    log_path = os.path.join(settings.logs_path, log)
+    if os.path.exists(log_path):
+        try:
+            os.remove(log_path)
+            info_message = "Log {log} deleted.\n".format(log=log)
+            logger.info(info_message)
+        except OSError as os_error_exception:
+            info_message = "Error deleting log {log}. Error {exception}\n".format(log=log,
+                                                                                  exception=str(os_error_exception))
+            logger.info(info_message)
+    else:
+        info_message = "Log {log} doesn't exist. Skipping...deleted.\n".format(log=log)
         logger.info(info_message)
 
 
