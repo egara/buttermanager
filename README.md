@@ -143,7 +143,8 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ### Version 2.4
 - Delete log icon button fixed.
 - Issue #28 fixed. There is an error for Plasma Desktop (and PyQT5) when the file explorer is opened and the user tries to select a directory when setting subvolumes up. Only for this case, TK will be used as workaround.
-- 'Don't remove snapshots' and 'Snapshots to keep' parameters are not global anymore. The user will be able to configure them per subvolume. 
+- 'Don't remove snapshots' and 'Snapshots to keep' parameters are not global anymore. The user will be able to configure them per subvolume.
+- Now, when user deletes a specific snapshot, the log related to it will be removed too if it exists.
 
 ### Version 2.3
 - Thanks to Fedora guys (Neal Gompa @Conan-Kudo and Michel Alexandre Salim @michel-slm) ButterManager has been restructured in order to be packaged for Fedora. Because of that, now the application won't need to be installed within a virtual environment so the package installation footprint will be very much smaller.
