@@ -1,7 +1,7 @@
 # ButterManager
 
 ---------------------
-## IMPORTANT!: Manual intervention for upgrading ButterManager from 2.3-1 to 2.3-2 on Arch and derivatives
+## IMPORTANT!: Manual intervention for upgrading ButterManager from 2.3-1 to newer version on Arch and derivatives
 
 Sorry, I made a mistake packaging the version **2.3-1** of ButterManager in AUR. The way the application is installed in this version is different because no virtual environment is required anymore. Because of this, I changed PKGBUILD but I introduced a mistake on it. Now, it is fixed in version **2.3-2**, but manual intervention is required for upgrading. First, try to upgrade normally ButterManager using your AUR package manager. You can see some errors:
 
