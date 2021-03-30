@@ -22,7 +22,10 @@ changelog=
 # Local source if user wants to build the package locally once the git repo has been cloned
 source=('git+file:///home/egarcia/buttermanager')
 # Remote source
+# Master branch
 # source=('git+https://github.com/egara/buttermanager#branch=master')
+# Tagged version
+# source=('https://github.com/egara/buttermanager/archive/"$pkgver".tar.gz')
 noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
