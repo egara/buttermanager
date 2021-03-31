@@ -25,6 +25,9 @@ from . import settings
 from ..exception import exception
 from ..filesystem import snapshot
 from ..window import windows
+from PyQt5.QtWidgets import QFileDialog
+from tkinter import Tk
+from tkinter.filedialog import askdirectory
 import logging
 import logging.handlers
 import os
@@ -70,6 +73,9 @@ class ConfigManager:
         settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
         settings.logs_path = os.path.join(settings.application_path, self.LOGS_DIR)
 
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
+
         # Creating application's directory if it is needed
         if not os.path.exists(settings.application_path):
             # Application directory does not exist. Creating directory...
@@ -79,15 +85,14 @@ class ConfigManager:
             config_file_as_dictionary = '''
                 aur_repository: 0
                 check_at_startup: 0
-                remove_snapshots: 1
                 snap_packages: 0
-                snapshots_to_keep: 3
                 save_log: 1
                 grub_btrfs: 0
                 path_to_consolidate_root_snapshot: 0
                 subvolumes_dest:
                 subvolumes_orig:
                 subvolumes_prefix:
+                subvolumes_snapshots_to_keep:
             '''
             config_file_dictionary = yaml.load(config_file_as_dictionary)
             conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
@@ -99,9 +104,6 @@ class ConfigManager:
         # Creating logs directory it it doesn't exist
         if not os.path.exists(settings.logs_path):
             os.makedirs(settings.logs_path)
-
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
 
     def configure(self):
         """Configures the application.
@@ -121,17 +123,26 @@ class ConfigManager:
             settings.user_os = OS_FEDORA
         self.__logger.info("Checking OS. {os} found".format(os=settings.user_os))
 
+        # Checking Desktop Environment
+        settings.desktop_environment = get_desktop_environment()
+        self.__logger.info("Checking Desktop Environment. {de} found".format(de=settings.desktop_environment))
+
+        # Checking Installation Type
+        if not os.path.exists("/opt/buttermanager/buttermanager"):
+            settings.installation_type = "native"
+        else:
+            settings.installation_type = "venv"
+        self.__logger.info("Installation type: {installation}".format(installation=settings.installation_type))
+
         # Creating a properties manager to manage all the application properties
         self.__logger.info("Creating PropertiesManager...")
         settings.properties_manager = settings.PropertiesManager()
 
+        # Triggering migration process
+        self.migrate_properties()
+
         # Retrieving configuration...
         self.__logger.info("Retrieving user's configuration from buttermanager.yaml file and loading it in memory...")
-        # Do the user want to remove snapshots during the upgrading process)
-        settings.remove_snapshots = int(settings.properties_manager.get_property('remove_snapshots'))
-
-        # Number of snapshots to keep after the upgrading process
-        settings.snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
 
         # Do the user want to update snap packages during the upgrading process
         settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))
@@ -160,6 +171,49 @@ class ConfigManager:
             subvolumes[subvolume.subvolume_origin] = subvolume
 
         settings.subvolumes = subvolumes
+
+    def migrate_properties(self):
+        """Migrates buttermanager.yaml properties file from one version to another if necessary.
+
+        """
+        # Checking if it is necessary to do some migrations to newer versions
+
+        # ##########################################
+        # BEGIN Version 2.3 or older -> 2.4 or newer
+        # ##########################################
+        # Number of snapshots per subvolume have been introduced in version 2.4
+        # Filling this property in case the user comes from version 2.3
+        snapshots_to_keep = int(settings.properties_manager.get_property('snapshots_to_keep'))
+        remove_snapshots = settings.properties_manager.get_property('remove_snapshots')
+        if snapshots_to_keep != 0:
+            # snapshots_to_keep property is still in buttermanager.yaml
+            self.__logger.info("Migrating from version 2.3 or older to version 2.4 or newer. Please wait...")
+            self.__logger.info("snapshots_to_keep property and remove_snapshots will be removed from buttermanager.yaml"
+                               " configuration file and every subvolume defined will have their own properties")
+            subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
+            subvolumes_snapshots_to_keep_raw = ""
+            if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
+                subvolumes_orig = subvolumes_orig_raw.split("|")
+                for index, subvolume_orig in enumerate(subvolumes_orig):
+                    if remove_snapshots == 0:
+                        # From this moment, when snapshots_to_keep is -1, then the user havve decided not to
+                        # delete any snapshot
+                        snapshots_to_keep = -1
+                    subvolumes_snapshots_to_keep_raw += str(snapshots_to_keep)
+                    if index + 1 < len(subvolumes_orig):
+                        subvolumes_snapshots_to_keep_raw += "|"
+            # Adding the new property
+            settings.properties_manager.set_property('subvolumes_snapshots_to_keep', subvolumes_snapshots_to_keep_raw)
+
+            # Removing old snapshots_to_keep and remove_snapshots properties
+            settings.properties_manager.remove_property('snapshots_to_keep')
+            settings.properties_manager.remove_property('remove_snapshots')
+
+        # ########################################
+        # END Version 2.3 or older -> 2.4 or newer
+        # ########################################
+
+        self.__logger.info("Migration process has finished successfully!")
 
 
 class Logger(object):
@@ -386,12 +440,15 @@ def get_subvolumes():
     subvolumes_orig_raw = settings.properties_manager.get_property('subvolumes_orig')
     subvolumes_dest_raw = settings.properties_manager.get_property('subvolumes_dest')
     subvolumes_prefix_raw = settings.properties_manager.get_property('subvolumes_prefix')
+    subvolumes_snapshots_to_keep_raw = settings.properties_manager.get_property('subvolumes_snapshots_to_keep')
     if subvolumes_orig_raw is not None and subvolumes_orig_raw != "":
         subvolumes_orig = subvolumes_orig_raw.split("|")
         subvolumes_dest = subvolumes_dest_raw.split("|")
         subvolumes_prefix = subvolumes_prefix_raw.split("|")
+        subvolumes_snapshots_to_keep = subvolumes_snapshots_to_keep_raw.split("|")
         for index, subvolume_orig in enumerate(subvolumes_orig):
-            subvolume = snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index])
+            subvolume = snapshot.Subvolume(subvolume_orig, subvolumes_dest[index], subvolumes_prefix[index],
+                                           subvolumes_snapshots_to_keep[index])
             subvolumes.append(subvolume)
 
     return subvolumes
@@ -410,3 +467,56 @@ def scale_fonts(ui_elements, reduced_point_size=0):
         font = label.font()
         font.setPointSize(font_size)
         label.setFont(font)
+
+
+def get_desktop_environment():
+    """Gets desktop environment.
+    """
+    desktop_environment = 'generic'
+    if os.environ.get('KDE_FULL_SESSION') == 'true':
+        desktop_environment = 'kde'
+    elif os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+        desktop_environment = 'gnome'
+    else:
+        try:
+            info = subprocess.getoutput('xprop -root _DT_SAVE_MODE')
+            if ' = "xfce4"' in info:
+                desktop_environment = 'xfce'
+        except (OSError, RuntimeError):
+            pass
+    return desktop_environment
+
+
+def open_file_browser_directory(parent_window):
+    """Opens a file browser to select a directory.
+
+    A bug has being detected in KDE Plasma native installatiom. When a native file browser is opened to
+    select a directory, then the application crashes. This doesn't happen in GNOME for example. So a
+    fallback has had to be implemented for this case, suing TKinter.
+
+    Arguments:
+        parent_window: Parent window
+
+    Returns:
+        str: Path of the directory selected
+    """
+
+    # Creating a QFileDialog or Tkinter file browser to select the directory
+    # Only directories will be allowed
+    selected_path = ""
+    if settings.desktop_environment == 'kde' and settings.installation_type == 'native':
+        Tk().withdraw()
+        filename = askdirectory()
+
+        if filename:
+            selected_path = filename
+    else:
+        file_dialog = QFileDialog(parent_window)
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog)
+
+        if file_dialog.exec_():
+            selected_path = file_dialog.selectedFiles()[0]
+
+    return selected_path

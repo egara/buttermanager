@@ -28,7 +28,7 @@ import yaml
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "2.3"
+VERSION = "2.4"
 
 # Global module attributes
 # Application version
@@ -45,8 +45,6 @@ user_password = ""
 user_os = ""
 # Do user want to remove snapshots? 0=False 1=True
 remove_snapshots = 1
-# Number of snapshots to keep after the upgrading process
-snapshots_to_keep = 2
 # Do user want to upgrade snap packages? 0=False 1=True
 snap_packages = 1
 # Do user want to upgrade packages from AUR? 0=False 1=True
@@ -71,6 +69,10 @@ base_font_size = 10
 ui_dir = ""
 # Location of the images directory
 images_dir = ""
+# Desktop environment
+desktop_environment = ""
+# Installation type
+installation_type = ""
 
 
 class PropertiesManager:
@@ -126,7 +128,19 @@ class PropertiesManager:
         # Setting property in buttermanager.yaml file
         self.__store_configuration()
 
-    def set_subvolume(self, subvolume_selected, snapshot_where, snapshot_prefix):
+    def remove_property(self, property):
+        """Removes s property from properties file.
+
+        Arguments:
+            property (string): Property to be removed.
+        """
+        self.__logger.info("Removing property {property}".format(property=property))
+        self.__user_settings.pop(property)
+
+        # Storing buttermanager.yaml file
+        self.__store_configuration()
+
+    def set_subvolume(self, subvolume_selected, snapshot_where, snapshot_prefix, snapshots_to_keep):
         """Sets the value of a subvolume.
 
         If snapshot_where = None and snapshot_prefix = None, then the subvolume
@@ -137,9 +151,13 @@ class PropertiesManager:
             snapshot_where (string): Path where the snapshot is going to be stored. None if the subvolume is removed
             snapshot_prefix (string): Prefix used to store the snapshot of a specific subvolume. None if the subvolume
             is removed
+            snapshots_to_keep (int): Number of the snapshots to keep in the filesystem for this subvolume
         """
-        self.__logger.info("Setting subvolume {subvolume} with new values: where {where}; prefix{prefix}".format(
-            subvolume=subvolume_selected, where=snapshot_where, prefix=snapshot_prefix))
+        self.__logger.info("Setting subvolume {subvolume} with new values: where {where}; prefix {prefix}; "
+                           "snapshots to keep {snapshots_to_keep}".format(subvolume=subvolume_selected,
+                                                                          where=snapshot_where,
+                                                                          prefix=snapshot_prefix,
+                                                                          snapshots_to_keep=snapshots_to_keep))
         if subvolume_selected in subvolumes:
             if not snapshot_where and not snapshot_prefix:
                 # The subvolume has to be removed from memory
@@ -148,28 +166,34 @@ class PropertiesManager:
                 # Modifying subvolume in memory
                 subvolumes[subvolume_selected].subvolume_dest = snapshot_where if snapshot_where[-1] == '/' else snapshot_where + '/'
                 subvolumes[subvolume_selected].snapshot_name = snapshot_prefix
+                subvolumes[subvolume_selected].snapshots_to_keep = snapshots_to_keep
         else:
             subvolumes[subvolume_selected] = filesystem.snapshot.Subvolume(subvolume_selected,
                                                                            snapshot_where,
-                                                                           snapshot_prefix)
+                                                                           snapshot_prefix,
+                                                                           snapshots_to_keep)
         subvolumes_orig = ""
         subvolumes_dest = ""
         subvolumes_prefix = ""
+        subvolumes_snapshost_to_keep = ""
         index = 0
 
         for subvolume in subvolumes:
             subvolumes_orig += subvolumes[subvolume].subvolume_origin
             subvolumes_dest += subvolumes[subvolume].subvolume_dest
             subvolumes_prefix += subvolumes[subvolume].snapshot_name
+            subvolumes_snapshost_to_keep += str(subvolumes[subvolume].snapshots_to_keep)
             if index + 1 < len(subvolumes):
                 subvolumes_orig += "|"
                 subvolumes_dest += "|"
                 subvolumes_prefix += "|"
+                subvolumes_snapshost_to_keep += "|"
             index += 1
 
         self.__user_settings['subvolumes_orig'] = subvolumes_orig
         self.__user_settings['subvolumes_dest'] = subvolumes_dest
         self.__user_settings['subvolumes_prefix'] = subvolumes_prefix
+        self.__user_settings['subvolumes_snapshots_to_keep'] = subvolumes_snapshost_to_keep
 
         # Setting property in buttermanager.yaml file
         self.__store_configuration()

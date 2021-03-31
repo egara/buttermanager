@@ -68,12 +68,10 @@ class Upgrader(QThread):
     refresh_gui = pyqtSignal()
 
     # Constructor
-    def __init__(self, dont_remove_snapshots, include_aur, include_snap, snapshots):
+    def __init__(self, include_aur, include_snap, snapshots):
         QThread.__init__(self)
         # Logger
         self.__logger = utils.Logger(self.__class__.__name__).get()
-        # Dont' remove snapshots when upgrading the system
-        self.__dont_remove_snapthosts = dont_remove_snapshots
         # Include AUR packages upgrade
         self.__include_aur = include_aur
         # Include snap packages upgrade
@@ -212,26 +210,25 @@ class Upgrader(QThread):
 
             # Removes all the snapshots not needed any more it it is needed
             if self.__snapshots:
-                if not self.__dont_remove_snapthosts:
-                    sys.stdout.write("\n")
-                    sys.stdout.write("--------")
-                    sys.stdout.write("\n")
-                    sys.stdout.write("Removing old snapshots if it is needed and updating GRUB entries. Please wait...")
-                    sys.stdout.write("\n")
-                    for snapshot in settings.subvolumes:
-                        try:
-                            settings.subvolumes[snapshot].delete_snapshots(settings.snapshots_to_keep)
-                        except Exception as exception:
-                            sys.stdout.write("\n")
-                            sys.stdout.write("--------")
-                            sys.stdout.write("\n")
-                            sys.stdout.write("Error deleting the snapshot " +
-                                             settings.subvolumes[snapshot].subvolume_origin)
-                            sys.stdout.write("\n")
-                            sys.stdout.write("Error: " + str(exception))
-                            sys.stdout.write("\n")
-                            sys.stdout.write("--------")
-                            sys.stdout.write("\n")
+                sys.stdout.write("\n")
+                sys.stdout.write("--------")
+                sys.stdout.write("\n")
+                sys.stdout.write("Removing old snapshots if it is needed and updating GRUB entries. Please wait...")
+                sys.stdout.write("\n")
+                for snapshot in settings.subvolumes:
+                    try:
+                        settings.subvolumes[snapshot].delete_snapshots()
+                    except Exception as exception:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error deleting the snapshot " +
+                                         settings.subvolumes[snapshot].subvolume_origin)
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error: " + str(exception))
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
 
             sys.stdout.write("\n")
             sys.stdout.write("--------")

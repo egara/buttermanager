@@ -27,8 +27,8 @@ from ..util import settings, utils
 import os
 import subprocess
 import sys
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QFileDialog, QPushButton, QVBoxLayout, QLabel
-from PyQt5 import uic, QtCore, QtTest, QtWidgets
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMainWindow, QPushButton, QVBoxLayout, QLabel
+from PyQt5 import uic, QtCore, QtTest
 from PyQt5.QtCore import pyqtSignal, QSize
 from PyQt5.QtGui import QIcon, QTextCursor
 
@@ -520,8 +520,9 @@ class SubvolumeWindow(QMainWindow):
         # UI elements
         self.__ui_elements = [self.button_ok, self.button_cancel, self.button_add_subvolume_orig,
                               self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
-                              self.label_subvolume_origin_2, self.line_subvolume_origin, self.line_subvolume_dest,
-                              self.line_snapshot_name]
+                              self.label_subvolume_prefix, self.line_subvolume_origin, self.line_subvolume_dest,
+                              self.line_snapshot_name, self.label_subvolume_snapshots_to_keep,
+                              self.spinbox_snapshots_to_keep, self.checkbox_dont_remove_snapshots]
         utils.scale_fonts(self.__ui_elements)
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
@@ -545,9 +546,13 @@ class SubvolumeWindow(QMainWindow):
         self.button_add_subvolume_dest.setIcon(QIcon(folder_icon))
         self.button_add_subvolume_dest.setIconSize(QSize(16, 16))
 
+        # Snapshots to keep by default will be 1
+        self.spinbox_snapshots_to_keep.setValue(1)
+
         # Button events
         self.button_add_subvolume_orig.clicked.connect(self.add_subvolume_orig)
         self.button_add_subvolume_dest.clicked.connect(self.add_subvolume_dest)
+        self.checkbox_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
         self.button_ok.clicked.connect(self.add_subvolume)
         self.button_cancel.clicked.connect(self.cancel)
 
@@ -555,27 +560,15 @@ class SubvolumeWindow(QMainWindow):
         """Adds the origin path for the subvolume to manage.
 
         """
-        # Creating a QFileDialog to select the directory
-        # Only directories will be allowed
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-
-        if file_dialog.exec_():
-            self.line_subvolume_origin.setText(file_dialog.selectedFiles()[0])
+        selected_path = utils.open_file_browser_directory(self)
+        self.line_subvolume_origin.setText(selected_path)
 
     def add_subvolume_dest(self):
         """Adds the destination where the snapshot of the subvolume will be stored.
 
         """
-        # Creating a QFileDialog to select the directory
-        # Only directories will be allowed
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-
-        if file_dialog.exec_():
-            self.line_subvolume_dest.setText(file_dialog.selectedFiles()[0])
+        selected_path = utils.open_file_browser_directory(self)
+        self.line_subvolume_dest.setText(selected_path)
 
     def add_subvolume(self):
         """Adds a new subvolume to be managed by the application.
@@ -585,18 +578,33 @@ class SubvolumeWindow(QMainWindow):
         origin = self.line_subvolume_origin.text()
         dest = self.line_subvolume_dest.text()
         name = self.line_snapshot_name.text()
-        if not origin or not dest or not name:
+        snapshots_to_keep = "-1"
+        if not self.checkbox_dont_remove_snapshots.isChecked():
+            snapshots_to_keep = str(self.spinbox_snapshots_to_keep.value())
+
+        if not origin or not dest or not name or not snapshots_to_keep:
             info_dialog = GeneralInfoWindow(self, "Please, fill all the fields.")
             info_dialog.show()
         else:
             # Adding a new subvolume
-            settings.properties_manager.set_subvolume(origin, dest, name)
+            settings.properties_manager.set_subvolume(origin, dest, name, snapshots_to_keep)
 
             # Refreshing GUI
             self.on_refresh_gui()
 
             # Closes the window
             self.cancel()
+
+    def dont_remove_snapshots(self):
+        """Actions when user checks don't remove snapshots.
+        """
+        if self.checkbox_dont_remove_snapshots.isChecked():
+            self.spinbox_snapshots_to_keep.hide()
+            self.label_subvolume_snapshots_to_keep.hide()
+        else:
+            self.spinbox_snapshots_to_keep.show()
+            self.label_subvolume_snapshots_to_keep.show()
+            self.spinbox_snapshots_to_keep.setValue(1)
 
     def cancel(self):
         """Closes the window.

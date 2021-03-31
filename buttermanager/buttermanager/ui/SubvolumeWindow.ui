@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>220</y>
+      <y>240</y>
       <width>88</width>
       <height>34</height>
      </rect>
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>545</x>
-      <y>220</y>
+      <y>240</y>
       <width>88</width>
       <height>34</height>
      </rect>
@@ -128,7 +128,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_subvolume_origin_2">
+   <widget class="QLabel" name="label_subvolume_prefix">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -139,6 +139,42 @@
     </property>
     <property name="text">
      <string>Snapshot prefix</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_subvolume_snapshots_to_keep">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>180</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Snapshot to keep</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>180</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>170</y>
+      <width>241</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Don't remove any snapshot</string>
     </property>
    </widget>
   </widget>

@@ -1,7 +1,7 @@
 # ButterManager
 
 ---------------------
-## IMPORTANT!: Manual intervention for upgrading ButterManager from 2.3-1 to 2.3-2 on Arch and derivatives
+## IMPORTANT!: Manual intervention for upgrading ButterManager from 2.3-1 to newer version on Arch and derivatives
 
 Sorry, I made a mistake packaging the version **2.3-1** of ButterManager in AUR. The way the application is installed in this version is different because no virtual environment is required anymore. Because of this, I changed PKGBUILD but I introduced a mistake on it. Now, it is fixed in version **2.3-2**, but manual intervention is required for upgrading. First, try to upgrade normally ButterManager using your AUR package manager. You can see some errors:
 
@@ -50,7 +50,7 @@ Try again, and now the upgrading should work. After installation, run ButterMana
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.3
+2.4
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -86,6 +86,7 @@ In order to install ButterManager manually, you have to install these packages (
 - **python-virtualenv** (f.i. the name of the package in Ubuntu is **python3-venv**). This package will only be needed if you use **venv_install.sh** script (see below).
 - **grub-btrfs**. Please, go to its GitHub repository [https://github.com/Antynea/grub-btrfs](https://github.com/Antynea/grub-btrfs) and follow the instructions to install it if the package is not in the official repository of your distribution.
 - **libxinerama**: This depency has been reported by some users (thanks Adam!) who install ButterManager on Ubuntu 20.04 (proper) (the name of the package in Ubuntu is **libxcb-xinerama0**)
+- **tk** (f.i. the name of the package in Ubuntu is **python3-tk**)
 
 Once you meet all the requirements, follow these steps:
 
@@ -138,6 +139,12 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.4
+- Delete log icon button fixed.
+- Issue #28 fixed. There is an error for Plasma Desktop (and PyQT5) when the file explorer is opened and the user tries to select a directory when setting subvolumes up. Only for this case, TK will be used as workaround.
+- 'Don't remove snapshots' and 'Snapshots to keep' parameters are not global anymore. The user will be able to configure them per subvolume.
+- Now, when user deletes a specific snapshot, the log related to it will be removed too if it exists.
 
 ### Version 2.3
 - Thanks to Fedora guys (Neal Gompa @Conan-Kudo and Michel Alexandre Salim @michel-slm) ButterManager has been restructured in order to be packaged for Fedora. Because of that, now the application won't need to be installed within a virtual environment so the package installation footprint will be very much smaller.

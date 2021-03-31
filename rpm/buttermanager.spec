@@ -1,5 +1,5 @@
 Name:           buttermanager
-Version:        2.3
+Version:        2.4
 Release:        0%{?dist}
 Summary:        Tool for managing Btrfs snapshots, balancing filesystems and more
 

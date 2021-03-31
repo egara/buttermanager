@@ -590,19 +590,6 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
-          <property name="geometry">
-           <rect>
-            <x>19</x>
-            <y>289</y>
-            <width>241</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Don't remove any snapshot</string>
-          </property>
-         </widget>
          <widget class="QLabel" name="label_settings_upgrade">
           <property name="geometry">
            <rect>
@@ -627,7 +614,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>370</y>
+            <y>350</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -640,36 +627,13 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>350</y>
+            <y>330</y>
             <width>201</width>
             <height>22</height>
            </rect>
           </property>
           <property name="text">
            <string>Include snap packages</string>
-          </property>
-         </widget>
-         <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
-          <property name="geometry">
-           <rect>
-            <x>389</x>
-            <y>290</y>
-            <width>41</width>
-            <height>21</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_snapshots_to_keep">
-          <property name="geometry">
-           <rect>
-            <x>265</x>
-            <y>290</y>
-            <width>121</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Snapshots to keep</string>
           </property>
          </widget>
          <widget class="QLabel" name="label_settings_subvolumes">
@@ -696,7 +660,7 @@
           <property name="geometry">
            <rect>
             <x>21</x>
-            <y>122</y>
+            <y>112</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -706,7 +670,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>164</y>
+            <y>150</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -719,7 +683,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>205</y>
+            <y>190</y>
             <width>411</width>
             <height>32</height>
            </rect>
@@ -732,7 +696,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>121</y>
+            <y>111</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -748,7 +712,7 @@
           <property name="geometry">
            <rect>
             <x>507</x>
-            <y>121</y>
+            <y>111</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -777,9 +741,9 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>170</y>
+            <y>150</y>
             <width>311</width>
-            <height>18</height>
+            <height>30</height>
            </rect>
           </property>
           <property name="font">
@@ -796,9 +760,9 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>210</y>
+            <y>190</y>
             <width>301</width>
-            <height>18</height>
+            <height>30</height>
            </rect>
           </property>
           <property name="font">
@@ -815,7 +779,7 @@
           <property name="geometry">
            <rect>
             <x>450</x>
-            <y>121</y>
+            <y>111</y>
             <width>41</width>
             <height>34</height>
            </rect>
@@ -831,7 +795,7 @@
           <property name="geometry">
            <rect>
             <x>22</x>
-            <y>99</y>
+            <y>89</y>
             <width>161</width>
             <height>18</height>
            </rect>
@@ -851,7 +815,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>310</y>
+            <y>290</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -864,7 +828,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>330</y>
+            <y>310</y>
             <width>201</width>
             <height>22</height>
            </rect>
@@ -877,7 +841,7 @@
           <property name="geometry">
            <rect>
             <x>19</x>
-            <y>390</y>
+            <y>370</y>
             <width>411</width>
             <height>22</height>
            </rect>
@@ -887,6 +851,48 @@
           </property>
           <property name="text">
            <string>Boot the system from GRUB using snapshots</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_settings_subvolumes_snapshots_to_keep">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>230</y>
+            <width>301</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>(Snapshots to keep)</string>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="spinbox_edit_snapshots_to_keep">
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>230</y>
+            <width>41</width>
+            <height>30</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkbox_edit_dont_remove_snapshots">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>230</y>
+            <width>241</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Don't remove any snapshot</string>
           </property>
          </widget>
         </widget>
@@ -1003,7 +1009,7 @@
            </font>
           </property>
           <property name="text">
-           <string>v2.3</string>
+           <string>v2.4</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
