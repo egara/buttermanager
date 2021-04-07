@@ -103,7 +103,7 @@ Once you meet all the requirements, follow these steps:
     ```
       cd buttermanager
       cd install
-      ./native-install.sh
+      ./native_install.sh
       
     ```
 
@@ -112,7 +112,7 @@ Once you meet all the requirements, follow these steps:
     ```
       cd buttermanager
       cd install
-      ./venv-install.sh
+      ./venv_install.sh
     ```  
 
 1. If you want to uninstall ButterManager:
