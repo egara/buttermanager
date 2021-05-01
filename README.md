@@ -50,7 +50,7 @@ Try again, and now the upgrading should work. After installation, run ButterMana
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.4
+2.4.1
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -139,6 +139,9 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.4.1
+- Issue #32 fixed. ButterManager crashed when it was installed for the first time.
 
 ### Version 2.4
 - Delete log icon button fixed.
