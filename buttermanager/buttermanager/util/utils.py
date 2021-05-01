@@ -73,9 +73,6 @@ class ConfigManager:
         settings.application_path = os.path.join(str(pathlib.Path.home()), application_directory)
         settings.logs_path = os.path.join(settings.application_path, self.LOGS_DIR)
 
-        # Logger
-        self.__logger = Logger(self.__class__.__name__).get()
-
         # Creating application's directory if it is needed
         if not os.path.exists(settings.application_path):
             # Application directory does not exist. Creating directory...
@@ -104,6 +101,9 @@ class ConfigManager:
         # Creating logs directory it it doesn't exist
         if not os.path.exists(settings.logs_path):
             os.makedirs(settings.logs_path)
+
+        # Logger
+        self.__logger = Logger(self.__class__.__name__).get()
 
     def configure(self):
         """Configures the application.
