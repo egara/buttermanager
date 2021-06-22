@@ -12,9 +12,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/egara/buttermanager",
-    packages=['buttermanager.buttermanager', 'buttermanager.buttermanager.exception', 'buttermanager.buttermanager.filesystem', 'buttermanager.buttermanager.manager', 'buttermanager.buttermanager.util', 'buttermanager.buttermanager.window'],
+    packages=['buttermanager', 'buttermanager.buttermanager', 'buttermanager.buttermanager.exception', 'buttermanager.buttermanager.filesystem', 'buttermanager.buttermanager.manager', 'buttermanager.buttermanager.util', 'buttermanager.buttermanager.window'],
     package_data= {'buttermanager.buttermanager': ['ui/*', 'images/*']},
-    data_files=[('buttermanager', ['buttermanager/bm_main.py'])],
     install_requires=[
        'PyQt5>=5.10.1',
        'PyYAML>=4.2b1',
