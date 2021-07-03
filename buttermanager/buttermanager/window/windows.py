@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # -*- coding: utf-8 -*-
 #
 # Copyright 2018-2019 Eloy García Almadén <eloy.garcia.pca@gmail.com>
