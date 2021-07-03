@@ -20,7 +20,7 @@ options=()
 install=
 changelog=
 # Local source if user wants to build the package locally once the git repo has been cloned
-source=('git+file:///home/egarcia/buttermanager')
+source=('git+file:////home/egarcia/Development/git/buttermanager/')
 # Remote source
 # Master branch
 # source=('git+https://github.com/egara/buttermanager#branch=master')
@@ -43,9 +43,6 @@ package() {
         # Installing ButterManager using python-setuptools
 	echo -e "\n Installing ButterManager. Please wait..."
 	python setup.py install --root="$pkgdir" --optimize=1 --skip-build
-
-        # Copying bm_main.py
-        install -Dm644 "$srcdir/$pkgname/$pkgname/bm_main.py" "${pkgdir}/$(python -c "import site; print(site.getsitepackages()[0])")/$pkgname/bm_main.py"
 
   	# Copying .desktop file and icon
         echo -e "\n Creating desktop icon. Finishing the installation"
