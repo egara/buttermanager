@@ -5,16 +5,15 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="buttermanager",
-    version="2.4.1",
+    version="2.4.2",
     author="Eloy García Almadén",
     author_email="eloy.garcia.pca@gmail.com",
     description="BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/egara/buttermanager",
-    packages=['buttermanager.buttermanager', 'buttermanager.buttermanager.exception', 'buttermanager.buttermanager.filesystem', 'buttermanager.buttermanager.manager', 'buttermanager.buttermanager.util', 'buttermanager.buttermanager.window'],
+    packages=['buttermanager', 'buttermanager.buttermanager', 'buttermanager.buttermanager.exception', 'buttermanager.buttermanager.filesystem', 'buttermanager.buttermanager.manager', 'buttermanager.buttermanager.util', 'buttermanager.buttermanager.window'],
     package_data= {'buttermanager.buttermanager': ['ui/*', 'images/*']},
-    data_files=[('buttermanager', ['buttermanager/bm_main.py'])],
     install_requires=[
        'PyQt5>=5.10.1',
        'PyYAML>=4.2b1',

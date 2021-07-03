@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # -*- coding: utf-8 -*-
 #
 # Copyright 2018-2019 Eloy García Almadén <eloy.garcia.pca@gmail.com>
@@ -28,7 +26,7 @@ import yaml
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "2.4.1"
+VERSION = "2.4.2"
 
 # Global module attributes
 # Application version
