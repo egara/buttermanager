@@ -1,56 +1,10 @@
 # ButterManager
 
----------------------
-## IMPORTANT!: Manual intervention for upgrading ButterManager from 2.3-1 to newer version on Arch and derivatives
-
-Sorry, I made a mistake packaging the version **2.3-1** of ButterManager in AUR. The way the application is installed in this version is different because no virtual environment is required anymore. Because of this, I changed PKGBUILD but I introduced a mistake on it. Now, it is fixed in version **2.3-2**, but manual intervention is required for upgrading. First, try to upgrade normally ButterManager using your AUR package manager. You can see some errors:
-
-```
-error: failed to commit transaction (conflicting files)
-python-pyqt5: /usr/bin/pylupdate5 exists in filesystem
-python-pyqt5: /usr/bin/pyrcc5 exists in filesystem
-python-pyqt5: /usr/bin/pyuic5 exists in filesystem
-Errors occurred, no packages were upgraded.
-==> ERROR: 'pacman' failed to install missing dependencies.
-==> Missing dependencies:
-  -> python-pyaml
-  -> python-pyqt5
-==> Checking buildtime dependencies...
-==> ERROR: Could not resolve all dependencies.
-```
-
-This error is due to in the previous package version (2.3-1) this library was installed by Python itself in the system instead of using the version which is in Arch repository (python-pyqt5). Now, this dependency is included from Arch repository (as well as python-pyaml) but it cannot be installed because the files are already in the filesystem (due to the previous installation). Please, move those files to another location (for example home) and try to upgrade again:
-
-```
-sudo mv /usr/bin/pylupdate5 ~/
-sudo mv /usr/bin/pyrcc5 ~/
-sudo mv /usr/bin/pyuic5 ~/
-```
-
-Now, another error can rise:
-
-```
-error: failed to commit transaction (conflicting files)
-buttermanager: /usr/bin/buttermanager exists in filesystem
-Errors occurred, no packages were upgraded.
-==> WARNING: Failed to install built package(s).
-```
-
-You have to remove this file:
-
-```
-sudo rm /usr/bin/buttermanager
-```
-
-Try again, and now the upgrading should work. After installation, run ButterManager and see if everything works OK. Again, sorry for the inconveniences. This error shouldn't appear anymore. Thanks to **Solomon Choina** and **Grey Christoforo** for the feedback. Thanks to them I have realized that the PKGBUILD file was wrong and I could fix it.
-
----------------------
-
 ## Summary ##
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
 ## Version ##
-2.4.2
+2.4.3
 
 ## Caveats ##
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
@@ -139,6 +93,9 @@ Or
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
 ## Changelog
+
+### Version 2.4.3
+- TODO
 
 ### Version 2.4.2
 - Minor changes in order to improve the package and preparing all to publish ButterManager in Fedora. Thanks Michel Alexandre Salim!
