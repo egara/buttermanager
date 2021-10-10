@@ -932,7 +932,7 @@ class ButtermanagerMainWindow(QMainWindow):
             self.button_regenerate_grub.hide()
 
     def on_combobox_filesystem_changed(self):
-        self.__current_filesystem_uuid = self.on_combobox_filesystem.currentText()
+        self.__current_filesystem_uuid = self.combobox_filesystem.currentText()
         self.refresh_filesystem_statistics()
 
     def on_combobox_subvolumes_changed(self):
