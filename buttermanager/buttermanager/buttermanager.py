@@ -411,6 +411,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.label_logo.setPixmap(QPixmap(buttermanager_icon))
 
                 # Button events
+                self.combobox_filesystem.currentTextChanged.connect(self.on_combobox_filesystem_changed)
                 self.button_balance.clicked.connect(self.balance_filesystem)
                 self.button_upgrade_system.clicked.connect(partial(self.upgrade_system, True))
                 self.button_upgrade_system_without_snapshots.clicked.connect(partial(self.upgrade_system, False))
@@ -929,6 +930,10 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             settings.properties_manager.set_property('grub_btrfs', 0)
             self.button_regenerate_grub.hide()
+
+    def on_combobox_filesystem_changed(self):
+        self.__current_filesystem_uuid = self.combobox_filesystem.currentText()
+        self.refresh_filesystem_statistics()
 
     def on_combobox_subvolumes_changed(self):
         current_subvolume = self.combobox_subvolumes.currentText()
