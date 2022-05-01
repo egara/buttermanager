@@ -95,7 +95,9 @@ Those are only examples. Use the package manager you have installed for AUR. Onc
 ## Changelog
 
 ### Version 2.4.3
-- TODO
+- Issue #31 fixed. Preventing errors when calculating diffs against root directly.
+- Issue #33 fixed. Refreshing filesystem statistics when user changes filesystem within combobox.
+- Issue #45 fixed. Changing yaml.load method to yaml.safe_load because pyyaml library requires it since version 5.4.
 
 ### Version 2.4.2
 - Minor changes in order to improve the package and preparing all to publish ButterManager in Fedora. Thanks Michel Alexandre Salim!
