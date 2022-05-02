@@ -89,14 +89,14 @@ class ConfigManager:
                 subvolumes_prefix:
                 subvolumes_snapshots_to_keep:
             '''
-            config_file_dictionary = yaml.load(config_file_as_dictionary)
+            config_file_dictionary = yaml.safe_load(config_file_as_dictionary)
             conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
                                                                      conf_file=settings.CONF_FILE)
             conf_file = open(conf_file_path, 'w')
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Creating logs directory it it doesn't exist
+        # Creating logs directory it doesn't exist
         if not os.path.exists(settings.logs_path):
             os.makedirs(settings.logs_path)
 

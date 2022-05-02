@@ -468,7 +468,11 @@ class Differentiator(QThread):
             # Getting the current subvolune name. This subvolume is the current one which is going to be
             # used for the comparison. It is needed to remove all the empty strings within the list
             subvolume_name_list = subvolume.subvolume_origin.split("/")
-            subvolume_name = list(filter(None, subvolume_name_list))[-1]
+            cleaned_subvolume_name_list = list(filter(None, subvolume_name_list))
+            if not cleaned_subvolume_name_list:
+                subvolume_name = "original"
+            else:
+                subvolume_name = cleaned_subvolume_name_list[-1]
 
             if self.__operation_type == self.OPERATION_FULL:
                 # Full operation
