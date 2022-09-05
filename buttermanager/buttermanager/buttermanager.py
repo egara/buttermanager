@@ -99,8 +99,6 @@ class PasswordWindow(QMainWindow):
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(240)
         self.setMinimumWidth(320)
-        self.setMaximumHeight(240)
-        self.setMaximumWidth(320)
 
         # Setting lock icon
         lock_icon = os.path.join(settings.images_dir, 'lock_24px_icon.png')
@@ -122,6 +120,10 @@ class PasswordWindow(QMainWindow):
 
         # Press enter within QLineEdit
         self.input_password.returnPressed.connect(self.load_main_window)
+
+        # Set focus on input_password
+        self.input_password.setFocusPolicy(Qt.StrongFocus)
+        self.input_password.setFocus()
 
         # Checks for new versions of ButterManager
         self.__version_checker.check_version()
