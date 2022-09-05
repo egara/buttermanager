@@ -133,8 +133,6 @@ class GeneralInfoWindow(QDialog):
         # Setting maximum and minimum  size for the main window
         self.setMinimumHeight(285)
         self.setMinimumWidth(420)
-        self.setMaximumHeight(285)
-        self.setMaximumWidth(420)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
