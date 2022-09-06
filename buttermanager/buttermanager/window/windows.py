@@ -827,11 +827,8 @@ class LogViewWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(442)
-        self.setMinimumWidth(767)
-        self.setMaximumHeight(442)
-        self.setMaximumWidth(767)
+        # Setting size for the window
+        self.resize(767, 442)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
