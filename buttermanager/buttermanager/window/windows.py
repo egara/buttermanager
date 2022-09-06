@@ -758,11 +758,8 @@ class ProblemsFoundWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
-        self.setMaximumHeight(285)
-        self.setMaximumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
