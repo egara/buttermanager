@@ -96,9 +96,8 @@ class PasswordWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(240)
-        self.setMinimumWidth(320)
+        # Setting size for the window
+        self.resize(320, 240)
 
         # Setting lock icon
         lock_icon = os.path.join(settings.images_dir, 'lock_24px_icon.png')

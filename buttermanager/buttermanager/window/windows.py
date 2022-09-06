@@ -73,9 +73,8 @@ class InfoWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(240)
-        self.setMinimumWidth(320)
+        # Setting size for the window
+        self.resize(320, 240)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -128,9 +127,8 @@ class GeneralInfoWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -201,9 +199,8 @@ class ConsolidateSnapshotWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
