@@ -14,169 +14,137 @@
    <string>Add a subvolume</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="button_ok">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>240</y>
-      <width>88</width>
-      <height>34</height>
-     </rect>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="leftMargin">
+     <number>10</number>
     </property>
-    <property name="text">
-     <string>OK</string>
+    <property name="rightMargin">
+     <number>10</number>
     </property>
-   </widget>
-   <widget class="QPushButton" name="button_cancel">
-    <property name="geometry">
-     <rect>
-      <x>545</x>
-      <y>240</y>
-      <width>88</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cancel</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="line_subvolume_origin">
-    <property name="geometry">
-     <rect>
-      <x>198</x>
-      <y>57</y>
-      <width>381</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="line_subvolume_dest">
-    <property name="geometry">
-     <rect>
-      <x>298</x>
-      <y>97</y>
-      <width>281</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="line_snapshot_name">
-    <property name="geometry">
-     <rect>
-      <x>149</x>
-      <y>137</y>
-      <width>431</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_subvolume_origin">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>161</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Subvolume to manage</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_subvolume_dest">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>101</y>
-      <width>291</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Path where the snapshot will be stored</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_add_subvolume_orig">
-    <property name="geometry">
-     <rect>
-      <x>589</x>
-      <y>52</y>
-      <width>41</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string comment=" ">Select the subvolume you want to create the snapshot, f.i. / if you have a subvolume created for root</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_add_subvolume_dest">
-    <property name="geometry">
-     <rect>
-      <x>589</x>
-      <y>91</y>
-      <width>41</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Selet the path where the snapshot will be stored. it is advisable to store the snapshot in a different subvolume</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_subvolume_prefix">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>131</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Snapshot prefix</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_subvolume_snapshots_to_keep">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>180</y>
-      <width>131</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Snapshot to keep</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinbox_snapshots_to_keep">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>180</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>241</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Don't remove any snapshot</string>
-    </property>
-   </widget>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_subvolume_origin">
+          <property name="text">
+           <string>Subvolume to manage</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="button_add_subvolume_orig">
+          <property name="toolTip">
+           <string comment=" ">Select the subvolume you want to create the snapshot, f.i. / if you have a subvolume created for root</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="button_add_subvolume_dest">
+          <property name="toolTip">
+           <string>Selet the path where the snapshot will be stored. it is advisable to store the snapshot in a different subvolume</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_subvolume_dest">
+          <property name="text">
+           <string>Path where the snapshot will be stored</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="line_subvolume_dest"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="line_subvolume_origin"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_subvolume_prefix">
+          <property name="text">
+           <string>Snapshot prefix</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="line_snapshot_name"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QCheckBox" name="checkbox_dont_remove_snapshots">
+        <property name="text">
+         <string>Don't remove any snapshot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_subvolume_snapshots_to_keep">
+        <property name="text">
+         <string>Snapshot to keep</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spinbox_snapshots_to_keep"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_ok">
+        <property name="text">
+         <string>OK</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_cancel">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

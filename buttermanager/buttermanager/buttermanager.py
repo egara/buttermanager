@@ -28,8 +28,9 @@ import time
 from functools import partial
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices, QFontMetrics
-from PyQt5 import uic, QtTest
+from PyQt5 import uic, QtTest, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
+
 
 # Constants
 SNAP_COMMAND = "snap"
@@ -95,11 +96,8 @@ class PasswordWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(240)
-        self.setMinimumWidth(320)
-        self.setMaximumHeight(240)
-        self.setMaximumWidth(320)
+        # Setting size for the window
+        self.resize(320, 240)
 
         # Setting lock icon
         lock_icon = os.path.join(settings.images_dir, 'lock_24px_icon.png')
@@ -121,6 +119,10 @@ class PasswordWindow(QMainWindow):
 
         # Press enter within QLineEdit
         self.input_password.returnPressed.connect(self.load_main_window)
+
+        # Set focus on input_password
+        self.input_password.setFocusPolicy(Qt.StrongFocus)
+        self.input_password.setFocus()
 
         # Checks for new versions of ButterManager
         self.__version_checker.check_version()
@@ -254,7 +256,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_app_name, self.label_app_version, self.label_app_developer,
                                   self.label_app_email, self.label_app_developer_2, self.button_balance,
                                   self.button_upgrade_system, self.button_upgrade_system_without_snapshots,
-                                  self.button_fa_take_snapshot, self.button_snapshot, self.button_take_snapshot,
+                                  self.button_fa_take_snapshot, self.button_take_snapshot,
                                   self.button_delete_snapshot, self.button_delete_log, self.button_view_log,
                                   self.button_edit_subvolume, self.button_delete_subvolume, self.button_add_subvolume,
                                   self.button_save_subvolume, self.button_github, self.button_close_terminal,
@@ -274,18 +276,23 @@ class ButtermanagerMainWindow(QMainWindow):
             self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
             # Setting maximum and minimum  size for the main window
-            self.setMinimumHeight(490)
-            self.setMinimumWidth(800)
-            self.setMaximumHeight(490)
-            self.setMaximumWidth(800)
+            self.setMinimumHeight(300)
+            self.setMinimumWidth(300)
 
             # Hiding terminal and buttons
             self.button_close_terminal.hide()
             self.button_save_log.hide()
             self.text_edit_console.hide()
 
-            # Adjusting the window
-            self.adjustSize()
+            # Setting initial size depending on resolution
+            size_object = QtWidgets.QDesktopWidget().screenGeometry(-1)
+
+            if size_object.width() == 1920:
+                self.resize(640, 520)
+            elif size_object.width() > 1920:
+                self.resize(1024, 832)
+            else:
+                self.resize(320, 260)
 
             # Centering the window
             qt_rectangle = self.frameGeometry()
@@ -392,7 +399,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Logs buttons
                 view_icon = os.path.join(settings.images_dir, 'view_24px_icon.png')
                 self.button_view_log.setIcon(QIcon(view_icon))
-                self.button_view_log.setIconSize(QSize(24, 24))
+                self.button_view_log.setIconSize(QSize(16, 16))
                 self.button_delete_log.setIcon(QIcon(remove_icon))
                 self.button_delete_log.setIconSize(QSize(16, 16))
 
@@ -601,12 +608,6 @@ class ButtermanagerMainWindow(QMainWindow):
         Arguments:
             snapshots (boolean): Create and delete snapshots when the upgrading process is executed.
         """
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(800)
-        self.setMinimumWidth(800)
-        self.setMaximumHeight(800)
-        self.setMaximumWidth(800)
-
         # Showing terminal and buttons
         self.button_close_terminal.show()
         # Save log button will only be displayed when the logs are
@@ -616,9 +617,6 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             self.button_save_log.hide()
         self.text_edit_console.show()
-
-        # Adjusting the window
-        self.adjustSize()
 
         # Checking if there is any subvolume defined by the user
         if len(settings.subvolumes) == 0:
@@ -656,19 +654,10 @@ class ButtermanagerMainWindow(QMainWindow):
         It will restore the proper windows size
 
         """
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(490)
-        self.setMinimumWidth(800)
-        self.setMaximumHeight(490)
-        self.setMaximumWidth(800)
-
         # Hiding terminal and buttons
         self.button_close_terminal.hide()
         self.button_save_log.hide()
         self.text_edit_console.hide()
-
-        # Adjusting the window
-        self.adjustSize()
 
     def save_log(self):
         """Saves the current content of the terminal into a file.
