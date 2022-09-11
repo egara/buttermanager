@@ -513,11 +513,8 @@ class SubvolumeWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(300)
-        self.setMinimumWidth(640)
-        self.setMaximumHeight(300)
-        self.setMaximumWidth(640)
+        # Setting size for the window
+        self.resize(640, 300)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
