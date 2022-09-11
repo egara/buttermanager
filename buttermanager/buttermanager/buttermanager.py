@@ -267,7 +267,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.spinbox_edit_snapshots_to_keep, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
-                                  self.checkbox_grub_btrfs, self.button_regenerate_grub]
+                                  self.checkbox_grub_btrfs, self.button_regenerate_grub, self.label_settings_ui,
+                                  self.label_font_size, self.spinbox_font_size]
             utils.scale_fonts(self.__ui_elements)
             self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
                                   self.label_settings_subvolumes_snapshots_to_keep]
