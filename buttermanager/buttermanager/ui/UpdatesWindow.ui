@@ -14,74 +14,72 @@
    <string>Packages to update</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTextEdit" name="text_edit_console">
-    <property name="geometry">
-     <rect>
-      <x>7</x>
-      <y>60</y>
-      <width>751</width>
-      <height>341</height>
-     </rect>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="leftMargin">
+     <number>10</number>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_updates">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>391</width>
-      <height>31</height>
-     </rect>
+    <property name="rightMargin">
+     <number>10</number>
     </property>
-    <property name="text">
-     <string>Packages to update</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_upgrade_system">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>20</y>
-      <width>171</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Upgrade the system creating a previous snapshot and removing old snapshots according to configuration</string>
-    </property>
-    <property name="text">
-     <string>Upgrade with snapshots</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_cancel">
-    <property name="geometry">
-     <rect>
-      <x>669</x>
-      <y>20</y>
-      <width>88</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cancel</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_upgrade_system_without_snapshots">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>20</y>
-      <width>181</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Upgrade the system without creating snapshots</string>
-    </property>
-    <property name="text">
-     <string>Upgrade without snapshots</string>
-    </property>
-   </widget>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_updates">
+          <property name="text">
+           <string>Packages to update</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_upgrade_system">
+          <property name="toolTip">
+           <string>Upgrade the system creating a previous snapshot and removing old snapshots according to configuration</string>
+          </property>
+          <property name="text">
+           <string>Upgrade with snapshots</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_upgrade_system_without_snapshots">
+          <property name="toolTip">
+           <string>Upgrade the system without creating snapshots</string>
+          </property>
+          <property name="text">
+           <string>Upgrade without snapshots</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_cancel">
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="text_edit_console"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
