@@ -88,6 +88,7 @@ class ConfigManager:
                 subvolumes_orig:
                 subvolumes_prefix:
                 subvolumes_snapshots_to_keep:
+                font_size_increment: 0
             '''
             config_file_dictionary = yaml.safe_load(config_file_as_dictionary)
             conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
@@ -161,6 +162,9 @@ class ConfigManager:
 
         # Do the user want to save logs automatically
         settings.save_log = int(settings.properties_manager.get_property('save_log'))
+
+        # Font size increment defined by the user
+        settings.font_size_increment = int(settings.properties_manager.get_property('font_size_increment'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()

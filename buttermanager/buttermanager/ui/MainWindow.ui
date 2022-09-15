@@ -1070,7 +1070,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinbox_font_size">
+             <widget class="QSpinBox" name="spinbox_font_size_increment">
               <property name="minimum">
                <number>-99</number>
               </property>

@@ -268,8 +268,8 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub, self.label_settings_ui,
-                                  self.label_font_size, self.spinbox_font_size, self.label_settings_subvolumes_where,
-                                  self.label_settings_subvolumes_prefix,
+                                  self.label_font_size, self.spinbox_font_size_increment,
+                                  self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
                                   self.label_settings_subvolumes_snapshots_to_keep]
             utils.scale_fonts(self.__ui_elements)
 
@@ -379,6 +379,9 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.checkbox_log.setChecked(False)
                 else:
                     self.checkbox_log.setChecked(True)
+
+                # Retrieving font size increment
+                self.spinbox_font_size_increment.setValue(settings.font_size_increment)
 
                 # END -- Displaying settings options
 

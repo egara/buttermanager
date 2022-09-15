@@ -63,6 +63,8 @@ subvolumes = {}
 properties_manager = None
 # Base fot size for all the UI elements (it is dynamically calculated during application start up)
 base_font_size = 10
+# Fot size increment defined by the user
+font_size_increment = 0
 # Location of the UI layouts directory
 ui_dir = ""
 # Location of the images directory
