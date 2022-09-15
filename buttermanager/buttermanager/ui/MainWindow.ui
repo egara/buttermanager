@@ -1065,12 +1065,16 @@
             <item>
              <widget class="QLabel" name="label_font_size">
               <property name="text">
-               <string>Font Size</string>
+               <string>Font size increment</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinbox_font_size"/>
+             <widget class="QSpinBox" name="spinbox_font_size">
+              <property name="minimum">
+               <number>-99</number>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer name="horizontalSpacer_9">

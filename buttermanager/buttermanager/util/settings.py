@@ -61,7 +61,7 @@ save_log = 1
 subvolumes = {}
 # Properties Manager
 properties_manager = None
-# Base fot size for all the UI elements
+# Base fot size for all the UI elements (it is dynamically calculated during application start up)
 base_font_size = 10
 # Location of the UI layouts directory
 ui_dir = ""

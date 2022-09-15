@@ -271,7 +271,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_font_size, self.spinbox_font_size, self.label_settings_subvolumes_where,
                                   self.label_settings_subvolumes_prefix,
                                   self.label_settings_subvolumes_snapshots_to_keep]
-            utils.scale_fonts(self.__ui_elements, -2)
+            utils.scale_fonts(self.__ui_elements)
 
             # Tooltips
             self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
