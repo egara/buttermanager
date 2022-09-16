@@ -267,11 +267,12 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.spinbox_edit_snapshots_to_keep, self.checkbox_startup, self.checkbox_log,
                                   self.checkbox_snap, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
-                                  self.checkbox_grub_btrfs, self.button_regenerate_grub]
-            utils.scale_fonts(self.__ui_elements)
-            self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
+                                  self.checkbox_grub_btrfs, self.button_regenerate_grub, self.label_settings_ui,
+                                  self.label_font_size, self.spinbox_font_size_increment,
+                                  self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
                                   self.label_settings_subvolumes_snapshots_to_keep]
-            utils.scale_fonts(self.__ui_elements, 2)
+            utils.scale_fonts(self.__ui_elements)
+
             # Tooltips
             self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
@@ -379,6 +380,9 @@ class ButtermanagerMainWindow(QMainWindow):
                 else:
                     self.checkbox_log.setChecked(True)
 
+                # Retrieving font size increment
+                self.spinbox_font_size_increment.setValue(settings.font_size_increment)
+
                 # END -- Displaying settings options
 
                 # Setting buttons and icons
@@ -437,6 +441,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
                 self.checkbox_grub_btrfs.clicked.connect(self.include_grub_btrfs)
+                self.spinbox_font_size_increment.valueChanged.connect(self.change_font_size_increment)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
                 self.button_save_subvolume.clicked.connect(self.save_subvolume)
@@ -919,6 +924,16 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             settings.properties_manager.set_property('grub_btrfs', 0)
             self.button_regenerate_grub.hide()
+
+    def change_font_size_increment(self):
+        """Actions when user increases or decreases the UI font size.
+
+        """
+        # Storing value in settings
+        settings.properties_manager.set_property('font_size_increment', self.spinbox_font_size_increment.value())
+
+        # Changing UI font size dynamically
+        utils.scale_fonts(self.__ui_elements)
 
     def on_combobox_filesystem_changed(self):
         self.__current_filesystem_uuid = self.combobox_filesystem.currentText()
