@@ -26,6 +26,9 @@
       <property name="rightMargin">
        <number>10</number>
       </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
       <item>
        <widget class="QRadioButton" name="radiobutton_all_subvolumes">
         <property name="text">
