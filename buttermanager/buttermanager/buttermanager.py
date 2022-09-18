@@ -652,9 +652,12 @@ class ButtermanagerMainWindow(QMainWindow):
         include_snap = False
         if utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
+        include_flatpak = False
+        if utils.exist_program(FLATPAK_COMMAND):
+            include_flatpak = self.checkbox_flatpak.isChecked()
 
         # Upgrading the system
-        self.__upgrader = upgrader.Upgrader(include_aur, include_snap, snapshots)
+        self.__upgrader = upgrader.Upgrader(include_aur, include_snap, include_flatpak, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
