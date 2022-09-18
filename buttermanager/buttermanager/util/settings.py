@@ -45,6 +45,8 @@ user_os = ""
 remove_snapshots = 1
 # Do user want to upgrade snap packages? 0=False 1=True
 snap_packages = 1
+# Do user want to upgrade flatpak packages? 0=False 1=True
+flatpak_packages = 1
 # Do user want to upgrade packages from AUR? 0=False 1=True
 aur_repository = 1
 # Do user want to check for updates at startup? 0=False 1=True

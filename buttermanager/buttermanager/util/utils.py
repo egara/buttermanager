@@ -81,6 +81,7 @@ class ConfigManager:
                 aur_repository: 0
                 check_at_startup: 0
                 snap_packages: 0
+                flatpak_packages: 0
                 save_log: 1
                 grub_btrfs: 0
                 path_to_consolidate_root_snapshot: 0
@@ -145,6 +146,9 @@ class ConfigManager:
 
         # Do the user want to update snap packages during the upgrading process
         settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))
+
+        # Do the user want to update flatpak packages during the upgrading process
+        settings.flatpak_packages = int(settings.properties_manager.get_property('flatpak_packages'))
 
         # Do the user want to update AUR packages during the upgrading process
         settings.aur_repository = int(settings.properties_manager.get_property('aur_repository'))

@@ -34,6 +34,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
 
 # Constants
 SNAP_COMMAND = "snap"
+FLATPAK_COMMAND = "flatpak"
 
 
 class EmittingStream(QObject):
@@ -265,7 +266,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.combobox_subvolumes, self.line_edit_snapshot_where,
                                   self.line_edit_snapshot_prefix, self.checkbox_edit_dont_remove_snapshots,
                                   self.spinbox_edit_snapshots_to_keep, self.checkbox_startup, self.checkbox_log,
-                                  self.checkbox_snap, self.checkbox_aur, self.button_save_log,
+                                  self.checkbox_snap, self.checkbox_flatpak, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
                                   self.checkbox_grub_btrfs, self.button_regenerate_grub, self.label_settings_ui,
                                   self.label_font_size, self.spinbox_font_size_increment,
@@ -340,6 +341,22 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.checkbox_snap.show()
                 else:
                     self.checkbox_snap.hide()
+
+                if utils.exist_program(SNAP_COMMAND):
+                    self.checkbox_snap.show()
+                else:
+                    self.checkbox_snap.hide()
+
+                # Retrieving Flatpak packages upgrade decision
+                if settings.flatpak_packages == 0:
+                    self.checkbox_flatpak.setChecked(False)
+                else:
+                    self.checkbox_flatpak.setChecked(True)
+
+                if utils.exist_program(FLATPAK_COMMAND):
+                    self.checkbox_flatpak.show()
+                else:
+                    self.checkbox_flatpak.hide()
 
                 # Retrieving AUR packages upgrade decision
                 if settings.aur_repository == 0:
@@ -437,6 +454,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_edit_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.checkbox_snap.clicked.connect(self.include_snap)
+                self.checkbox_flatpak.clicked.connect(self.include_flatpak)
                 self.checkbox_aur.clicked.connect(self.include_aur)
                 self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
@@ -882,6 +900,16 @@ class ButtermanagerMainWindow(QMainWindow):
             settings.properties_manager.set_property('snap_packages', 1)
         else:
             settings.properties_manager.set_property('snap_packages', 0)
+
+    def include_flatpak(self):
+        """Actions when user checks include flatpak packages.
+
+        """
+        # Storing value in settings
+        if self.checkbox_flatpak.isChecked():
+            settings.properties_manager.set_property('flatpak_packages', 1)
+        else:
+            settings.properties_manager.set_property('flatpak_packages', 0)
 
     def include_aur(self):
         """Actions when user checks include AUR packages.
