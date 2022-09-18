@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tab_buttermanager">
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_main">
        <attribute name="title">
