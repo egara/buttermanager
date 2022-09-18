@@ -139,6 +139,9 @@ class GeneralInfoWindow(QDialog):
         # Setting information
         self.label_info.setText(information)
 
+        # Buttons
+        self.button_box.rejected.connect(self.reject)
+
 
 class ConsolidateSnapshotWindow(QDialog):
     """Window to consolidate or not root snapshot.
