@@ -1017,6 +1017,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="checkbox_flatpak">
+            <property name="text">
+             <string>Include Flatpak packages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="checkbox_aur">
             <property name="text">
              <string>Include AUR packages</string>
