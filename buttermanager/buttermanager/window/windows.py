@@ -73,11 +73,8 @@ class InfoWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(240)
-        self.setMinimumWidth(320)
-        self.setMaximumHeight(240)
-        self.setMaximumWidth(320)
+        # Setting size for the window
+        self.resize(320, 240)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -130,11 +127,8 @@ class GeneralInfoWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
-        self.setMaximumHeight(285)
-        self.setMaximumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -144,6 +138,9 @@ class GeneralInfoWindow(QDialog):
 
         # Setting information
         self.label_info.setText(information)
+
+        # Buttons
+        self.button_box.rejected.connect(self.reject)
 
 
 class ConsolidateSnapshotWindow(QDialog):
@@ -205,11 +202,8 @@ class ConsolidateSnapshotWindow(QDialog):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
-        self.setMaximumHeight(285)
-        self.setMaximumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -356,11 +350,8 @@ class SnapshotWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(300)
-        self.setMinimumWidth(640)
-        self.setMaximumHeight(300)
-        self.setMaximumWidth(640)
+        # Setting size for the window
+        self.resize(500, 200)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -525,11 +516,8 @@ class SubvolumeWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(300)
-        self.setMinimumWidth(640)
-        self.setMaximumHeight(300)
-        self.setMaximumWidth(640)
+        # Setting size for the window
+        self.resize(640, 300)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -671,11 +659,8 @@ class UpdatesWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(442)
-        self.setMinimumWidth(767)
-        self.setMaximumHeight(442)
-        self.setMaximumWidth(767)
+        # Setting size for the window
+        self.resize(767, 442)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -767,11 +752,8 @@ class ProblemsFoundWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(285)
-        self.setMinimumWidth(420)
-        self.setMaximumHeight(285)
-        self.setMaximumWidth(420)
+        # Setting size for the window
+        self.resize(420, 285)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()
@@ -836,11 +818,8 @@ class LogViewWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(442)
-        self.setMinimumWidth(767)
-        self.setMaximumHeight(442)
-        self.setMaximumWidth(767)
+        # Setting size for the window
+        self.resize(767, 442)
 
         # Centering the window
         qt_rectangle = self.frameGeometry()

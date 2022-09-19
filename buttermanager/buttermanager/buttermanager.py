@@ -28,11 +28,13 @@ import time
 from functools import partial
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QCursor, QTextCursor, QIcon, QPixmap, QDesktopServices, QFontMetrics
-from PyQt5 import uic, QtTest
+from PyQt5 import uic, QtTest, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QSize, QUrl
+
 
 # Constants
 SNAP_COMMAND = "snap"
+FLATPAK_COMMAND = "flatpak"
 
 
 class EmittingStream(QObject):
@@ -95,11 +97,8 @@ class PasswordWindow(QMainWindow):
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(240)
-        self.setMinimumWidth(320)
-        self.setMaximumHeight(240)
-        self.setMaximumWidth(320)
+        # Setting size for the window
+        self.resize(320, 240)
 
         # Setting lock icon
         lock_icon = os.path.join(settings.images_dir, 'lock_24px_icon.png')
@@ -121,6 +120,10 @@ class PasswordWindow(QMainWindow):
 
         # Press enter within QLineEdit
         self.input_password.returnPressed.connect(self.load_main_window)
+
+        # Set focus on input_password
+        self.input_password.setFocusPolicy(Qt.StrongFocus)
+        self.input_password.setFocus()
 
         # Checks for new versions of ButterManager
         self.__version_checker.check_version()
@@ -254,7 +257,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.label_app_name, self.label_app_version, self.label_app_developer,
                                   self.label_app_email, self.label_app_developer_2, self.button_balance,
                                   self.button_upgrade_system, self.button_upgrade_system_without_snapshots,
-                                  self.button_fa_take_snapshot, self.button_snapshot, self.button_take_snapshot,
+                                  self.button_fa_take_snapshot, self.button_take_snapshot,
                                   self.button_delete_snapshot, self.button_delete_log, self.button_view_log,
                                   self.button_edit_subvolume, self.button_delete_subvolume, self.button_add_subvolume,
                                   self.button_save_subvolume, self.button_github, self.button_close_terminal,
@@ -263,29 +266,35 @@ class ButtermanagerMainWindow(QMainWindow):
                                   self.combobox_subvolumes, self.line_edit_snapshot_where,
                                   self.line_edit_snapshot_prefix, self.checkbox_edit_dont_remove_snapshots,
                                   self.spinbox_edit_snapshots_to_keep, self.checkbox_startup, self.checkbox_log,
-                                  self.checkbox_snap, self.checkbox_aur, self.button_save_log,
+                                  self.checkbox_snap, self.checkbox_flatpak, self.checkbox_aur, self.button_save_log,
                                   self.button_close_terminal, self.button_wiki, self.label_documentation,
-                                  self.checkbox_grub_btrfs, self.button_regenerate_grub]
-            utils.scale_fonts(self.__ui_elements)
-            self.__ui_elements = [self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
+                                  self.checkbox_grub_btrfs, self.button_regenerate_grub, self.label_settings_ui,
+                                  self.label_font_size, self.spinbox_font_size_increment,
+                                  self.label_settings_subvolumes_where, self.label_settings_subvolumes_prefix,
                                   self.label_settings_subvolumes_snapshots_to_keep]
-            utils.scale_fonts(self.__ui_elements, 2)
+            utils.scale_fonts(self.__ui_elements)
+
             # Tooltips
             self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
 
             # Setting maximum and minimum  size for the main window
-            self.setMinimumHeight(490)
-            self.setMinimumWidth(800)
-            self.setMaximumHeight(490)
-            self.setMaximumWidth(800)
+            self.setMinimumHeight(300)
+            self.setMinimumWidth(300)
 
             # Hiding terminal and buttons
             self.button_close_terminal.hide()
             self.button_save_log.hide()
             self.text_edit_console.hide()
 
-            # Adjusting the window
-            self.adjustSize()
+            # Setting initial size depending on resolution
+            size_object = QtWidgets.QDesktopWidget().screenGeometry(-1)
+
+            if size_object.width() == 1920:
+                self.resize(640, 520)
+            elif size_object.width() > 1920:
+                self.resize(1024, 832)
+            else:
+                self.resize(320, 260)
 
             # Centering the window
             qt_rectangle = self.frameGeometry()
@@ -333,6 +342,22 @@ class ButtermanagerMainWindow(QMainWindow):
                 else:
                     self.checkbox_snap.hide()
 
+                if utils.exist_program(SNAP_COMMAND):
+                    self.checkbox_snap.show()
+                else:
+                    self.checkbox_snap.hide()
+
+                # Retrieving Flatpak packages upgrade decision
+                if settings.flatpak_packages == 0:
+                    self.checkbox_flatpak.setChecked(False)
+                else:
+                    self.checkbox_flatpak.setChecked(True)
+
+                if utils.exist_program(FLATPAK_COMMAND):
+                    self.checkbox_flatpak.show()
+                else:
+                    self.checkbox_flatpak.hide()
+
                 # Retrieving AUR packages upgrade decision
                 if settings.aur_repository == 0:
                     self.checkbox_aur.setChecked(False)
@@ -372,6 +397,9 @@ class ButtermanagerMainWindow(QMainWindow):
                 else:
                     self.checkbox_log.setChecked(True)
 
+                # Retrieving font size increment
+                self.spinbox_font_size_increment.setValue(settings.font_size_increment)
+
                 # END -- Displaying settings options
 
                 # Setting buttons and icons
@@ -392,7 +420,7 @@ class ButtermanagerMainWindow(QMainWindow):
                 # Logs buttons
                 view_icon = os.path.join(settings.images_dir, 'view_24px_icon.png')
                 self.button_view_log.setIcon(QIcon(view_icon))
-                self.button_view_log.setIconSize(QSize(24, 24))
+                self.button_view_log.setIconSize(QSize(16, 16))
                 self.button_delete_log.setIcon(QIcon(remove_icon))
                 self.button_delete_log.setIconSize(QSize(16, 16))
 
@@ -426,10 +454,12 @@ class ButtermanagerMainWindow(QMainWindow):
                 self.button_view_log.clicked.connect(self.view_log)
                 self.checkbox_edit_dont_remove_snapshots.clicked.connect(self.dont_remove_snapshots)
                 self.checkbox_snap.clicked.connect(self.include_snap)
+                self.checkbox_flatpak.clicked.connect(self.include_flatpak)
                 self.checkbox_aur.clicked.connect(self.include_aur)
                 self.checkbox_log.clicked.connect(self.include_log)
                 self.checkbox_startup.clicked.connect(self.include_startup)
                 self.checkbox_grub_btrfs.clicked.connect(self.include_grub_btrfs)
+                self.spinbox_font_size_increment.valueChanged.connect(self.change_font_size_increment)
                 self.button_add_subvolume.clicked.connect(self.add_subvolume)
                 self.button_edit_subvolume.clicked.connect(self.edit_subvolume)
                 self.button_save_subvolume.clicked.connect(self.save_subvolume)
@@ -601,12 +631,6 @@ class ButtermanagerMainWindow(QMainWindow):
         Arguments:
             snapshots (boolean): Create and delete snapshots when the upgrading process is executed.
         """
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(800)
-        self.setMinimumWidth(800)
-        self.setMaximumHeight(800)
-        self.setMaximumWidth(800)
-
         # Showing terminal and buttons
         self.button_close_terminal.show()
         # Save log button will only be displayed when the logs are
@@ -616,9 +640,6 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             self.button_save_log.hide()
         self.text_edit_console.show()
-
-        # Adjusting the window
-        self.adjustSize()
 
         # Checking if there is any subvolume defined by the user
         if len(settings.subvolumes) == 0:
@@ -631,9 +652,12 @@ class ButtermanagerMainWindow(QMainWindow):
         include_snap = False
         if utils.exist_program(SNAP_COMMAND):
             include_snap = self.checkbox_snap.isChecked()
+        include_flatpak = False
+        if utils.exist_program(FLATPAK_COMMAND):
+            include_flatpak = self.checkbox_flatpak.isChecked()
 
         # Upgrading the system
-        self.__upgrader = upgrader.Upgrader(include_aur, include_snap, snapshots)
+        self.__upgrader = upgrader.Upgrader(include_aur, include_snap, include_flatpak, snapshots)
         # Connecting the signal emitted by the upgrader with this slot
         self.__upgrader.disable_buttons.connect(self.__disable_buttons)
         # Connecting the signal emitted by the upgrader with this slot
@@ -656,19 +680,10 @@ class ButtermanagerMainWindow(QMainWindow):
         It will restore the proper windows size
 
         """
-        # Setting maximum and minimum  size for the main window
-        self.setMinimumHeight(490)
-        self.setMinimumWidth(800)
-        self.setMaximumHeight(490)
-        self.setMaximumWidth(800)
-
         # Hiding terminal and buttons
         self.button_close_terminal.hide()
         self.button_save_log.hide()
         self.text_edit_console.hide()
-
-        # Adjusting the window
-        self.adjustSize()
 
     def save_log(self):
         """Saves the current content of the terminal into a file.
@@ -889,6 +904,16 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             settings.properties_manager.set_property('snap_packages', 0)
 
+    def include_flatpak(self):
+        """Actions when user checks include flatpak packages.
+
+        """
+        # Storing value in settings
+        if self.checkbox_flatpak.isChecked():
+            settings.properties_manager.set_property('flatpak_packages', 1)
+        else:
+            settings.properties_manager.set_property('flatpak_packages', 0)
+
     def include_aur(self):
         """Actions when user checks include AUR packages.
 
@@ -930,6 +955,16 @@ class ButtermanagerMainWindow(QMainWindow):
         else:
             settings.properties_manager.set_property('grub_btrfs', 0)
             self.button_regenerate_grub.hide()
+
+    def change_font_size_increment(self):
+        """Actions when user increases or decreases the UI font size.
+
+        """
+        # Storing value in settings
+        settings.properties_manager.set_property('font_size_increment', self.spinbox_font_size_increment.value())
+
+        # Changing UI font size dynamically
+        utils.scale_fonts(self.__ui_elements)
 
     def on_combobox_filesystem_changed(self):
         self.__current_filesystem_uuid = self.combobox_filesystem.currentText()

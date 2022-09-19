@@ -40,7 +40,9 @@ ARCH_YAY_COMMAND = "yay"
 ARCH_TRIZEN_UPGRADE_COMMAND = "trizen -Syua --noconfirm"
 ARCH_TRIZEN_COMMAND = "trizen"
 SNAP_COMMAND = "snap"
+FLATPAK_COMMAND = "flatpak"
 SNAP_UPGRADE_COMMAND = "sudo -S snap refresh"
+FLATPAK_UPGRADE_COMMAND = "flatpak update -y"
 SUSE_ZYPPER_UPGRADE_COMMAND = "sudo -S zypper -n update"
 SUSE_ZYPPER_CHECK_UPDATES = "sudo -S zypper list-updates"
 FEDORA_DNF_UPGRADE_COMMAND = "sudo -S dnf upgrade --refresh --assumeyes"
@@ -66,7 +68,7 @@ class Upgrader(QThread):
     refresh_gui = pyqtSignal()
 
     # Constructor
-    def __init__(self, include_aur, include_snap, snapshots):
+    def __init__(self, include_aur, include_snap, include_flatpak, snapshots):
         QThread.__init__(self)
         # Logger
         self.__logger = utils.Logger(self.__class__.__name__).get()
@@ -74,6 +76,8 @@ class Upgrader(QThread):
         self.__include_aur = include_aur
         # Include snap packages upgrade
         self.__include_snap = include_snap
+        # Include flatpak packages upgrade
+        self.__include_flatpak = include_flatpak
         # Create and delete snapshots
         self.__snapshots = snapshots
 
@@ -192,7 +196,7 @@ class Upgrader(QThread):
                         sys.stdout.write("\n")
                         sys.stdout.write("--------")
                         sys.stdout.write("\n")
-                        sys.stdout.write("Updating snaps. Please wait...")
+                        sys.stdout.write("Updating snap applications. Please wait...")
                         sys.stdout.write("\n")
                         utils.execute_command(SNAP_UPGRADE_COMMAND, console=True)
                     except Exception as exception:
@@ -206,7 +210,28 @@ class Upgrader(QThread):
                         sys.stdout.write("--------")
                         sys.stdout.write("\n")
 
-            # Removes all the snapshots not needed any more it it is needed
+            # Upgrades flatpak packages
+            if self.__include_flatpak:
+                if utils.exist_program(FLATPAK_COMMAND):
+                    try:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Updating flatpak applications. Please wait...")
+                        sys.stdout.write("\n")
+                        utils.execute_command(FLATPAK_UPGRADE_COMMAND, console=True)
+                    except Exception as exception:
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error upgrading flatpak packages")
+                        sys.stdout.write("\n")
+                        sys.stdout.write("Error: " + str(exception))
+                        sys.stdout.write("\n")
+                        sys.stdout.write("--------")
+                        sys.stdout.write("\n")
+
+            # Removes all the snapshots not needed any more it is needed
             if self.__snapshots:
                 sys.stdout.write("\n")
                 sys.stdout.write("--------")

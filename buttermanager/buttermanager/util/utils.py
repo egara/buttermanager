@@ -81,6 +81,7 @@ class ConfigManager:
                 aur_repository: 0
                 check_at_startup: 0
                 snap_packages: 0
+                flatpak_packages: 0
                 save_log: 1
                 grub_btrfs: 0
                 path_to_consolidate_root_snapshot: 0
@@ -88,6 +89,7 @@ class ConfigManager:
                 subvolumes_orig:
                 subvolumes_prefix:
                 subvolumes_snapshots_to_keep:
+                font_size_increment: 0
             '''
             config_file_dictionary = yaml.safe_load(config_file_as_dictionary)
             conf_file_path = '{application_path}/{conf_file}'.format(application_path=settings.application_path,
@@ -145,6 +147,9 @@ class ConfigManager:
         # Do the user want to update snap packages during the upgrading process
         settings.snap_packages = int(settings.properties_manager.get_property('snap_packages'))
 
+        # Do the user want to update flatpak packages during the upgrading process
+        settings.flatpak_packages = int(settings.properties_manager.get_property('flatpak_packages'))
+
         # Do the user want to update AUR packages during the upgrading process
         settings.aur_repository = int(settings.properties_manager.get_property('aur_repository'))
 
@@ -161,6 +166,9 @@ class ConfigManager:
 
         # Do the user want to save logs automatically
         settings.save_log = int(settings.properties_manager.get_property('save_log'))
+
+        # Font size increment defined by the user
+        settings.font_size_increment = int(settings.properties_manager.get_property('font_size_increment'))
 
         # Subvolumes to manage
         subvolumes_list = get_subvolumes()
@@ -452,14 +460,13 @@ def get_subvolumes():
     return subvolumes
 
 
-def scale_fonts(ui_elements, reduced_point_size=0):
+def scale_fonts(ui_elements):
     """Scales all the UI elements fonts in order to fit on the window.
 
     Arguments:
         ui_elements (list): UI elements to change the font
-        reduced_point_size (int): Integer to reduce the base font pint size
     """
-    font_size = settings.base_font_size - reduced_point_size
+    font_size = settings.base_font_size + int(settings.properties_manager.get_property('font_size_increment'))
     # Changing the font for every UI element
     for label in ui_elements:
         font = label.font()

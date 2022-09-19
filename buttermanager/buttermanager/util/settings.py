@@ -26,7 +26,7 @@ import yaml
 
 # Global module constants
 CONF_FILE = "buttermanager.yaml"
-VERSION = "2.4.3"
+VERSION = "2.5.0"
 
 # Global module attributes
 # Application version
@@ -45,6 +45,8 @@ user_os = ""
 remove_snapshots = 1
 # Do user want to upgrade snap packages? 0=False 1=True
 snap_packages = 1
+# Do user want to upgrade flatpak packages? 0=False 1=True
+flatpak_packages = 1
 # Do user want to upgrade packages from AUR? 0=False 1=True
 aur_repository = 1
 # Do user want to check for updates at startup? 0=False 1=True
@@ -61,8 +63,10 @@ save_log = 1
 subvolumes = {}
 # Properties Manager
 properties_manager = None
-# Base fot size for all the UI elements
+# Base fot size for all the UI elements (it is dynamically calculated during application start up)
 base_font_size = 10
+# Fot size increment defined by the user
+font_size_increment = 0
 # Location of the UI layouts directory
 ui_dir = ""
 # Location of the images directory
