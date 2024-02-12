@@ -98,7 +98,15 @@ class ConfigManager:
             yaml.dump(config_file_dictionary, conf_file)
             conf_file.close()
 
-        # Creating logs directory it doesn't exist
+            # Sanitazing config file. All null values will be replaced by blank spaces
+            with open(conf_file_path, 'r') as file:
+                config_file_data = file.read()
+                config_file_data = config_file_data.replace('null', '')
+
+            with open(conf_file_path, 'w') as file:
+                file.write(config_file_data)
+
+        # Creating logs directory if it doesn't exist
         if not os.path.exists(settings.logs_path):
             os.makedirs(settings.logs_path)
 
