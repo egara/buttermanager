@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>738</width>
+    <width>756</width>
     <height>746</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ButterManager</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1274,7 +1274,7 @@
              </font>
             </property>
             <property name="text">
-             <string>v2.5.0</string>
+             <string>v2.5.1</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -1390,7 +1390,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>738</width>
+     <width>756</width>
      <height>30</height>
     </rect>
    </property>
