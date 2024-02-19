@@ -288,7 +288,7 @@ class VersionChecker:
                                                                    last_version + " is available. Check the repository "
                                                                    "\nof the project "
                                                                    "(https://github.com/egara/buttermanager)\n "
-                                                                   "to get the latest code or snap package")
+                                                                   "to get the latest code")
 
                 info_window.show()
 
