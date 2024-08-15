@@ -1,38 +1,38 @@
 # ButterManager
 
-## Summary ##
+## Summary
 ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and upgrading the system safetly.
 
-## Version ##
-2.5.1
+## Version
+2.5.2
 
-## Caveats ##
+## Caveats
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
 this](https://github.com/egara/arch-btrfs-installation).
 
 - ButterManager works with **Debian**, **Ubuntu / derivatives (Linux Mint, KDE Neon, ElementaryOS, Zorin, Deepin...)**, **OpenSUSE / SUSE**, **RHEL / Fedora** and **Arch Linux** so far.
 
-## Main Functionalities ##
+## Main Functionalities
 
-### Managing snapshots ###
+### Managing snapshots
 You will be able to define all the subvolumes you want to create snapshots and the path for their storage. Then, using ButterManager you will create and delete snapshots of those subvolumes at your will.
 
-### Integration with GRUB ###
+### Integration with GRUB
 ButterManager is integrated with [grub-btrfs](https://github.com/Antynea/grub-btrfs) and you will be able to boot your system from any snapshot directly from the GRUB menu.
 
-### Balancing BTRFS filesystems ###
+### Balancing BTRFS filesystems
 As new snapshots are created in the system, the free space of the filesystem decreases and it is necessary to perform a system balancing regularly. With ButterManager you can perform these balances at any time and visualize the real space that is occupied.
 
-### Upgrading the system ###
+### Upgrading the system
 You will be able to upgrade your system and create new snapshots automatically when this operation is performed. Doing so, if something goes wrong, you will have a snapshot before the upgrade you can use to go back. You will be able to set the maximum number of snapshots in your system and ButterManager will maintain this number with every upgrade.
 
-### Saving the logs ###
+### Saving the logs
 Everytime your system is upgraded using ButterManager, you could save the log indepently. This way, you would be able to see the packages that have been updated in every snapshot if you wish.
 
-## Installation ##
+## Installation
 You can install ButterManager in different ways.
 
-### From the source code ###
+### From the source code
 In order to install ButterManager manually, you have to install these packages (all the packages described below are for **Arch Linux**. Please, take into account that maybe the name is different in your distribution and you have to install them for python3 version):
 
 - Python 3
@@ -58,7 +58,7 @@ Once you meet all the requirements, follow these steps:
       cd buttermanager
       cd install
       ./native_install.sh
-      
+
     ```
 
 	1. **Venv Installation**: If the first method doesn't run ButterManager properly, please try this second one. The installation process will create a virtual environment with all the dependencies needed and a desktop launcher to run ButterManager directly. In order to install ButterManager just open a terminal and type:
@@ -67,7 +67,7 @@ Once you meet all the requirements, follow these steps:
       cd buttermanager
       cd install
       ./venv_install.sh
-    ```  
+    ```
 
 1. If you want to uninstall ButterManager:
 
@@ -77,7 +77,7 @@ Once you meet all the requirements, follow these steps:
     ./uninstall.sh
   ```
 
-### From AUR ###
+### From AUR
 If you are an Arch Linux user or your distribution is a derivative (Manjaro, EndevourOS...), ButterManager is in AUR. Depending on your package manager for AUR, type:
 
     yaourt -S buttermanager
@@ -92,7 +92,17 @@ Or
 
 Those are only examples. Use the package manager you have installed for AUR. Once ButterManager is installed, you will be able to run it using the icon created in the main menu.
 
+### From Nix
+ButterManager is packaged in Nix [and included in the official repo](https://search.nixos.org/packages?channel=24.05&from=0&size=50&sort=relevance&type=packages&query=buttermanager)
+
+### From RPM
+ButterManager is packaged in Fedora but it is outdated. [This is the official package](https://packages.fedoraproject.org/pkgs/buttermanager/buttermanager/)
+
 ## Changelog
+
+### Version 2.5.2
+- Issue #56. Cancel button has been re-implemented within the consolidation window and now it closes this window when it is clicked.
+- All ButterManager windows have been renamed to ButterManager. New labels in some windows have been added.
 
 ### Version 2.5.1
 - Issue #52. A bug that prevented ButterManager to start normally (reported by Fedora users) has been fixed.

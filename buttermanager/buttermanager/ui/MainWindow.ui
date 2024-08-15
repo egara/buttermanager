@@ -1274,7 +1274,7 @@
              </font>
             </property>
             <property name="text">
-             <string>v2.5.1</string>
+             <string>v2.5.2</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
