@@ -492,19 +492,19 @@ class ButtermanagerMainWindow(QMainWindow):
                     self.check_updates()
                 else:
                     consolidate_window = self.__root_snapshot_checker.open_consolidate_snapshot_window()
-                    # Hidding the main window and showing the consolodate window in order to proceed
+                    # Hiding the main window and showing the consolidate window in order to proceed
                     self.hide()
                     consolidate_window.show()
                     consolidation = consolidate_window.exec_()
                     if consolidation == 1:
-                        # User chose Ok button to consolidate root snapshot and the process finished succesfully
+                        # User chose Ok button to consolidate root snapshot and the process finished successfully
                         info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "The snapshot you choose to boot the system \n"
                                                                          "has been consolidated as the default root \n"
                                                                          "snapshot. Please, reboot the system now.")
                         info_dialog.show()
                     elif consolidation == 2:
-                        # User chose Ok button to consolidate root snapshot and the process doesn't finished
+                        # User chose Ok button to consolidate root snapshot and the process didn't finish
                         # successfully
                         info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "Error trying to substitute the root's path \n"
@@ -512,7 +512,7 @@ class ButtermanagerMainWindow(QMainWindow):
                                                                          "created")
                         info_dialog.show()
                     elif consolidation == 3:
-                        # User chose Ok button to consolidate root snapshot and the process doesn't finished
+                        # User chose Ok button to consolidate root snapshot and the process didn't finish
                         # successfully
                         info_dialog = windows.ProblemsFoundWindow(self,
                                                                          "Error removing root snapshot because it is \n"

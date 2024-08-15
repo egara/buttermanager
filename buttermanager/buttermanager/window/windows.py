@@ -218,6 +218,7 @@ class ConsolidateSnapshotWindow(QDialog):
 
         # Buttons
         self.button_box.accepted.connect(self.consolidate)
+        self.button_box.rejected.connect(self.cancel)
 
     def consolidate(self):
         """Accepts root snapshot consolidation.
@@ -304,6 +305,13 @@ class ConsolidateSnapshotWindow(QDialog):
             # The consolidation process was KO so this QDialong window is closed and returns integer 3
             self.done(3)
 
+    def cancel(self):
+        """Rejects root snapshot consolidation.
+
+        """
+        self.__logger.info("Rejecting default root snapshot")
+        self.done(4)
+
 
 class SnapshotWindow(QMainWindow):
     """Window to select a subvolume to take a snapshot.
@@ -345,7 +353,8 @@ class SnapshotWindow(QMainWindow):
         # Adjusting font scale
         # UI elements
         self.__ui_elements = [self.radiobutton_all_subvolumes, self.radiobutton_one_subvolume,
-                              self.combobox_subvolumes, self.button_ok, self.button_cancel]
+                              self.label_take_snapshots, self.combobox_subvolumes, self.button_ok,
+                              self.button_cancel]
         utils.scale_fonts(self.__ui_elements)
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
@@ -511,7 +520,8 @@ class SubvolumeWindow(QMainWindow):
                               self.button_add_subvolume_dest, self.label_subvolume_origin, self.label_subvolume_dest,
                               self.label_subvolume_prefix, self.line_subvolume_origin, self.line_subvolume_dest,
                               self.line_snapshot_name, self.label_subvolume_snapshots_to_keep,
-                              self.spinbox_snapshots_to_keep, self.checkbox_dont_remove_snapshots]
+                              self.spinbox_snapshots_to_keep, self.checkbox_dont_remove_snapshots,
+                              self.label_add_subvolume]
         utils.scale_fonts(self.__ui_elements)
         # Tooltips
         self.setStyleSheet(" QToolTip{font: " + str(settings.base_font_size) + "pt}")
