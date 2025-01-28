@@ -18,6 +18,6 @@ if test -f "$installed_files"; then
 fi
 
 sudo rm -rf /opt/buttermanager/
-rm ~/.local/share/applications/buttermanager.desktop
+rm ${HOME}/.local/share/applications/buttermanager.desktop
 
 echo "Uninstallation process has been successfully completed. You are good to go!"

@@ -42,12 +42,12 @@ if [[ "$installButterManager" == "y" ]]; then
 
     # Creating desktop launcher
     echo -e "Creating desktop launcher..."
-    if [ ! -d "~/.local/share/applications/" ] 
+    if [ ! -d "${HOME}/.local/share/applications/" ]
     then
-        echo "Directory ~/.local/share/applications/ doesn't exist. Creating it to store ButterManager desktop launcher."
-        mkdir ~/.local/share/applications/ 
+        echo "Directory ${HOME}/.local/share/applications/ doesn't exist. Creating it to store ButterManager desktop launcher."
+        mkdir -p ${HOME}/.local/share/applications/
     fi
-    cp ../packaging/buttermanager_venv.desktop ~/.local/share/applications/buttermanager.desktop
+    cp ../packaging/buttermanager_venv.desktop ${HOME}/.local/share/applications/buttermanager.desktop
 
     # Creating virtual environment
     echo "Creating virtual environment..."
