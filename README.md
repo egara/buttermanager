@@ -6,6 +6,9 @@ ButterManager is a BTRFS tool for managing snapshots, balancing filesystems and 
 ## Version
 2.5.2
 
+## Wiki
+You can find documentation and more info in the [wiki of the project](https://github.com/egara/buttermanager/wiki)
+
 ## Caveats
 - For using ButterManager, it is important to have a **good BTRFS structure in your filesystem**. If you want some tips and more information, you can [read
 this](https://github.com/egara/arch-btrfs-installation).
